@@ -56,7 +56,7 @@ export default {
         });
         const userData = response.data.User;
         localStorage.setItem('token', userData.token);
-        this.$router.push('/');
+        this.$router.push('/SideNav');
       } catch (error) {
         this.message = error.response.data;
       }
