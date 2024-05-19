@@ -3,6 +3,8 @@ import HomeView from '../views/HomeView.vue'
 import AboutView from '../views/AboutView.vue'
 import LoginView from '../views/LoginView.vue'
 import SignupForm from '@/components/SignupForm.vue'
+import SideNav from '../views/SideNavView.vue'
+
 
 
 
@@ -28,6 +30,11 @@ const router = createRouter({
       path: '/signup',
       name: 'SignupForm',
       component: SignupForm,
+    },
+    {
+      path: '/sidenav',
+      name: 'SideNav',
+      component: SideNav,
     }
   
   ]
