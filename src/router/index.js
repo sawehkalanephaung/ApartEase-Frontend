@@ -1,9 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Dashboard from '../views/Dashboard.vue'
-import AboutView from '../views/AboutView.vue'
 import LoginView from '../views/LoginView.vue'
 import SignupForm from '@/components/SignupForm.vue'
 import SideNav from '../views/SideNavView.vue'
+import HomeView from '../views/HomeView.vue'
 
 
 
@@ -13,13 +12,8 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: Dashboard,
-    },
-    {
-      path: '/about',
-      name: 'about',
-      component: AboutView,
+      name: 'login',
+      component: LoginView
     },
     {
       path: '/login',
@@ -35,6 +29,14 @@ const router = createRouter({
       path: '/sidenav',
       name: 'SideNav',
       component: SideNav,
+      children:[
+        {
+          path: '/home',
+          name: 'home',
+          component:HomeView,
+        }
+      ]
+     
     }
   
   ]

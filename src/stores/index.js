@@ -7,12 +7,11 @@ export default createStore({
   mutations: {
     setUser(state, user) {
       state.user = user;
+      // state.role = role;
     }
   },
   actions: {
     login({ commit }, user) {
-      // Simulate login
-      // In a real app, you'd make an API call here and handle authentication
       commit('setUser', user);
     }
   },

@@ -30,7 +30,7 @@
           </button>
         </div>
       </form>
-      <p>{{ message }}</p>
+      <p v-if="message" class="text-red-500">{{ message }}</p>
     </div>
   </div>
 </template>
@@ -39,7 +39,7 @@
 import axios from 'axios';
 
 export default {
-  name:'UserLogin',
+  name: 'UserLogin',
   data() {
     return {
       username: '',
@@ -54,11 +54,28 @@ export default {
           username: this.username,
           password: this.password
         });
-        const userData = response.data.User;
+        // Assuming the response contains user data directly
+        const userData = response.data;
         localStorage.setItem('token', userData.token);
-        this.$router.push('/SideNav');
+        const user = {
+          username: userData.username,
+          role: userData.role
+        };
+        // Set the user in Vuex store
+        this.$store.commit('setUser', user);
+        // Redirect to SideNav after successful login
+        this.$router.push('/sidenav');
       } catch (error) {
-        this.message = error.response.data;
+        // Log the error for debugging
+        console.error('Login error:', error);
+        // Check if error object exists and contains data property
+        if (error.response && error.response.data && error.response.data.message) {
+          // Display the error message from the server
+          this.message = error.response.data.message;
+        } else {
+          // Display a generic error message
+          this.message = 'An error occurred during login. Please try again.';
+        }
       }
     }
   }
