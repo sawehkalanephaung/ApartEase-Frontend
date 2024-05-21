@@ -64,7 +64,7 @@ export default {
         // Set the user in Vuex store
         this.$store.commit('setUser', user);
         // Redirect to SideNav after successful login
-        this.$router.push('/sidenav');
+        this.$router.push('/dashboard');
       } catch (error) {
         // Log the error for debugging
         console.error('Login error:', error);

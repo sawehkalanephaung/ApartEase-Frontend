@@ -2,9 +2,10 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/LoginView.vue'
 import SignupForm from '@/components/SignupForm.vue'
 import SideNav from '../views/SideNavView.vue'
-// import HomeView from '../views/HomeView.vue'
+import Dashboard from '@/views/Dashboard.vue'
 import ResidentList from '../views/ResidentList.vue'
 import UserList from '../views/UserList.vue'
+
 
 
 
@@ -29,17 +30,23 @@ const router = createRouter({
       component: SideNav,
       children:[
         {
+          path: '/dashboard',
+          name: 'Dashboard',
+          component:Dashboard,
+        },
+        {
           path: '/residentlist',
           name: 'ResidentList',
           component: ResidentList,
+      
         },
+     
         {
           path: '/userlist',
           name: 'UserList',
           component: UserList,
         },
       ]
-     
     }
   
   ]
