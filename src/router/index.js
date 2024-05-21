@@ -4,6 +4,7 @@ import SignupForm from '@/components/SignupForm.vue'
 import SideNav from '../views/SideNavView.vue'
 import Dashboard from '@/views/Dashboard.vue'
 import ResidentList from '../views/ResidentList.vue'
+import UserList from '../views/UserList.vue'
 
 
 
@@ -39,6 +40,12 @@ const router = createRouter({
           component: ResidentList,
       
         }
+        },
+        {
+          path: '/userlist',
+          name: 'UserList',
+          component: UserList,
+        },
       ]
     }
   
