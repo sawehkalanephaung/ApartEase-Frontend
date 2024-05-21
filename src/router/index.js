@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/LoginView.vue'
 import SignupForm from '@/components/SignupForm.vue'
 import SideNav from '../views/SideNavView.vue'
-import HomeView from '../views/HomeView.vue'
+import Dashboard from '@/views/Dashboard.vue'
 
 
 
@@ -31,9 +31,9 @@ const router = createRouter({
       component: SideNav,
       children:[
         {
-          path: '/home',
-          name: 'home',
-          component:HomeView,
+          path: '/dashboard',
+          name: 'Dashboard',
+          component:Dashboard,
         }
       ]
      
