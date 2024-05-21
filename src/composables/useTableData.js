@@ -4,12 +4,15 @@ import axios from 'axios'
 
 export function useTableData() {
   const paginatedResidentListTableData = ref([])
+  const paginatedUserListTableData = ref([])
 
 
   async function fetchData() {
     try {
       const [residentResponse, userResponse] = await Promise.all([
         axios.get('YOUR_BACKEND_API_URL_FOR_RESIDENT_LIST'),
+        axios.get('YOUR_BACKEND_API_URL_FOR_USER_LIST')
+         
 
       ])
 
@@ -17,6 +20,7 @@ export function useTableData() {
       paginatedUserListTableData.value = userResponse.data
     } catch (error) {
       console.error('Error fetching data:', error)
+      
     }
   }
 
@@ -24,5 +28,6 @@ export function useTableData() {
 
   return {
     paginatedResidentListTableData,
+    paginatedUserListTableData
   }
 }
