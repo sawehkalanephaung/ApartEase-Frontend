@@ -7,6 +7,27 @@
       <!-- Search input and add room button -->
       <div class="mt-6">
         <!-- Your search input and add room button -->
+        <div class="flex justify-between items-center mt-2 sm:mt-0">
+          <div class="relative block w-full max-w-md">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-2">
+              <svg viewBox="0 0 24 24" class="w-4 h-4 text-gray-500 fill-current">
+                <path
+                  d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z"
+                />
+              </svg>
+            </span>
+
+            <input
+              placeholder="Search"
+              class="block min-w-full py-2 pl-8 pr-6 text-sm text-gray-700 placeholder-gray-400 bg-white border border-b border-gray-400 rounded-l rounded-r appearance-none sm:rounded-l-none focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline:non"
+            >
+          </div>
+          <button
+            class=" flex px-4 py-2 text-sm font-semibold text-emerald-800 bg-emerald-300 rounded hover:bg-emerald-400 uppercase ml-3"
+          >
+            add room
+          </button>
+        </div>
       </div>
 
       <!-- Table -->
