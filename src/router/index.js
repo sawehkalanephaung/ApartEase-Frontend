@@ -1,7 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import AboutView from '../views/AboutView.vue'
-import LoginView from '../views/LoginView.vue'
+import Login from '../views/LoginView.vue'
+import SignupForm from '@/components/SignupForm.vue'
+import SideNav from '../views/SideNavView.vue'
+import Dashboard from '@/views/Dashboard.vue'
+import ResidentList from '../views/ResidentList.vue'
+import UserList from '../views/UserList.vue'
+
+
 
 
 
@@ -10,18 +15,38 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView
-    },
-    {
-      path: '/about',
-      name: 'about',
-      component: AboutView,
-    },
-    {
-      path: '/login',
       name: 'login',
-      component: LoginView,
+      component: Login,
+    },
+    
+    {
+      path: '/signup',
+      name: 'SignupForm',
+      component: SignupForm,
+    },
+    {
+      path: '/sidenav',
+      name: 'SideNav',
+      component: SideNav,
+      children:[
+        {
+          path: '/dashboard',
+          name: 'Dashboard',
+          component:Dashboard,
+        },
+        {
+          path: '/residentlist',
+          name: 'ResidentList',
+          component: ResidentList,
+      
+        },
+     
+        {
+          path: '/userlist',
+          name: 'UserList',
+          component: UserList,
+        },
+      ]
     }
   
   ]
