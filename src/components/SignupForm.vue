@@ -6,24 +6,24 @@
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
       <!-- create user form -->
       <form @submit.prevent="signup" class="space-y-6" action="#" method="POST">
-        <div>
+        <div class>
           <div class="flex items-center justify-between">
             <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Username</label>
           </div>
           <div class="mt-2">
             <input id="username" name="username" type="text" autocomplete="username" required="" v-model="username" class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:text-sm sm:leading-6" />
           </div>
-        </div>
+      </div>
 
-        <div>
+      <div class="mt-6">
           <div class="flex items-center justify-between">
-            <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Password</label>
+            <label type="password" for="password" class="block text-sm font-medium leading-6 text-gray-900">Password</label>
           </div>
           <div class="mt-2">
-            <input id="password" name="password" type="password" autocomplete="current-password" required="" v-model="password" class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:text-sm sm:leading-6" />
+            <input id="username" name="username" type="text" autocomplete="username" required="" v-model="username" class="block w-full rounded-md border-0 py-1.5 p-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:text-sm sm:leading-6" />
           </div>
-        </div>
-
+      </div>
+        <div class="mt-6">
         <!-- user role -->
         <div>
           <div class="flex items-center justify-between">
@@ -44,6 +44,7 @@
           <button type="button" @click="cancel" class="ml-2 flex-1 rounded-md border border-red-600 px-3 py-1.5 text-sm font-semibold leading-6 text-red-600 hover:bg-red-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600">
             Cancel
           </button>
+        </div>
         </div>
       </form>
       <p>{{ message }}</p>
