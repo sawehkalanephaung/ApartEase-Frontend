@@ -45,7 +45,6 @@
             Cancel
           </button>
         </div>
-        </div>
       </form>
       <p v-if="message" class="text-red-500">{{ message }}</p>
     </div>
