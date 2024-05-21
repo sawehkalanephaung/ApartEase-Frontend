@@ -39,8 +39,8 @@ const router = createRouter({
           name: 'ResidentList',
           component: ResidentList,
       
-        }
         },
+     
         {
           path: '/userlist',
           name: 'UserList',
