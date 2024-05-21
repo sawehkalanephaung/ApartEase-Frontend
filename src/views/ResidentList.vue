@@ -22,10 +22,16 @@
               class="block min-w-full py-2 pl-8 pr-6 text-sm text-gray-700 placeholder-gray-400 bg-white border border-b border-gray-400 rounded-l rounded-r appearance-none sm:rounded-l-none focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline:non"
             >
           </div>
-          <button
-            class=" flex px-4 py-2 text-sm font-semibold text-emerald-800 bg-emerald-300 rounded hover:bg-emerald-400 uppercase ml-3"
-          >
-            add room
+      
+          <!-- Add New Room Button -->
+          <button class="flex px-4 py-2 ml-3">
+            <div class="flex items-center justify-center">
+              <router-link to="/residentlist/add-room" class="h-12 w-12 rounded-full bg-emerald-300 hover:bg-emerald-400">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="-10 0 30 10" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 stroke-gray-500">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+              </router-link>
+            </div>
           </button>
         </div>
       </div>
@@ -100,6 +106,7 @@
         </div>
       </div>
     </div>
+    <router-view/>
   </div>
 </template>
 
