@@ -22,7 +22,7 @@
 
               Dashboard
             </router-link>
-            <router-link to="/ResidentList" class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800  transition duration-400 ease-in-out">
+            <router-link to="/residentlist" class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800  transition duration-400 ease-in-out">
               <svg aria-hidden="true" class="mr-2 w-[25px] h-[25px] fill-current mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path>
               </svg>
@@ -49,10 +49,11 @@
         </div>
       </div>
     </div>
+        <!-- Main Content Area -->
     <div class="w-full h-full bg-gray-400">
-      <div class="h-[50px] bg-gray-100 flex items-center shadow-sm px-[20px] w-full py-[10px] z-10 border-b ">
+      <div class="h-[50px] bg-gray-100 flex items-center shadow-sm px-[20px] w-full py-[10px] z-10 border-b">
         <!-- Hambuger menu -->
-        <div class="cursor-pointer w-[30px]" @click="toggleSideBar">
+        <div class="cursor-pointer w-[30px] " @click="toggleSideBar">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class=" w-[25px] h-[25px]">
             <!--! Font Awesome Pro 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
             <path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z" />
@@ -66,15 +67,19 @@
             <strong class="font-bold">Success!</strong>
             <span class="block sm:inline"> You have successfully logged out.</span>
           </div>
-          <router-view></router-view>
+          <router-view/>
         </div>
       </div>
     </div>
     <!-- Main  -->
   </div>
 </template>
-<script>
+<script >
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
 export default {
+
   name:'Sidebar',
   // suppose super user
   props:['user'],
@@ -86,6 +91,8 @@ export default {
       showSuccessMessage: false
     }
   },
+
+
   methods: {
     // hide show side bar
     toggleSideBar() {
@@ -114,5 +121,6 @@ export default {
 </script>
 
 <style>
+/* Add your styles here */
 
 </style>
