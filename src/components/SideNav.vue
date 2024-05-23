@@ -52,6 +52,10 @@
         <!-- Main Content Area -->
     <div class="w-full h-full bg-gray-400">
       <div class="h-[50px] bg-gray-100 flex items-center shadow-sm px-[20px] w-full py-[10px] z-10 border-b">
+
+        <!-- Add progress nagivation bar
+        to show the progress bar Eg.  Resident List > Create resident
+        -->
         <!-- Hambuger menu -->
         <div class="cursor-pointer w-[30px] " @click="toggleSideBar">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class=" w-[25px] h-[25px]">

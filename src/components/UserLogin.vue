@@ -1,7 +1,7 @@
 
 <template>
-  <div class="flex items-center justify-center h-screen px-6 bg-gray-200">
-    <div class="w-full max-w-xl p-6 bg-white rounded-md shadow-md">
+  <div class="flex items-center justify-center h-screen px-6 -200">
+    <div class="w-full max-w-xl p-6 bg-white rounded-md">
       <div class="flex items-center justify-center">
         <span class="text-2xl font-semibold text-gray-700">Login Account</span>
       </div>
@@ -28,7 +28,7 @@
           </label>
 
       
-        <div class="mt-10">
+        <div class="mt-20">
           <button
             type="submit"
             class="w-full px-3 py-2 text-sm text-center text-white bg-emerald-600 rounded-md focus:outline-none hover:bg-emerald-500"
@@ -37,7 +37,7 @@
           </button>
         </div>
       </form>
-      <p v-if="message" class="text-red-500">{{ message }}</p>
+      <p v-if="message" class="text-red-500 mt-5">{{ message }}</p>
     </div>
   </div>
 </template>

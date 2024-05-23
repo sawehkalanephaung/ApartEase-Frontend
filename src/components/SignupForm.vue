@@ -1,12 +1,12 @@
 
 <template>
-  <div class="flex items-center justify-center h-screen px-6 bg-gray-200">
-    <div class="w-full max-w-xl p-6 bg-white rounded-md shadow-md">
+  <div class="flex items-center justify-center h-screen px-6">
+    <div class="w-full max-w-xl p-6 bg-white rounded-md ">
       <div class="flex items-center justify-center">
         <span class="text-2xl font-semibold text-gray-700">Create User Account</span>
       </div>
 
-      <form class="mt-10" @submit.prevent="onSubmit">
+      <form class="mt-10" @submit.prevent="signup">
         <label class="block">
             <span class="block text-sm font-medium text-slate-700">Username</span>
             <input type="text" v-model="username" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
@@ -52,82 +52,38 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-// import axios from 'axios'
+import axios from 'axios';
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
-const user = ref({
-  username: '',
-  password: '',
-  role: '',
-
-})
-
 const cancel = () => {
-  router.push('/userlist')
+  router.push('/')
 }
 
-
-const onSubmit =() => {
-  const myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
-
-const raw = JSON.stringify({
-  "username": username.value,
-  "password": password.value,
-  "role": role.value,
- 
-});
-
-const requestOptions = {
-  method: "POST",
-  headers: myHeaders,
-  body: raw,
-  redirect: "follow"
-};
-
-// check correct backend api endpint
-fetch("http://127.0.0.1:1234/signup", requestOptions)
-  .then((response) => response.json())
-  .then((result) => {
-    alert(result.message)
-    if(result.status ==='ok'){
-      router.push('/userlist')
+export default {
+  name: 'SignupForm',
+  data() {
+    return {
+      username: '',
+      password: '',
+      admin: false,
+      message: ''
+    };
+  },
+  methods: {
+    async signup() {
+      try {
+        const response = await axios.post('http://127.0.0.1:1234/signup', {
+          username: this.username,
+          password: this.password,
+          admin: this.admin
+        });
+        this.message = response.data.message;
+        this.$router.push('/');
+      } catch (error) {
+        this.message = error.response.data.message;
+      }
     }
-  })
-  .catch(error => {
-      console.error('Error submitting form:', error);
-      alert('Failed to submit form. Please try again.');
-    });
-}
-
-// import axios from 'axios';
-
-// export default {
-//   name: 'SignupForm',
-//   data() {
-//     return {
-//       username: '',
-//       password: '',
-//       admin: false,
-//       message: ''
-//     };
-//   },
-//   methods: {
-//     async signup() {
-//       try {
-//         const response = await axios.post('http://127.0.0.1:1234/signup', {
-//           username: this.username,
-//           password: this.password,
-//           admin: this.admin
-//         });
-//         this.message = response.data.message;
-//         this.$router.push('/login');
-//       } catch (error) {
-//         this.message = error.response.data.message;
-//       }
-//     }
-//   }
-// };
+  }
+};
 </script>
