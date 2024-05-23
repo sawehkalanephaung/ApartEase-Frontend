@@ -11,7 +11,7 @@ export function useTableData() {
     try {
       const [residentResponse, userResponse] = await Promise.all([
         axios.get('YOUR_BACKEND_API_URL_FOR_RESIDENT_LIST'),
-        axios.get('YOUR_BACKEND_API_URL_FOR_USER_LIST')
+        axios.get('https://www.melivecode.com/api/users')
          
 
       ])
