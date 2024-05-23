@@ -19,11 +19,7 @@ const router = createRouter({
       component: Login,
     },
     
-    {
-      path: '/signup',
-      name: 'SignupForm',
-      component: SignupForm,
-    },
+  
     {
       path: '/sidenav',
       name: 'SideNav',
@@ -40,11 +36,16 @@ const router = createRouter({
           component: ResidentList,
       
         },
-     
+    
         {
           path: '/userlist',
           name: 'UserList',
           component: UserList,
+        },
+        {
+          path: '/create-user',
+          name: 'SignupForm',
+          component: SignupForm,
         },
       ]
     }

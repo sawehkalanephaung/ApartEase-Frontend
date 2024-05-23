@@ -14,7 +14,7 @@
       <div class="mt-6">
         <div class="flex justify-between items-center mt-2 sm:mt-0">
           <div class="relative block w-full max-w-md" />
-          <button
+          <button @click="onCreate"
             class="px-4 py-2 text-sm font-semibold text-emerald-800 bg-emerald-300 rounded hover:bg-emerald-400 uppercase"
           >
             create user
@@ -43,7 +43,7 @@
                     status
                   </th>
                   <th
-                    class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200 text-center "
+                    class="px-5 py-3 text-xs font-semibold tracking-wider text-center text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200 "
                   >
                     Action
                   </th>
@@ -79,8 +79,8 @@
                   </td>
                   <td class="px-5 py-5 text-sm bg-white border-b border-gray-200 text-center ">
                     <span class="relative inline-block px-3 py-1 font-semibold leading-tight">
-                      <a href="#" class="text-emerald-600 hover:text-emerald-900 mr-10">Edit</a>
-                      <a href="#" class="text-emerald-600 hover:text-emerald-900 ml-10">Delete</a>
+                      <button  @click="() => onEdit(u.id)"  class="text-emerald-600 hover:text-emerald-900 mr-10">Edit</button>
+                      <button @click="() => onDelete(u.id)" class="text-emerald-600 hover:text-emerald-900 ml-10">Delete</button>
                     </span>
                   </td>
                 </tr>
@@ -89,7 +89,7 @@
             <div class="flex flex-col items-center px-5 py-5 bg-white border-t xs:flex-row xs:justify-between">
               <!-- Handle button -->
               <span class="text-xs text-gray-900 xs:text-sm">
-                Showing {{ start + 1 }} to {{ Math.min(end, paginatedUserListTableData.length) }} of {{ paginatedUserListTableData.length }} Entries
+                Showing {{ start + 1 }} to {{ Math.min(end, rows.length) }} of {{ rows.length }} Entries
               </span>
               <div class="flex justify-between w-full mt-2 xs:mt-0">
                 <button
@@ -117,12 +117,70 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import { useTableData } from '../composables/useTableData'
 
-const {
-  paginatedUserListTableData,
-} = useTableData()
+import router from '@/router';
+import { computed, ref, onMounted } from 'vue'
+import axios from 'axios'
+
+const rows = ref([])
+
+const fetchData = async () => {
+  try {
+    // checkout api endpoint is correct
+    const response = await axios.get('https://www.melivecode.com/api/users')
+    rows.value = response.data
+  } catch (error) {
+    console.error('Error fetching data:', error)
+  }
+}
+
+onMounted(() => {
+  fetchData()
+})
+
+
+
+const onEdit = (id) => {
+router.push('/resident-edit-view/'+id)
+
+}
+
+const onDelete = (id) => {
+  const myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+
+const raw = JSON.stringify({
+  "id": id
+});
+
+const requestOptions = {
+  method: "DELETE",
+  headers: myHeaders,
+  body: raw,
+  redirect: "follow"
+};
+
+// check api end pint is correct
+fetch("https://www.melivecode.com/api/users/delete", requestOptions)
+  .then((response) => response.json())
+  .then((result) => {
+    alert(result.message)
+    fetchData()
+  })
+
+  .catch((error) => console.error(error));
+}
+
+
+const onCreate=()=>{
+  router.push('/resident-create-view')
+}
+
+
+
+
+// ################################################################
+// pagination
 
 const itemsPerPage = 5
 const currentPage = ref(1)
@@ -130,9 +188,8 @@ const currentPage = ref(1)
 const start = computed(() => (currentPage.value - 1) * itemsPerPage)
 const end = computed(() => start.value + itemsPerPage)
 
-const paginatedData = computed(() =>
-  paginatedUserListTableData.value.slice(start.value, end.value),
-)
+
+const paginatedData = computed(() => rows.value.slice(start.value, end.value))
 
 function prevPage() {
   if (currentPage.value > 1) {
@@ -141,7 +198,7 @@ function prevPage() {
 }
 
 function nextPage() {
-  if (end.value < paginatedUserListTableData.value.length) {
+  if (end.value <rows.value.length) {
     currentPage.value++
   }
 }
