@@ -1,14 +1,14 @@
 <template>
   <div class="w-screen h-screen flex">
     <!-- Side bar -->
-    <div class="w-[300px] h-full bg-gray-200 text-white" v-show="showSide">
-      <div class="h-[50px]  bg-emerald-600 flex justify-start  items-center ">
+    <div class="w-[300px] h-full bg-gray-200 text-text" v-show="showSide">
+      <div class="h-[50px]  bg-primary flex justify-start  items-center ">
         <div class="px-[20px]">
           <h3 class="font-bold text-xl">ApartEase</h3>
         </div>
       </div>
 
-      <div class="h-[calc(100vh-50px)] bg-emerald-600 py-[20px]">
+      <div class="h-[calc(100vh-50px)] bg-primary py-[20px]">
 
         <div class="flex flex-col justify-between h-full px-[20px] space-y-[10px]">
 
@@ -23,7 +23,7 @@
               Dashboard
             </router-link>
             <router-link to="/residentlist" class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800  transition duration-400 ease-in-out">
-              <svg aria-hidden="true" class="mr-2 w-[25px] h-[25px] fill-current mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <svg aria-hidden="true" class=" w-[25px] h-[25px] fill-current mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path>
               </svg>
               Resident List
@@ -96,12 +96,23 @@ export default {
     }
   },
 
-
+  created() {
+    window.addEventListener('resize', this.handleResize);
+    this.handleResize(); // Check initial size
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.handleResize);
+  },
   methods: {
     // hide show side bar
     toggleSideBar() {
       this.showSide = !this.showSide
+  
+    },
 
+    // Handle window resize to auto-show/hide sidebar
+    handleResize() {
+      this.showSide = window.innerWidth >= 768;
     },
     // toggle user 
     toggleDrop() {
