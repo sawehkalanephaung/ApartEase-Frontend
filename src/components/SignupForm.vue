@@ -56,9 +56,7 @@ import axios from 'axios';
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
-const cancel = () => {
-  router.push('/')
-}
+
 
 export default {
   name: 'SignupForm',
@@ -66,7 +64,7 @@ export default {
     return {
       username: '',
       password: '',
-      admin: false,
+      role: 'User',
       message: ''
     };
   },
@@ -76,14 +74,17 @@ export default {
         const response = await axios.post('http://127.0.0.1:1234/signup', {
           username: this.username,
           password: this.password,
-          admin: this.admin
+          admin: this.role === 'Admin'
         });
         this.message = response.data.message;
-        this.$router.push('/');
+        this.$router.push('/userlist');
       } catch (error) {
         this.message = error.response.data.message;
       }
-    }
+    },
+    cancel() {
+    router.push('/userlist')
+}
   }
 };
 </script>
