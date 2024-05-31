@@ -20,11 +20,11 @@ const router = createRouter({
       name: 'login',
       component: Login,
     },
-       {
-          path: '/signup',
-          name: 'SignupForm',
-          component: SignupForm,
-        },
+      //  {
+      //     path: '/signup',
+      //     name: 'SignupForm',
+      //     component: SignupForm,
+      //   },
   
     {
       path: '/sidenav',
@@ -73,6 +73,12 @@ const router = createRouter({
         component:  UserEditView,
   
         },
+        {
+          path: '/signup',
+          name: 'SignupForm',
+          component: SignupForm,
+        },
+  
       ]
     }
   
