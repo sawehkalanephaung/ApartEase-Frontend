@@ -1,12 +1,12 @@
 
 <template>
-  <div class="flex items-center justify-center h-screen px-6 bg-gray-200">
-    <div class="w-full max-w-xl p-6 bg-white rounded-md shadow-md">
+  <div class="flex items-center justify-center h-screen px-6">
+    <div class="w-full max-w-xl p-6 bg-white rounded-md ">
       <div class="flex items-center justify-center">
         <span class="text-2xl font-semibold text-gray-700">Create User Account</span>
       </div>
 
-      <form class="mt-10" @submit.prevent="login">
+      <form class="mt-10" @submit.prevent="signup">
         <label class="block">
             <span class="block text-sm font-medium text-slate-700">Username</span>
             <input type="text" v-model="username" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400
@@ -53,6 +53,10 @@
 
 <script>
 import axios from 'axios';
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+
 
 export default {
   name: 'SignupForm',
@@ -60,7 +64,7 @@ export default {
     return {
       username: '',
       password: '',
-      admin: false,
+      role: 'User',
       message: ''
     };
   },
@@ -70,14 +74,17 @@ export default {
         const response = await axios.post('http://127.0.0.1:1234/signup', {
           username: this.username,
           password: this.password,
-          admin: this.admin
+          admin: this.role === 'Admin'
         });
         this.message = response.data.message;
-        this.$router.push('/login');
+        this.$router.push('/userlist');
       } catch (error) {
         this.message = error.response.data.message;
       }
-    }
+    },
+    cancel() {
+    router.push('/userlist')
+}
   }
 };
 </script>
