@@ -1,14 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Login from '../views/LoginView.vue'
+import Login from '../components/UserLogin.vue'
 import SignupForm from '@/components/SignupForm.vue'
-import SideNav from '../views/SideNavView.vue'
+
+import SideNav from '../components/SideNav.vue'
 
 import ResidentList from '../views/ResidentList.vue'
 import UserList from '../views/UserList.vue'
 import ResidentCreateView from '@/views/ResidentCreateView.vue'
 import ResidentEditView from '../views/ResidentEditView.vue'
-
-
+import UserCreateView from '../views/UserCreateView.vue'
+import UserEditView from '../views/UserEditView.vue'
 
 
 
@@ -20,12 +21,7 @@ const router = createRouter({
       name: 'login',
       component: Login,
     },
-    
-    {
-      path: '/signup',
-      name: 'SignupForm',
-      component: SignupForm,
-    },
+  
     {
       path: '/sidenav',
       name: 'SideNav',
@@ -49,13 +45,31 @@ const router = createRouter({
           component: ResidentEditView,
       
         },
-     
-     
         {
           path: '/userlist',
           name: 'UserList',
           component: UserList,
         },
+     
+  
+      {
+      path: '/create-user',
+      name: 'UserCreateView',
+      component:  UserCreateView,
+
+      },
+      {
+        path: '/edit-user',
+        name: 'UserEditView',
+        component:  UserEditView,
+  
+        },
+        {
+          path: '/signup',
+          name: 'SignupForm',
+          component: SignupForm,
+        },
+  
       ]
     }
   
