@@ -18,27 +18,28 @@
       <table class="min-w-full leading-normal">
         <thead>
           <tr>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">First Name</th>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Last Name</th>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Username</th>
+            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">username</th>
+            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">role</th>
             <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(u, index) in paginatedData" :key="index">
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.id }}</td>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.fname }}</td>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.lname }}</td>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.username }}</td>
+          <!-- Display a message if no users are found -->
+          <tr v-if="!users || users.length === 0">
+            <td colspan="4" class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">No users found.</td>
+          </tr>
+               <!-- Render user rows with pagination -->
+          <tr v-else v-for="(user, index) in paginatedUsers" :key="index">
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ user.username }}</td>
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ user.has_admin_role[0].name }}</td>
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
-              <button @click="() => onEdit(u.id)" class="text-emerald-600 hover:text-emerald-900 mr-2">Edit</button>
-              <button @click="() => onDelete(u.id)" class="text-emerald-600 hover:text-emerald-900 ml-2">Delete</button>
+              <button @click="() => onEdit(user.id)" class="text-emerald-600 hover:text-emerald-900 mr-2">Edit</button>
+              <button @click="() => onDelete(user.id)" class="text-emerald-600 hover:text-emerald-900 ml-2">Delete</button>
             </td>
           </tr>
         </tbody>
       </table>
-
+      <!-- Pagination controls -->
       <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
         <div class="flex flex-1 justify-between sm:hidden">
           <a @click="prevPage" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">Previous</a>
@@ -57,7 +58,7 @@
               {{ ' ' }}
               of
               {{ ' ' }}
-              <span class="font-medium">{{ rows.length }}</span>
+              <span class="font-medium">{{ users.length }}</span>
               {{ ' ' }}
               results
             </p>
@@ -82,66 +83,31 @@
 
 <script setup>
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
-import router from '@/router';
+import router from '@/router'
 import { computed, ref, onMounted } from 'vue'
 import axios from 'axios'
+import userService from '@/services/userService'
 
-const rows = ref([])
+const users = ref([]) // Reactive variable to store user data
 
-const fetchData = async () => {
+// Fetch user list from the backend API on component mount
+onMounted(async () => {
   try {
-    const response = await axios.get('https://www.melivecode.com/api/users')
-    rows.value = response.data
+    const userList = await userService.getUsers()
+    users.value = userList
   } catch (error) {
-    console.error('Error fetching data:', error)
+    console.error(error)
   }
-}
-
-onMounted(() => {
-  fetchData()
 })
+// Pagination configuration
+const itemsPerPage = 5 // Number of items to display per page
+const currentPage = ref(1) // Current page number
 
-const onEdit = (id) => {
-  router.push('/resident-edit-view/'+id)
-}
-
-const onDelete = (id) => {
-  const myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
-
-  const raw = JSON.stringify({ "id": id });
-
-  const requestOptions = {
-    method: "DELETE",
-    headers: myHeaders,
-    body: raw,
-    redirect: "follow"
-  };
-
-  fetch("https://www.melivecode.com/api/users/delete", requestOptions)
-    .then((response) => response.json())
-    .then((result) => {
-      alert(result.message)
-      fetchData()
-    })
-    .catch((error) => console.error(error));
-}
-
-const onCreate = () => {
-  // router.push('/create-user')
-  router.push('/signup')
-}
-
-// handle pagination
-const itemsPerPage = 5
-const currentPage = ref(1)
-const paginatedData = computed(() => rows.value.slice(start.value, end.value))
-
-const totalPages = computed(() => Math.ceil(rows.value.length / itemsPerPage))
-
-// Calculate start and end indexes for pagination
+// Computed properties for pagination
+const paginatedUsers = computed(() => users.value.slice(start.value, end.value))
+const totalPages = computed(() => Math.ceil(users.value.length / itemsPerPage))
 const start = computed(() => (currentPage.value - 1) * itemsPerPage)
-const end = computed(() => Math.min(start.value + itemsPerPage, rows.value.length))
+const end = computed(() => Math.min(start.value + itemsPerPage, users.value.length))
 
 // Function to navigate to previous page
 const prevPage = () => {
@@ -152,7 +118,7 @@ const prevPage = () => {
 
 // Function to navigate to next page
 const nextPage = () => {
-  if (end.value < rows.value.length) {
+  if (end.value < users.value.length) {
     currentPage.value++
   }
 }
