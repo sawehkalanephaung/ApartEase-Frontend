@@ -71,7 +71,7 @@ export default {
   methods: {
     async signup() {
       try {
-        const response = await axios.post('http://127.0.0.1:1234/signup', {
+        const response = await axios.post('signup', {
           username: this.username,
           password: this.password,
           admin: this.role === 'Admin'
