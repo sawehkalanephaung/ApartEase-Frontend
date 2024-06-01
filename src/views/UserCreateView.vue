@@ -65,6 +65,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
+import { API_URL, API_TOKEN } from '@/config';
 
 const user = ref({
   username: '',
@@ -77,41 +78,42 @@ const cancel = () => {
 }
 
 const onSubmit = () => {
-  const myHeaders = new Headers()
-  myHeaders.append('x-access-token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIn0.1Al8RHoDdEiGxSQ8jYfIdh3l6PFXTsWvaEL_4SHw-yg')
-  myHeaders.append('Content-Type', 'application/json')
+  const myHeaders = new Headers();
+  myHeaders.append('Content-Type', 'application/json');
 
   const raw = JSON.stringify({
     username: user.value.username,
     password: user.value.password,
     role: user.value.role === 'user' ? 'user' : 'admin',
-    // role: user.value.role.toLowerCase(),
-  })
+  });
 
   const requestOptions = {
     method: 'POST',
-    headers: myHeaders,
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': API_TOKEN,
+    },
     body: raw,
     redirect: 'follow',
-  }
+  };
 
-  fetch('http://127.0.0.1:1230/user/add', requestOptions)
+  fetch(`${API_URL}/user/add`, requestOptions)
     .then((response) => response.json())
     .then((result) => {
-      console.log(result)
+      console.log(result);
       if (result.status === 'ok') {
-        alert(result.message)
-        router.push('/userlist')
+        alert(result.message);
+        router.push('/userlist');
       } else {
-        alert(result.message)
+        alert(result.message);
       }
     })
     .catch((error) => {
-      console.error('Error submitting form:', error)
-      alert('Failed to submit form. Please try again.')
-    })
-  router.push('/userlist')
-}
+      console.error('Error submitting form:', error);
+      alert('Failed to submit form. Please try again.');
+    });
+  router.push('/userlist');
+};
 </script>
 
 <style scoped>

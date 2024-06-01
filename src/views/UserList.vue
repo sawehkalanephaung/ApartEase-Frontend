@@ -26,7 +26,7 @@
         <tbody>
           <!-- Display a message if no users are found -->
           <tr v-if="!users || users.length === 0">
-            <td colspan="4" class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">Loading User ...</td>
+            <td colspan="4" class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">No users found.</td>
           </tr>
                <!-- Render user rows with pagination -->
           <tr v-else v-for="(user, index) in paginatedUsers" :key="index">
@@ -122,25 +122,62 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
 import router from '@/router'
 import { computed, ref, onMounted } from 'vue'
 import axios from 'axios'
-import userService from '@/services/userService'
+import { API_URL, API_TOKEN } from '@/config';
 
 const users = ref([]) // Reactive variable to store user data
 
 // Fetch user list from the backend API on component mount
 onMounted(async () => {
   try {
-    const userList = await userService.getUsers()
-    users.value = userList
+    const response = await axios.get(`${API_URL}/user/list`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': API_TOKEN,
+      },
+    })
+    users.value = response.data.Users
   } catch (error) {
     console.error(error)
   }
 })
+
+
 const onCreate = () => {
   router.push('/create-user')
 
 }
 
+const onEdit = async (userId) => {
+  router.push({ name: 'UserEditView', params: { id: userId } })
+}
 
+
+
+
+const onDelete = async (userId) => {
+  try {
+    const myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+
+    const requestOptions = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': API_TOKEN,
+      },
+      redirect: 'follow',
+    };
+
+    const response = await fetch(`${API_URL}/user/del/${userId}`, requestOptions);
+    const result = await response.json();
+    alert(result.message);
+
+    // Optionally, you can update the users list after successful deletion
+    users.value = users.value.filter((user) => user.id !== userId);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 
 

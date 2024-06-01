@@ -2,12 +2,23 @@
 <template>
       <div class="flex items-center justify-center h-full">
     <div class="w-full max-w-xl p-6 bg-white rounded-md shadow-md">
-    <h3 class="text-2xl font-medium text-gray-700">Create Resident</h3>
+      <h3 class="text-2xl font-medium text-gray-700 text-center">User Edit</h3>
+
     <form @submit.prevent="onSubmit"  class="  rounded px-8 pt-6 pb-8 mb-4" >
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="id">Id</label>
+        <input
+          v-model="user.id"
+          type="text"
+          id="id"
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          required
+        />
+      </div>
   
 
       <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="fname">Username</label>
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Username</label>
         <input
           v-model="user.username"
           type="text"
@@ -58,36 +69,51 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-// import axios from 'axios'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { API_URL, API_TOKEN } from '@/config'
+
 const router = useRouter()
+const route = useRoute()
 
 const user = ref({
+  id: '',
   username: '',
   password: '',
   role: '',
-
 })
-
 
 const fetchData = async () => {
   try {
-    const response = await fetch(`https://www.melivecode.com/api/users/${route.params.id}`)
-    const result = await response.json()
-    user.value.id = result.user.id
-    resident.value.username = result.user.username
-    resident.value.lname = result.user.lname
-    resident.value.username = result.user.username
-
+    const myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json')
+    myHeaders.append('x-access-token', API_TOKEN)
+  
+    const raw = "";
+    const requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+    const response = await fetch(
+      `http://127.0.0.1:1230/user/list/${route.params.id}`,
+      requestOptions
+    );
+    const result = await response.json();
+    user.value.id = user.value.id
+    user.value.username = user.value.username
+    user.value.password = user.value.password
+    user.value.role = user.value.role
+    alert(result.message);
   } catch (error) {
-    console.error('Error fetching data:', error)
+    console.error("Error fetching data:", error);
   }
-}
+};
 
 onMounted(() => {
-  fetchData()
-})
+  fetchData();
+});
 
 const cancel = () => {
   router.push('/userlist')
@@ -95,26 +121,25 @@ const cancel = () => {
 
 const onSubmit = async () => {
   const myHeaders = new Headers()
-  myHeaders.append("Content-Type", "application/json")
+  myHeaders.append('Content-Type', 'application/json')
+  myHeaders.append('x-access-token', API_TOKEN)
 
   const raw = JSON.stringify({
-    "id": user.value.id,
-    "username": user.value.fname,
-    "password": user.value.lname,
-    "role": user.value.role,
+    id: user.value.id,
+    username: user.value.username,
+    password: user.value.password,
+    role: user.value.role,
   })
 
   const requestOptions = {
-    method: "PUT",
+    method: 'POST',
     headers: myHeaders,
     body: raw,
-    redirect: "follow"
+    redirect: 'follow',
   }
 
   try {
-
-    // check api endpoints
-    const response = await fetch("https://www.melivecode.com/api/users/update", requestOptions)
+    const response = await fetch(`${API_URL}/user/edit/${user.value.id}`, requestOptions)
     const result = await response.json()
     alert(result.message)
     if (result.status === 'ok') {
