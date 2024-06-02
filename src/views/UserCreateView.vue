@@ -33,6 +33,7 @@
             v-model="user.role"
             class="block w-full appearance-none bg-white border border-gray-300 rounded-md py-2 px-3 pr-10 text-gray-900 shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-600 sm:text-sm"
           >
+            <option value="">Select Role</option>
             <option value="user">User</option>
             <option value="admin">Admin</option>
           </select>
