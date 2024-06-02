@@ -66,7 +66,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
-import { API_URL, API_TOKEN } from '@/config';
+import { API_URL, JWT_TOKEN } from '@/config';
 
 const user = ref({
   username: '',
@@ -92,7 +92,7 @@ const onSubmit = () => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-access-token': API_TOKEN,
+      'x-access-token': JWT_TOKEN,
     },
     body: raw,
     redirect: 'follow',

@@ -62,7 +62,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { API_URL, API_TOKEN } from '@/config'
+import { API_URL, JWT_TOKEN } from '@/config'
 
 const router = useRouter()
 const route = useRoute()
@@ -77,7 +77,7 @@ const fetchData = async () => {
   try {
     const myHeaders = new Headers()
     myHeaders.append('Content-Type', 'application/json')
-    myHeaders.append('x-access-token', API_TOKEN)
+    myHeaders.append('x-access-token', JWT_TOKEN)
 
     const requestOptions = {
       method: 'GET',
@@ -116,7 +116,7 @@ const onSubmit = async () => {
 
   const myHeaders = new Headers()
   myHeaders.append('Content-Type', 'application/json')
-  myHeaders.append('x-access-token', API_TOKEN)
+  myHeaders.append('x-access-token', JWT_TOKEN)
 
   const raw = JSON.stringify({
     username: user.value.username,

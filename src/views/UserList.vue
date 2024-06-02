@@ -122,7 +122,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
 import router from '@/router'
 import { computed, ref, onMounted } from 'vue'
 import axios from 'axios'
-import { API_URL, API_TOKEN } from '@/config';
+import { API_URL, JWT_TOKEN } from '@/config';
 
 const users = ref([]) // Reactive variable to store user data
 
@@ -132,7 +132,7 @@ const fetchData = async () => {
     const response = await axios.get(`${API_URL}/user/list`, {
       headers: {
         'Content-Type': 'application/json',
-        'x-access-token': API_TOKEN,
+        'x-access-token': JWT_TOKEN,
       },
     });
     users.value = response.data.Users;
@@ -167,7 +167,7 @@ const onDelete = async (userId) => {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        'x-access-token': API_TOKEN,
+        'x-access-token': JWT_TOKEN,
       },
       redirect: 'follow',
     };
