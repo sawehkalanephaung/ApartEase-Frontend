@@ -129,7 +129,7 @@ const onDelete = (id) => {
 
 const onCreate = () => {
   // router.push('/create-user')
-  router.push('/signup')
+  router.push('/resident-create-view')
 }
 
 // handle pagination
