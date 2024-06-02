@@ -127,19 +127,23 @@ import { API_URL, API_TOKEN } from '@/config';
 const users = ref([]) // Reactive variable to store user data
 
 // Fetch user list from the backend API on component mount
-onMounted(async () => {
+const fetchData = async () => {
   try {
     const response = await axios.get(`${API_URL}/user/list`, {
       headers: {
         'Content-Type': 'application/json',
         'x-access-token': API_TOKEN,
       },
-    })
-    users.value = response.data.Users
+    });
+    users.value = response.data.Users;
   } catch (error) {
-    console.error(error)
+    console.error('Error fetching data:', error);
   }
-})
+};
+
+onMounted(() => {
+  fetchData();
+});
 
 
 const onCreate = () => {
