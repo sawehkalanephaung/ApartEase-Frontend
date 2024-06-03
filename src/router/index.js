@@ -3,7 +3,6 @@ import Login from '../components/UserLogin.vue'
 import SignupForm from '@/components/SignupForm.vue'
 
 import SideNav from '../components/SideNav.vue'
-
 import ResidentList from '../views/ResidentList.vue'
 import UserList from '../views/UserList.vue'
 import ResidentCreateView from '@/views/ResidentCreateView.vue'
@@ -59,7 +58,7 @@ const router = createRouter({
 
       },
       {
-        path: '/edit-user',
+        path: '/edit-user/:id',
         name: 'UserEditView',
         component:  UserEditView,
   
