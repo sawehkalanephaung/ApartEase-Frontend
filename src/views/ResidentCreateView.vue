@@ -6,69 +6,38 @@
   
 
       <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="fname">First Name</label>
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="fname">Room No </label>
         <input
-          v-model="resident.fname"
+          v-model="resident.roomNumber"
           type="text"
-          id="fname"
+          id="roomNumber"
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           required
         />
       </div>
 
       <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="lname">Last Name</label>
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="lname">Name</label>
         <input
-          v-model="resident.lname"
+          v-model="resident.name"
           type="text"
-          id="lname"
+          id="name"
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           required
         />
       </div>
 
+    
       <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Username</label>
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Lind ID</label>
         <input
-          v-model="resident.username"
+          v-model="resident.lineId"
           type="text"
-          id="username"
+          id="lineId"
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           required
         />
       </div>
-      <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Email</label>
-        <input
-          v-model="resident.email"
-          type="email"
-          id="email"
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          required
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
-        <input
-          v-model="resident.password"
-          type="password"
-          id="password"
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          required
-        />
-      </div>
-      <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="avatar">Avatar URL</label>
-        <input
-          v-model="resident.avatar"
-          type="text"
-          id="avatar"
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          required
-        />
-      </div>
-
-
       <div class="flex items-center justify-between mt-10">
         <button
           type="submit"
@@ -94,35 +63,36 @@ import { ref } from 'vue'
 // import axios from 'axios'
 import { useRouter } from 'vue-router'
 const router = useRouter()
+import { API_URL,JWT_TOKEN, AUTHORIZATION } from '@/config';
+
 
 const resident = ref({
-  fname: '',
-  lname: '',
-  username: '',
-  password: '',
-  email: '',
-  avatar: ''
-
-
+  roomNumber: '',
+  name: '',
+  lineId: ''
 })
+const name = ref('') 
 
 const cancel = () => {
   // Redirect to resident list page when cancel button is clicked
   router.push('/residentlist')
 }
 
-
 const onSubmit =() => {
   const myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
+  myHeaders.append('Content-Type', 'application/json')
+  myHeaders.append('x-access-token', JWT_TOKEN)
+  myHeaders.append('Authorization', AUTHORIZATION)
 
 const raw = JSON.stringify({
-  "fname": fname.value,
-  "lname": lname.value,
-  "username": username.value,
-  "password": password.value,
-  "email": email.value,
-  "avatar": avatar.value,
+  "roomNumber": resident.value.roomNumber,
+  "name": resident.value.name,
+  "lineId": resident.value.lineId
+
+  // above code also correct
+  // lineId: resident.value.lineId,
+  // name: resident.value.name,
+  // roomNumber: resident.value.roomNumber
 });
 
 const requestOptions = {
@@ -131,12 +101,14 @@ const requestOptions = {
   body: raw,
   redirect: "follow"
 };
-
-fetch("https://www.melivecode.com/api/users/create", requestOptions)
+// fetch(`)
+fetch(`${API_URL}/resident/add`, requestOptions)
   .then((response) => response.json())
   .then((result) => {
     alert(result.message)
     if(result.status ==='ok'){
+        // Emit an event to notify the parent component
+        emit('residentCreated')
       router.push('/residentlist')
     }
   })
