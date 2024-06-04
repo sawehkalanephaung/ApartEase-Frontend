@@ -5,9 +5,7 @@
     <!--search bar here -->
     <div class="mt-4 flex flex-col sm:flex-row justify-between items-left">
       <div class="relative w-full max-w-md mb-4 sm:mb-0 sm:mr-4">
-        <div
-          class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
-        >
+        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
           <svg
             class="w-5 h-5 text-gray-500"
             fill="currentColor"
@@ -23,11 +21,12 @@
         </div>
         <input
           type="text"
-          placeholder="Search..."
+          v-model="searchQuery"
+          placeholder="Search by Room Number or Name..."
           class="w-full px-4 py-2 pl-8 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+          @keyup.enter="searchResident"
         />
       </div>
-
       <button @click="toggleCreateModal" class="bg-primary hover:bg-emerald-400 text-white px-4 py-2 rounded text-sm">
         Create Resident
       </button>
@@ -37,7 +36,7 @@
       <table v-if="residents.length > 0" class="min-w-full leading-normal text-md">
         <thead>
           <tr>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
+            <!-- <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th> -->
             <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Room No</th>
             <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
             <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Line ID</th>
@@ -46,7 +45,7 @@
         </thead>
         <tbody>
           <tr v-for="(u, index) in residents" :key="index">
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.id }}</td>
+            <!-- <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.id }}</td> -->
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.roomNumber }}</td>
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.name }}</td>
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.lineId }}</td>
@@ -142,6 +141,7 @@ import { useModal } from '@/useModal'
 import ResidentCreateModal from '@/components/ResidentCreateModal.vue'
 import ResidentEditModal from '@/components/ResidentEditModal.vue'
 
+const searchQuery = ref(''); // Single ref for ID, room number, or name search
 const { isShowing: isShowingCreateModal, toggle: toggleCreateModal } = useModal()
 const { isShowing: isShowingEditModal, toggle: toggleEditModal } = useModal()
 
@@ -169,7 +169,8 @@ const fetchData = async () => {
     const pageData = data[data.length - 1]
     totalPages.value = pageData.total_pages
     currentPage.value = pageData.page
-    totalResidents.value = pageData.total_resident 
+    totalResidents.value = pageData.Resident
+    totalResidents.value = pageData.total_resident
     console.log('Fetched residents:', residents.value) // Debugging line
   } catch (error) {
     console.error('Error fetching data:', error)
@@ -198,6 +199,42 @@ const onDelete = async (id) => {
     console.error('Error deleting resident:', error)
   }
 }
+
+// search resident by room number or name
+const searchResident = async () => {
+  try {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("x-access-token", JWT_TOKEN);
+
+    const requestOptions = {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    let url;
+    if (searchQuery.value.match(/^\d+$/)) {
+      // If the search query is a number, search by room number
+      url = `${API_URL}/resident/list/room?query=${searchQuery.value}&page=1`;
+    } else {
+      // Otherwise, search by name
+      url = `${API_URL}/resident/list/name?query=${searchQuery.value}&page=1`;
+    }
+
+    const response = await fetch(url, requestOptions);
+    const result = await response.json();
+    if (Array.isArray(result.Resident)) {
+      residents.value = result.Resident; // Update residents with the search result
+    } else {
+      residents.value = [result]; // Update residents with the search result
+    }
+    totalPages.value = 1; // Update total pages count
+    currentPage.value = 1; // Reset current page to 1
+  } catch (error) {
+    console.error("Error searching resident:", error);
+  }
+};
 
 // Function to navigate to previous page
 const prevPage = () => {
@@ -256,7 +293,6 @@ const end = computed(() => Math.min(start.value + perPage, totalResidents.value)
 .modal-leave-to {
   opacity: 0;
 }
-
 .modal-enter-from .modal-container,
 .modal-leave-to .modal-container {
   transform: scale(1.1);
