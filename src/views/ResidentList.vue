@@ -214,6 +214,18 @@ const searchResident = async () => {
     };
 
     let url;
+    /**
+     * Checks if the search query is a number, and if so, constructs the URL to search for residents by room number.
+     * This is part of the `searchResident` function in the `ResidentList` component.
+     * 
+     * Regular Expression Breakdown
+      ^: Asserts the position at the start of the string.
+      \d: Matches any digit (equivalent to [0-9]).
+      +: Matches one or more of the preceding token (in this case, one or more digits).
+      $: Asserts the position at the end of the string.
+
+     */
+
     if (searchQuery.value.match(/^\d+$/)) {
       // If the search query is a number, search by room number
       url = `${API_URL}/resident/list/room?query=${searchQuery.value}&page=1`;
