@@ -5,11 +5,10 @@ import SignupForm from '@/components/SignupForm.vue'
 import SideNav from '../components/SideNav.vue'
 import ResidentList from '../views/ResidentList.vue'
 import UserList from '../views/UserList.vue'
-// import ResidentCreateView from '@/views/ResidentCreateView.vue'
-// import ResidentEditView from '../views/ResidentEditView.vue'
 import UserCreateView from '../views/UserCreateView.vue'
 import UserEditView from '../views/UserEditView.vue'
 import ResidentEditModal from '@/components/ResidentEditModal.vue'
+import ResidentCreateModal from '@/components/ResidentCreateModal.vue'
 
 
 
@@ -33,23 +32,18 @@ const router = createRouter({
           component: ResidentList,
       
         },
-        // {
-        //   path: '/resident-create-view',
-        //   name: 'ResidentCreateView',
-        //   component: ResidentCreateView,
+        {
+          path: '/resident-create-view',
+          name: 'ResidentCreateModal',
+          component: ResidentCreateModal,
       
-        // },
+        },
         {
           path: '/resident-edit-view/:id',
           name: 'ResidentEditView',
           component: ResidentEditModal,
         },
-        // {
-        //   path: '/resident-edit-view/:id',
-        //   name: 'ResidentEditView',
-        //   component: ResidentEditView,
-      
-        // },
+       
         {
           path: '/userlist',
           name: 'UserList',
