@@ -2,39 +2,55 @@
   <h3 class="text-2xl font-medium text-gray-700">Resident Management</h3>
   <div class="mt-4">
     <h2 class="text-lg font-semibold leading-tight text-gray-700">Resident List</h2>
-    <div class="mt-4 flex flex-col sm:flex-row justify-between items-center">
-      <div class="relative w-full max-w-md mb-4 sm:mb-0">
-        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-          <svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+    <!--search bar here -->
+    <div class="mt-4 flex flex-col sm:flex-row justify-between items-left">
+      <div class="relative w-full max-w-md mb-4 sm:mb-0 sm:mr-4">
+        <div
+          class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+        >
+          <svg
+            class="w-5 h-5 text-gray-500"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+              clip-rule="evenodd"
+            ></path>
           </svg>
         </div>
-        <input type="text" placeholder="Search..." class="w-full px-3 py-1 pl-8 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary text-sm" />
+        <input
+          type="text"
+          placeholder="Search..."
+          class="w-full px-4 py-2 pl-8 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+        />
       </div>
 
-      <button @click="toggleCreateModal" class="bg-primary hover:bg-emerald-400 text-white px-3 py-1 rounded text-sm">
+      <button @click="toggleCreateModal" class="bg-primary hover:bg-emerald-400 text-white px-4 py-2 rounded text-sm">
         Create Resident
       </button>
     </div>
 
     <div class="mt-4 overflow-x-auto">
-      <table v-if="residents.length > 0" class="min-w-full leading-normal text-sm">
+      <table v-if="residents.length > 0" class="min-w-full leading-normal text-md">
         <thead>
           <tr>
-            <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
-            <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Room No</th>
-            <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
-            <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Line ID</th>
-            <th class="px-3 py-2 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
+            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
+            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Room No</th>
+            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
+            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Line ID</th>
+            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(u, index) in residents" :key="index">
-            <td class="px-3 py-2 border-b border-gray-200 bg-white text-xs">{{ u.id }}</td>
-            <td class="px-3 py-2 border-b border-gray-200 bg-white text-xs">{{ u.roomNumber }}</td>
-            <td class="px-3 py-2 border-b border-gray-200 bg-white text-xs">{{ u.name }}</td>
-            <td class="px-3 py-2 border-b border-gray-200 bg-white text-xs">{{ u.lineId }}</td>
-            <td class="px-3 py-2 border-b border-gray-200 bg-white text-xs text-center">
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.id }}</td>
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.roomNumber }}</td>
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.name }}</td>
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.lineId }}</td>
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
               <button @click="() => onEdit(u.id)" class="text-emerald-600 hover:text-emerald-900 mr-1">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
@@ -102,6 +118,17 @@
         </div>
       </transition>
     </teleport>
+
+    <!-- Edit Resident Modal -->
+    <teleport to="body">
+      <transition name="modal">
+        <div v-if="isShowingEditModal" class="modal-mask">
+          <div class="modal-container">
+            <ResidentEditModal :id="selectedResidentId" @close="toggleEditModal" @resident-updated="fetchData" />
+          </div>
+        </div>
+      </transition>
+    </teleport>
   </div>
   <router-view />
 </template>
@@ -113,8 +140,10 @@ import axios from 'axios'
 import { API_URL, JWT_TOKEN } from '@/config'
 import { useModal } from '@/useModal'
 import ResidentCreateModal from '@/components/ResidentCreateModal.vue'
+import ResidentEditModal from '@/components/ResidentEditModal.vue'
 
 const { isShowing: isShowingCreateModal, toggle: toggleCreateModal } = useModal()
+const { isShowing: isShowingEditModal, toggle: toggleEditModal } = useModal()
 
 const selectedResidentId = ref(null)
 const residents = ref([])
@@ -140,8 +169,7 @@ const fetchData = async () => {
     const pageData = data[data.length - 1]
     totalPages.value = pageData.total_pages
     currentPage.value = pageData.page
-    // totalResidents.value = totalPages.value * perPage
-    totalResidents.value = pageData.total_residents 
+    totalResidents.value = pageData.total_resident 
     console.log('Fetched residents:', residents.value) // Debugging line
   } catch (error) {
     console.error('Error fetching data:', error)
@@ -154,7 +182,7 @@ onMounted(() => {
 
 const onEdit = (id) => {
   selectedResidentId.value = id
-  // Logic to handle edit
+  toggleEditModal()
 }
 
 const onDelete = async (id) => {
