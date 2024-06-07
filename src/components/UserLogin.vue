@@ -51,49 +51,59 @@
 </template>
 
 
-<script>
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 import axios from 'axios';
 
-export default {
-  name: 'UserLogin',
-  data() {
-    return {
-      username: '',
-      password: '',
-      message: ''
+const store = useStore();
+const router = useRouter();
+
+const username = ref('');
+const password = ref('');
+const message = ref('');
+
+const login = async () => {
+  try {
+    const response = await axios.post('http://127.0.0.1:1230/login', {
+      username: username.value,
+      password: password.value
+    });
+      // Log the entire response data
+      console.log('Login response:', response.data);
+
+
+    // Assuming the response contains user data directly
+    const userData = response.data;
+    localStorage.setItem('token', userData.token);
+
+
+
+    // Log the specific user data properties
+    console.log('Username:', userData.username);
+    console.log('Role:', userData.role);
+    
+    const user = {
+      username: userData.username,
+      role: userData.role
     };
-  },
-  methods: {
-    async login() {
-      try {
-        const response = await axios.post('http://127.0.0.1:1230/login', {
-          username: this.username,
-          password: this.password
-        });
-        // Assuming the response contains user data directly
-        const userData = response.data;
-        localStorage.setItem('token', userData.token);
-        const user = {
-          username: userData.username,
-          role: userData.role
-        };
-        // Set the user in Vuex store
-        this.$store.commit('setUser', user);
-        // Redirect to SideNav after successful login
-        this.$router.push('/residentlist');
-      } catch (error) {
-        // Log the error for debugging
-        console.error('Login error:', error);
-        // Check if error object exists and contains data property
-        if (error.response && error.response.data && error.response.data.message) {
-          // Display the error message from the server
-          this.message = error.response.data.message;
-        } else {
-          // Display a generic error message
-          this.message = 'An error occurred during login. Please try again.';
-        }
-      }
+    // Set the user in Vuex store
+    store.commit('setUser', user);
+    // Redirect to SideNav after successful login
+    router.push('/residentlist');
+  } catch (error) {
+    // Log the error for debugging
+    console.error('Login error:', error);
+    // Check if error object exists and contains data property
+    if (error.response && error.response.data && error.response.data.message) {
+      // Display the error message from the server
+      message.value = error.response.data.message;
+    } else {
+      // Display a generic error message
+      message.value = 'An error occurred during login. Please try again.';
     }
   }
 };
 </script>
+

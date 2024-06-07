@@ -39,10 +39,22 @@
                   <router-link to="/rolelist" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Role</router-link>
                 </div>
               </transition>
+
+
+              <!-- display username and role-->
+              <div class="grid grid-rows-2 space-y-1 mt-20">
+                <span>Username: {{ user.username }}</span>
+                <span>Role: {{ user.role }}</span>
+              </div>
+
+       
             </div>
           </div>
+
+       
+           
           <div class="h-[50px]">
-            <div>
+            <div class="flex items-center justify-between">
               <router-link to="/" class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-300 hover:text-gray-800 transition duration-400 ease-in-out">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" />
@@ -54,6 +66,7 @@
         </div>
       </div>
     </div>
+
     <!-- Main Content Area -->
     <div class="w-full h-full bg-gray-400">
       <div class="h-[50px] bg-gray-100 flex items-center shadow-sm px-[20px] w-full py-[10px] z-10 border-b">
@@ -81,51 +94,60 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Sidebar',
-  props: ['user'],
-  data() {
-    return {
-      showDropDown: false,
-      showSide: true,
-      showSuccessMessage: false,
-      showUserManagementDropdown: false,
-    };
-  },
-  created() {
-    window.addEventListener('resize', this.handleResize);
-    this.handleResize(); // Check initial size
-  },
-  destroyed() {
-    window.removeEventListener('resize', this.handleResize);
-  },
-  methods: {
-    // hide show side bar
-    toggleSideBar() {
-      this.showSide = !this.showSide;
-    },
-    // Handle window resize to auto-show/hide sidebar
-    handleResize() {
-      this.showSide = window.innerWidth >= 768;
-    },
-    // toggle user
-    toggleDrop() {
-      this.showDropDown = !this.showDropDown;
-    },
-    toggleUserManagementDropdown() {
-      this.showUserManagementDropdown = !this.showUserManagementDropdown;
-    },
-    logout() {
-      // Perform any logout logic here (e.g., clear user data, make API call)
-      // Show the success message
-      this.showSuccessMessage = true;
-      // Redirect to login page
-      this.$router.push('/login');
-    },
-  },
+<script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+
+const store = useStore();
+const router = useRouter();
+
+const user = computed(() => store.getters.getUser);
+const showDropDown = ref(false);
+const showSide = ref(true);
+const showSuccessMessage = ref(false);
+const showUserManagementDropdown = ref(false);
+
+// hide show side bar
+const toggleSideBar = () => {
+  showSide.value = !showSide.value;
 };
+
+// Handle window resize to auto-show/hide sidebar
+const handleResize = () => {
+  showSide.value = window.innerWidth >= 768;
+};
+
+// toggle user
+const toggleDrop = () => {
+  showDropDown.value = !showDropDown.value;
+};
+
+const toggleUserManagementDropdown = () => {
+  showUserManagementDropdown.value = !showUserManagementDropdown.value;
+};
+
+const logout = () => {
+  // Perform any logout logic here (e.g., clear user data, make API call)
+  // Show the success message
+  showSuccessMessage.value = true;
+  // Redirect to login page
+  router.push('/login');
+};
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+  handleResize(); // Check initial size
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
+
+<style>
+/* ... (styles remain the same) ... */
+</style>
 
 <style>
 /* Add your styles here */

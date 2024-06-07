@@ -7,7 +7,6 @@ export default createStore({
   mutations: {
     setUser(state, user) {
       state.user = user;
-      // state.role = role;
     }
   },
   actions: {
@@ -16,7 +15,6 @@ export default createStore({
     }
   },
   getters: {
-    getUser: (state) => state.user
+    getUser: (state) => state.user || {}
   }
 });
-

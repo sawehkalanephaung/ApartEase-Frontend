@@ -34,7 +34,8 @@
               {{ user.username }}
             </td>
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              {{ user.has_admin_role[0].name }}
+              <!-- {{ user.has_admin_role[0].name }} -->
+              {{ user.has_admin_role && user.has_admin_role.length > 0 ? user.has_admin_role[0].name : '' }}
             </td>
             <td
               class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center"
