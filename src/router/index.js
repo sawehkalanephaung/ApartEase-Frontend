@@ -4,8 +4,6 @@ import Login from '../components/UserLogin.vue'
 import SideNav from '../components/SideNav.vue'
 import ResidentList from '../views/ResidentList.vue'
 import UserList from '../views/UserList.vue'
-import ResidentCreateView from '@/views/ResidentCreateView.vue'
-import ResidentEditView from '../views/ResidentEditView.vue'
 import UserCreateView from '../views/UserCreateView.vue'
 import UserEditView from '../views/UserEditView.vue'
 import RoleList from '../views/RoleList.vue'
@@ -31,16 +29,7 @@ const router = createRouter({
           name: "ResidentList",
           component: ResidentList,
         },
-        {
-          path: "/resident-create-view",
-          name: "ResidentCreateView",
-          component: ResidentCreateView,
-        },
-        {
-          path: "/resident-edit-view/:id",
-          name: "ResidentEditView",
-          component: ResidentEditView,
-        },
+        
         {
           path: "/userlist",
           name: "UserList",
