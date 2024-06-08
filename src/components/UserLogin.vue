@@ -52,9 +52,7 @@
 
 
 <script>
-import axios from 'axios';
-// import apiClient from '@/services/api.js';
-
+import AuthService from '@/services/AuthService';
 
 export default {
   name: 'UserLogin',
@@ -68,24 +66,29 @@ export default {
   methods: {
     async login() {
       try {
-        // const response = await axios.post('http://127.0.0.1:1239/login', {
-        const response = await axios.post('login', {
-          // const response = await apiClient.post('/login', {
-        
+        const user = {
           username: this.username,
           password: this.password
-        });
-        // Assuming the response contains user data directly
-        const userData = response.data;
-        localStorage.setItem('token', userData.token);
-        const user = {
-          username: userData.username,
-          role: userData.role
         };
-        // Set the user in Vuex store
-        this.$store.commit('setUser', user);
-        // Redirect to SideNav after successful login
-        this.$router.push('/residentlist');
+        const response = await AuthService.login(user);
+        const userData = response.user;
+
+
+         // Set the user and role in Vuex store
+        this.$store.commit('setUser', userData);
+        
+         // Check if the role property exists in userData
+    if (userData && userData.role) {
+      this.$store.commit('setRole', userData.role);
+    } else {
+      // Set a default role if the role property is missing or undefined
+      this.$store.commit('setRole', 'user');
+    }
+    
+    this.$store.commit('setJwtToken', response.token);
+    
+    // Redirect to SideNav after successful login
+    this.$router.push('/residentlist');
       } catch (error) {
         // Log the error for debugging
         console.error('Login error:', error);

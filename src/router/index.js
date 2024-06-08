@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import store from '@/stores/index'; 
 import Login from '../components/UserLogin.vue'
-import SignupForm from '@/components/SignupForm.vue'
 import SideNav from '../components/SideNav.vue'
-
 import ResidentList from '../views/ResidentList.vue'
 import UserList from '../views/UserList.vue'
 import ResidentCreateView from '@/views/ResidentCreateView.vue'
 import ResidentEditView from '../views/ResidentEditView.vue'
 import UserCreateView from '../views/UserCreateView.vue'
 import UserEditView from '../views/UserEditView.vue'
+
 
 
 
@@ -64,17 +64,26 @@ const router = createRouter({
         component:  UserEditView,
   
         },
-        {
-          path: '/signup',
-          name: 'SignupForm',
-          component: SignupForm,
-        },
+      
   
       ]
     }
   
   ]
 })
+
+// src/router/index.js
+router.beforeEach((to, from, next) => {
+  const isAdmin = store.state.role === 'admin';
+  
+  if (to.path === '/userlist' && !isAdmin) {
+    // Redirect to the resident list page if the user is not an admin
+    next('/residentlist');
+  } else {
+    next();
+  }
+});
+
 
 export default router
 
