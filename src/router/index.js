@@ -8,8 +8,9 @@ import ResidentCreateView from '@/views/ResidentCreateView.vue'
 import ResidentEditView from '../views/ResidentEditView.vue'
 import UserCreateView from '../views/UserCreateView.vue'
 import UserEditView from '../views/UserEditView.vue'
-
-
+import RoleList from '../views/RoleList.vue'
+import RoleCreateView from '../views/RoleCreateView.vue'
+import RoleEditView from '../views/RoleEditView.vue'
 
 
 const router = createRouter({
@@ -26,7 +27,6 @@ const router = createRouter({
       name: 'SideNav',
       component: SideNav,
       children:[
-
         {
           path: '/residentlist',
           name: 'ResidentList',
@@ -59,12 +59,33 @@ const router = createRouter({
 
       },
       {
-        path: '/edit-user',
+        path: '/edit-user/:id',
         name: 'UserEditView',
         component:  UserEditView,
   
         },
-      
+        {
+          path: '/signup',
+          name: 'SignupForm',
+          component: SignupForm,
+        },
+        {
+          path: '/rolelist',
+          name: 'RoleList',
+          component: RoleList,
+        },
+        {
+          path: '/create-role',
+          name: 'RoleCreateView',
+          component: RoleCreateView,
+        },
+        {
+          path: '/edit-role/:id',
+          name: 'RoleEditView',
+          component: RoleEditView,
+        },
+ 
+
   
       ]
     }

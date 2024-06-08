@@ -9,12 +9,14 @@ export default createStore({
   mutations: {
     setUser(state, user) {
       state.user = user;
+
     },
     setJwtToken(state, token) {
       state.jwtToken = token;
     },
     setRole(state, role) {
       state.role = role;
+
     }
   },
   actions: {
@@ -26,7 +28,9 @@ export default createStore({
     },
   },
   getters: {
+
     getUser: (state) => state.user,
     getJwtToken: (state) => state.jwtToken,
   },
+
 });
