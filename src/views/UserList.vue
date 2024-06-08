@@ -104,31 +104,25 @@
 </template>
 
 <script setup>
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid'
-import router from '@/router'
-import { computed, ref, onMounted } from 'vue'
-import axios from 'axios'
-import apiClient from '@/services/AxiosClient.js'
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/vue/20/solid";
+import router from "@/router";
+import { computed, ref, onMounted } from "vue";
+import apiClient from "@/services/AxiosClient.js";
 
-const users = ref([]) // Reactive variable to store user data
+const users = ref([]); // Reactive variable to store user data
 
 // Fetch user list from the backend API on component mount
 const fetchData = async () => {
   try {
-    const response = await apiClient.get(`${API_URL}/user/list`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-access-token': JWT_TOKEN,
-      },
-    });
+    const response = await apiClient.get("/user/list");
     users.value = response.data.Users;
   } catch (error) {
-    console.error('Error fetching data:', error);
+    console.error("Error fetching data:", error);
     if (error.response && error.response.status === 401) {
-      console.log(" unauthorized test")
-        // Handle unauthorized access, e.g., redirect to login
-        this.$router.push('/');
-      }
+      console.log(" unauthorized test");
+      // Handle unauthorized access, e.g., redirect to login
+      router.push("/");
+    }
   }
 };
 
@@ -136,35 +130,18 @@ onMounted(() => {
   fetchData();
 });
 
-
 const onCreate = () => {
-  router.push('/create-user')
-
-}
+  router.push("/create-user");
+};
 
 const onEdit = async (userId) => {
-  router.push({ name: 'UserEditView', params: { id: userId } })
-}
-
-
-
+  router.push({ name: "UserEditView", params: { id: userId } });
+};
 
 const onDelete = async (userId) => {
   try {
-    const myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-
-    const requestOptions = {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-access-token': JWT_TOKEN,
-      },
-      redirect: 'follow',
-    };
-
-    const response = await fetch(`${API_URL}/user/del/${userId}`, requestOptions);
-    const result = await response.json();
+    const response = await apiClient.delete(`/user/del/${userId}`);
+    const result = await response.data;
     alert(result.message);
 
     // Optionally, you can update the users list after successful deletion
@@ -174,36 +151,38 @@ const onDelete = async (userId) => {
   }
 };
 
-
-
 // Pagination configuration
-const itemsPerPage = 5 // Number of items to display per page
-const currentPage = ref(1) // Current page number
+const itemsPerPage = 5; // Number of items to display per page
+const currentPage = ref(1); // Current page number
 
 // Computed properties for pagination
-const paginatedUsers = computed(() => users.value.slice(start.value, end.value))
-const totalPages = computed(() => Math.ceil(users.value.length / itemsPerPage))
-const start = computed(() => (currentPage.value - 1) * itemsPerPage)
-const end = computed(() => Math.min(start.value + itemsPerPage, users.value.length))
+const paginatedUsers = computed(() =>
+  users.value.slice(start.value, end.value)
+);
+const totalPages = computed(() => Math.ceil(users.value.length / itemsPerPage));
+const start = computed(() => (currentPage.value - 1) * itemsPerPage);
+const end = computed(() =>
+  Math.min(start.value + itemsPerPage, users.value.length)
+);
 
 // Function to navigate to previous page
 const prevPage = () => {
   if (currentPage.value > 1) {
-    currentPage.value--
+    currentPage.value--;
   }
-}
+};
 
 // Function to navigate to next page
 const nextPage = () => {
   if (end.value < users.value.length) {
-    currentPage.value++
+    currentPage.value++;
   }
-}
+};
 
 // Function to navigate to a specific page
 const goToPage = (page) => {
-  currentPage.value = page
-}
+  currentPage.value = page;
+};
 </script>
 
 <style scoped>
