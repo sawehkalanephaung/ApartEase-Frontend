@@ -66,7 +66,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
-import { API_URL, JWT_TOKEN } from '@/config';
+import apiClient from '../services/AxiosClient'
 
 const user = ref({
   username: '',

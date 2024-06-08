@@ -62,7 +62,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { API_URL, JWT_TOKEN } from '@/config'
+import apiClient from '../services/AxiosClient'
 
 const router = useRouter()
 const route = useRoute()

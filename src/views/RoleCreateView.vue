@@ -34,9 +34,9 @@
 </template>
 
 <script setup>
+import apiClient from '@/services/AxiosClient'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { API_URL, JWT_TOKEN } from '@/config'
 
 const router = useRouter()
 

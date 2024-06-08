@@ -17,81 +17,64 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'login',
+      path: "/",
+      name: "login",
       component: Login,
     },
-  
     {
-      path: '/sidenav',
-      name: 'SideNav',
+      path: "/sidenav",
+      name: "SideNav",
       component: SideNav,
-      children:[
+      children: [
         {
-          path: '/residentlist',
-          name: 'ResidentList',
+          path: "/residentlist",
+          name: "ResidentList",
           component: ResidentList,
-      
         },
         {
-          path: '/resident-create-view',
-          name: 'ResidentCreateView',
+          path: "/resident-create-view",
+          name: "ResidentCreateView",
           component: ResidentCreateView,
-      
         },
         {
-          path: '/resident-edit-view/:id',
-          name: 'ResidentEditView',
+          path: "/resident-edit-view/:id",
+          name: "ResidentEditView",
           component: ResidentEditView,
-      
         },
         {
-          path: '/userlist',
-          name: 'UserList',
+          path: "/userlist",
+          name: "UserList",
           component: UserList,
         },
-     
-  
-      {
-      path: '/create-user',
-      name: 'UserCreateView',
-      component:  UserCreateView,
-
-      },
-      {
-        path: '/edit-user/:id',
-        name: 'UserEditView',
-        component:  UserEditView,
-  
+        {
+          path: "/create-user",
+          name: "UserCreateView",
+          component: UserCreateView,
         },
         {
-          path: '/signup',
-          name: 'SignupForm',
-          component: SignupForm,
+          path: "/edit-user/:id",
+          name: "UserEditView",
+          component: UserEditView,
         },
         {
-          path: '/rolelist',
-          name: 'RoleList',
+          path: "/rolelist",
+          name: "RoleList",
           component: RoleList,
         },
         {
-          path: '/create-role',
-          name: 'RoleCreateView',
+          path: "/create-role",
+          name: "RoleCreateView",
           component: RoleCreateView,
         },
         {
-          path: '/edit-role/:id',
-          name: 'RoleEditView',
+          path: "/edit-role/:id",
+          name: "RoleEditView",
           component: RoleEditView,
         },
- 
-
-  
-      ]
-    }
-  
-  ]
-})
+      ],
+    },
+  ],
+});
 
 // src/router/index.js
 router.beforeEach((to, from, next) => {
