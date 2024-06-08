@@ -1,15 +1,9 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
 import store from '@/stores/index'; 
-import Login from '../components/UserLogin.vue'
-import SideNav from '../components/SideNav.vue'
-import ResidentList from '../views/ResidentList.vue'
-import UserList from '../views/UserList.vue'
-import UserCreateView from '../views/UserCreateView.vue'
-import UserEditView from '../views/UserEditView.vue'
-import RoleList from '../views/RoleList.vue'
-import RoleCreateView from '../views/RoleCreateView.vue'
-import RoleEditView from '../views/RoleEditView.vue'
-
+import Login from '../components/UserLogin.vue';
+import Register from '../components/UserRegister.vue';
+import SideNav from '../components/SideNav.vue';
+import HomeView from '@/views/HomeView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,63 +14,23 @@ const router = createRouter({
       component: Login,
     },
     {
+      path: "/register",
+      name: "register",
+      component: Register,
+    },
+    {
       path: "/sidenav",
       name: "SideNav",
       component: SideNav,
       children: [
         {
-          path: "/residentlist",
-          name: "ResidentList",
-          component: ResidentList,
-        },
-        
-        {
-          path: "/userlist",
-          name: "UserList",
-          component: UserList,
-        },
-        {
-          path: "/create-user",
-          name: "UserCreateView",
-          component: UserCreateView,
-        },
-        {
-          path: "/edit-user/:id",
-          name: "UserEditView",
-          component: UserEditView,
-        },
-        {
-          path: "/rolelist",
-          name: "RoleList",
-          component: RoleList,
-        },
-        {
-          path: "/create-role",
-          name: "RoleCreateView",
-          component: RoleCreateView,
-        },
-        {
-          path: "/edit-role/:id",
-          name: "RoleEditView",
-          component: RoleEditView,
+          path: "/home",
+          name: "HomeView",
+          component: HomeView,
         },
       ],
     },
   ],
 });
 
-// src/router/index.js
-router.beforeEach((to, from, next) => {
-  const isAdmin = store.state.role === 'admin';
-  
-  if (to.path === '/userlist' && !isAdmin) {
-    // Redirect to the resident list page if the user is not an admin
-    next('/residentlist');
-  } else {
-    next();
-  }
-});
-
-
-export default router
-
+export default router;

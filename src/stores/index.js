@@ -2,22 +2,18 @@ import { createStore } from 'vuex';
 
 export default createStore({
   state: {
-    user: null,
+    user: { username: 'admin' }, // Example user object with a username
     jwtToken: null,
-    role:'user' // default
+    role: 'user', // default
   },
   mutations: {
     setUser(state, user) {
       state.user = user;
-
+      state.role = user.role || 'user'; // ensure role is set
     },
     setJwtToken(state, token) {
       state.jwtToken = token;
     },
-    setRole(state, role) {
-      state.role = role;
-
-    }
   },
   actions: {
     login({ commit }, user) {
@@ -28,9 +24,8 @@ export default createStore({
     },
   },
   getters: {
-
     getUser: (state) => state.user,
+    getRole: (state) => state.role,
     getJwtToken: (state) => state.jwtToken,
   },
-
 });

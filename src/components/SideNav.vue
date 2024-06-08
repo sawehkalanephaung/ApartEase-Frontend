@@ -12,44 +12,20 @@
         <div class="flex flex-col justify-between h-full px-[20px] space-y-[10px]">
           <div class="flex flex-col justify-between space-y-[10px]">
             <!-- Add router-link for Home -->
-            <router-link to="/residentlist" class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800 transition duration-400 ease-in-out">
+            <router-link to="/home" class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800 transition duration-400 ease-in-out">
               <svg aria-hidden="true" class="w-[25px] h-[25px] fill-current mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path>
               </svg>
-              Resident List
+             Home
             </router-link>
-            <!-- User Management Dropdown -->
-            <div  v-if="isAdmin"  class="relative" @click="toggleUserManagementDropdown">
-              <div class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800 transition duration-400 ease-in-out cursor-pointer">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
-                </svg>
-                User Management
-                <svg v-if="showUserManagementDropdown" class="w-4 h-4 ml-auto transition-transform transform rotate-180" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                </svg>
-                <svg v-else class="w-4 h-4 ml-auto transition-transform transform rotate-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                </svg>
-              </div>
-              <transition name="fade">
-                <div v-show="showUserManagementDropdown" class="absolute left-0 w-full mt-2 bg-white border border-gray-200 rounded-md shadow-lg z-10">
-                  <router-link to="/userlist" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">User</router-link>
-                  <router-link to="/rolelist" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Role</router-link>
-                </div>
-              </transition>
-
-
-             <!-- display username and role-->
-             <div class="grid grid-rows-2 space-y-1 mt-20">
-                <span v-if="user && user.username">Username: {{ user.username }}</span>
-                <span v-if="user && user.role">Role: {{ user.role }}</span>
-              </div>
-       
-            </div>
+  
           </div>
 
-       
+          <!-- Display username and role -->
+          <div class="text-center mb-4">
+            <p class="text-sm font-medium">{{ username }}</p>
+            <p class="text-xs text-gray-600">{{ role }}</p>
+          </div>
            
           <div class="h-[50px]">
             <div class="flex items-center justify-between">
@@ -91,6 +67,7 @@
     <!-- Main -->
   </div>
 </template>
+
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useStore } from "vuex";
@@ -100,6 +77,8 @@ const store = useStore();
 const router = useRouter();
 
 const user = computed(() => store.getters.getUser);
+const username = computed(() => store.getters.getUser?.username || "Guest");
+const role = computed(() => store.getters.getRole);
 const showDropDown = ref(false);
 const showSide = ref(true);
 const showSuccessMessage = ref(false);
