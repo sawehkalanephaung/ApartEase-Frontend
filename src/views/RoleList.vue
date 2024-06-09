@@ -1,14 +1,14 @@
 <template>
-  <h3 class="text-3xl font-medium text-gray-700">User Management</h3>
+  <h3 class="text-3xl font-medium text-gray-700">Role Management</h3>
   <div class="mt-8">
-    <h2 class="text-xl font-semibold leading-tight text-gray-700">User List</h2>
+    <h2 class="text-xl font-semibold leading-tight text-gray-700">Role List</h2>
     <div class="mt-6 flex justify-between items-center">
       <div class="relative w-full max-w-md"></div>
       <button
         @click="onCreate"
         class="ml-3 bg-primary hover:bg-emerald-400 text-white px-4 py-2 rounded"
       >
-        <router-link to="/userlist/create-user" class="flex items-center">
+        <router-link to="/rolelist/create-role" class="flex items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -23,7 +23,7 @@
               d="M12 4.5v15m7.5-7.5h-15"
             />
           </svg>
-          <span class="ml-2">Create User</span>
+          <span class="ml-2">Create Role</span>
         </router-link>
       </button>
     </div>
@@ -35,12 +35,7 @@
             <th
               class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
             >
-              username
-            </th>
-            <th
-              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
-            >
-              role
+              Role Name
             </th>
             <th
               class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider"
@@ -50,33 +45,23 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Display a message if no users are found -->
-          <tr v-if="!users || users.length === 0">
+          <tr v-if="!roles || roles.length === 0">
             <td
-              colspan="4"
+              colspan="2"
               class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center"
             >
-              No users found.
+              No roles found.
             </td>
           </tr>
-          <!-- Render user rows with pagination -->
-          <tr v-else v-for="(user, index) in paginatedUsers" :key="index">
+          <tr v-else v-for="(role, index) in paginatedRoles" :key="index">
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              {{ user.username }}
-            </td>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              <!-- {{ user.has_admin_role[0].name }} -->
-              {{
-                user.has_admin_role && user.has_admin_role.length > 0
-                  ? user.has_admin_role[0].name
-                  : ''
-              }}
+              {{ role.role_name }}
             </td>
             <td
               class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center"
             >
               <button
-                @click="() => onEdit(user.id)"
+                @click="() => onEdit(role.id)"
                 class="text-emerald-600 hover:text-emerald-900 mr-1"
               >
                 <svg
@@ -96,7 +81,7 @@
                 </svg>
               </button>
               <button
-                @click="() => onDelete(user.id)"
+                @click="() => onDelete(role.id)"
                 class="text-emerald-600 hover:text-emerald-900 ml-1"
               >
                 <svg
@@ -147,7 +132,7 @@
               {{ ' ' }}
               of
               {{ ' ' }}
-              <span class="font-medium">{{ users.length }}</span>
+              <span class="font-medium">{{ roles.length }}</span>
               {{ ' ' }}
               results
             </p>
@@ -188,54 +173,56 @@
 
 <script setup>
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid';
+import { ref, computed, onMounted } from 'vue';
 import router from '@/router';
-import { computed, ref, onMounted } from 'vue';
 import apiClient from '@/services/AxiosClient.js';
 
-const users = ref([]); // Reactive variable to store user data
+import axios from 'axios';
 
-// Fetch user list from the backend API on component mount
+const roles = ref([]); // Reactive variable to store role data
+
+// Fetch role list from the backend API on component mount
+
 const fetchData = async () => {
   try {
-    const response = await apiClient.get('/user/list');
-    users.value = response.data.Users;
+    const response = await apiClient.get('/role/list');
+    users.value = response.data.Roles;
   } catch (error) {
     console.error('Error fetching data:', error);
-    if (error.response) {
-      console.error('Response data:', error.response.data);
-      console.error('Response status:', error.response.status);
-      console.error('Response headers:', error.response.headers);
-    } else if (error.request) {
-      console.error('Request data:', error.request);
-    } else {
-      console.error('Error message:', error.message);
+    if (error.response && error.response.status === 401) {
+      console.log(' unauthorized test');
+      // Handle unauthorized access, e.g., redirect to login
+      router.push('/');
     }
   }
 };
-
 
 onMounted(() => {
   fetchData();
 });
 
 const onCreate = () => {
-  router.push('/create-user');
+  router.push('/create-role');
 };
 
-const onEdit = async (userId) => {
-  router.push({ name: 'UserEditView', params: { id: userId } });
+const onEdit = (roleId) => {
+  router.push({ name: 'RoleEditView', params: { id: roleId } });
 };
 
-const onDelete = async (userId) => {
+const onDelete = async (roleId) => {
   try {
-    const response = await apiClient.delete(`/user/del/${userId}`);
-    const result = await response.data;
+    const response = await fetch(`${API_URL}/role/del/${roleId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': JWT_TOKEN,
+      },
+    });
+    const result = await response.json();
     alert(result.message);
-
-    // Optionally, you can update the users list after successful deletion
-    users.value = users.value.filter((user) => user.id !== userId);
+    fetchData();
   } catch (error) {
-    console.error(error);
+    console.error('Error deleting role:', error);
   }
 };
 
@@ -244,13 +231,13 @@ const itemsPerPage = 5; // Number of items to display per page
 const currentPage = ref(1); // Current page number
 
 // Computed properties for pagination
-const paginatedUsers = computed(() =>
-  users.value.slice(start.value, end.value)
+const paginatedRoles = computed(() =>
+  roles.value.slice(start.value, end.value)
 );
-const totalPages = computed(() => Math.ceil(users.value.length / itemsPerPage));
+const totalPages = computed(() => Math.ceil(roles.value.length / itemsPerPage));
 const start = computed(() => (currentPage.value - 1) * itemsPerPage);
 const end = computed(() =>
-  Math.min(start.value + itemsPerPage, users.value.length)
+  Math.min(start.value + itemsPerPage, roles.value.length)
 );
 
 // Function to navigate to previous page
@@ -262,7 +249,7 @@ const prevPage = () => {
 
 // Function to navigate to next page
 const nextPage = () => {
-  if (end.value < users.value.length) {
+  if (end.value < roles.value.length) {
     currentPage.value++;
   }
 };

@@ -4,7 +4,11 @@ import Login from '../components/UserLogin.vue';
 import Register from '../components/UserRegister.vue';
 import SideNav from '../components/SideNav.vue';
 import HomeView from '@/views/HomeView.vue';
-import UserManagement from '@/components/UserManagement.vue';
+
+import UserList from '@/views/UserList.vue';
+import RoleList from '@/views/RoleList.vue';
+
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,9 +36,15 @@ const router = createRouter({
           meta: { requiresAuth: true},
         },
         {
-          path: "/user-management",
-          name: "UserManagement",
-          component: UserManagement,
+          path: "/user-list",
+          name: "UserList",
+          component: UserList,
+          meta: { requiresAuth: true, roles: ['admin'] },
+        },
+        {
+          path: "/role-list",
+          name: "RoleList",
+          component: RoleList,
           meta: { requiresAuth: true, roles: ['admin'] },
         },
       ],
@@ -51,7 +61,7 @@ router.beforeEach((to, from, next) => {
   if (requiresAuth && !token) {
     next({ name: 'login' }); // Redirect to login if not authenticated
   } else if (requiresAuth && roles && !roles.includes(userRole)) {
-    next({ name: 'HomeView' }); // Redirect to home if not authorized
+    next({ name: 'login' }); // Redirect to home if not authorized
   } else {
     next(); // Proceed to the route
   }
