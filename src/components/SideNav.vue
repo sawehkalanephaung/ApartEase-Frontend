@@ -98,15 +98,6 @@ const handleResize = () => {
   showSide.value = window.innerWidth >= 768;
 };
 
-// toggle user
-const toggleDrop = () => {
-  showDropDown.value = !showDropDown.value;
-};
-
-const toggleUserManagementDropdown = () => {
-  showUserManagementDropdown.value = !showUserManagementDropdown.value;
-};
-
 const logout = () => {
   // Remove token and user from local storage
   localStorage.removeItem("token");

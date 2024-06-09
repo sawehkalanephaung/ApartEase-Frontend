@@ -1,19 +1,8 @@
 <template>
   <div class="home">
     <h1><strong>Welcome to Home page</strong></h1>
-  
-  </div>
+    </div>
 </template>
-
-<script setup>
-import { computed } from "vue";
-import { useStore } from "vuex";
-
-const store = useStore();
-const username = computed(() => store.getters.getUser?.username || "Guest");
-const role = computed(() => store.getters.getRole);
-</script>
-
 
 <style scoped>
 .home {
