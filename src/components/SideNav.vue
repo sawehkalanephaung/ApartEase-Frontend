@@ -19,12 +19,27 @@
              Home
             </router-link>
 
-            <router-link v-if="role === 'admin'"  to="/user-management" class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800 transition duration-400 ease-in-out">
-              <svg aria-hidden="true" class="w-[25px] h-[25px] fill-current mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path>
-              </svg>
-             User Management
-            </router-link>
+           <!-- User Management Dropdown -->
+           <div  v-if="isAdmin"  class="relative" @click="toggleUserManagementDropdown">
+              <div class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800 transition duration-400 ease-in-out cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+                </svg>
+                User Management
+                <svg v-if="showUserManagementDropdown" class="w-4 h-4 ml-auto transition-transform transform rotate-180" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+                <svg v-else class="w-4 h-4 ml-auto transition-transform transform rotate-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+              </div>
+              <transition name="fade">
+                <div v-show="showUserManagementDropdown" class="absolute left-0 w-full mt-2 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                  <router-link to="/userlist" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">User</router-link>
+                  <router-link to="/rolelist" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Role</router-link>
+                </div>
+              </transition>
+          </div>
           </div>
 
           <div class="flex flex-col items-center mt-auto mb-4">
@@ -122,6 +137,16 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener("resize", handleResize);
 });
+
+
+// toggle user
+const toggleDrop = () => {
+  showDropDown.value = !showDropDown.value;
+};
+
+const toggleUserManagementDropdown = () => {
+  showUserManagementDropdown.value = !showUserManagementDropdown.value;
+};
 </script>
 
 <style>
