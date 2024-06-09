@@ -4,6 +4,7 @@ import Login from '../components/UserLogin.vue';
 import Register from '../components/UserRegister.vue';
 import SideNav from '../components/SideNav.vue';
 import HomeView from '@/views/HomeView.vue';
+import UserManagement from '@/components/UserManagement.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,15 +23,38 @@ const router = createRouter({
       path: "/sidenav",
       name: "SideNav",
       component: SideNav,
+      meta: { requiresAuth: true},
       children: [
         {
           path: "/home",
           name: "HomeView",
           component: HomeView,
+          meta: { requiresAuth: true},
+        },
+        {
+          path: "/user-management",
+          name: "UserManagement",
+          component: UserManagement,
+          meta: { requiresAuth: true, roles: ['admin'] },
         },
       ],
     },
   ],
+});
+// Global navigation guard for authentication
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+  const userRole = store.state.role; // Access role from Vuex store state
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const roles = to.meta.roles;
+
+  if (requiresAuth && !token) {
+    next({ name: 'login' }); // Redirect to login if not authenticated
+  } else if (requiresAuth && roles && !roles.includes(userRole)) {
+    next({ name: 'HomeView' }); // Redirect to home if not authorized
+  } else {
+    next(); // Proceed to the route
+  }
 });
 
 export default router;

@@ -98,6 +98,7 @@ const login = async () => {
     // Set the user and role in Vuex store
     store.commit('setUser', userData);
     store.commit('setJwtToken', token);
+    
 
     // Check if the role property exists in userData
     if (userData && userData.role) {

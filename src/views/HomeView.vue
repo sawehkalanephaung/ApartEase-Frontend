@@ -1,8 +1,7 @@
 <template>
   <div class="home">
-    <h1><strong>Welcome</strong></h1>
-    <p>Username: {{ username }}</p>
-    <p>Role: {{ role }}</p>
+    <h1><strong>Welcome to Home page</strong></h1>
+  
   </div>
 </template>
 
