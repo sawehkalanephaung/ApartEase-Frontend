@@ -186,14 +186,9 @@ const roles = ref([]); // Reactive variable to store role data
 const fetchData = async () => {
   try {
     const response = await apiClient.get('/role/list');
-    users.value = response.data.Roles;
+    users.value = response.data.Role;
   } catch (error) {
     console.error('Error fetching data:', error);
-    if (error.response && error.response.status === 401) {
-      console.log(' unauthorized test');
-      // Handle unauthorized access, e.g., redirect to login
-      router.push('/');
-    }
   }
 };
 
@@ -211,18 +206,15 @@ const onEdit = (roleId) => {
 
 const onDelete = async (roleId) => {
   try {
-    const response = await fetch(`${API_URL}/role/del/${roleId}`, {
-      method: 'DELETE',
+    const response = await apiClient.delete(`/role/del/${roleId}`, {
       headers: {
-        'Content-Type': 'application/json',
-        'x-access-token': JWT_TOKEN,
+        "x-access-token": JWT_TOKEN,
       },
     });
-    const result = await response.json();
-    alert(result.message);
+    alert(response.data.message);
     fetchData();
   } catch (error) {
-    console.error('Error deleting role:', error);
+    console.error("Error deleting role:", error);
   }
 };
 
