@@ -1,12 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import store from '@/stores/index'; 
 import Login from '../components/UserLogin.vue';
-import Register from '../components/UserRegister.vue';
 import SideNav from '../components/SideNav.vue';
 import HomeView from '@/views/HomeView.vue';
 
 import UserList from '@/views/UserList.vue';
 import RoleList from '@/views/RoleList.vue';
+import CreateUserView from '@/views/CreateUserView.vue';
+import UserEditView from '@/views/UserEditView.vue';
 
 
 
@@ -17,11 +18,6 @@ const router = createRouter({
       path: "/",
       name: "login",
       component: Login,
-    },
-    {
-      path: "/register",
-      name: "register",
-      component: Register,
     },
     {
       path: "/sidenav",
@@ -47,6 +43,20 @@ const router = createRouter({
           component: RoleList,
           meta: { requiresAuth: true, roles: ['admin'] },
         },
+        {
+          path: "/create-user",
+          name: "CreateUserView",
+          component: CreateUserView,
+          meta: { requiresAuth: true, roles: ['admin'] },
+        },
+        {
+          path: "/user-edit/:id", 
+          name: "UserEditView",
+          component: UserEditView,
+          meta: { requiresAuth: true, roles: ['admin'] },
+        },
+
+        
       ],
     },
   ],
