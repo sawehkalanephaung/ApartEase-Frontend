@@ -8,6 +8,7 @@ import UserList from '@/views/UserList.vue';
 import RoleList from '@/views/RoleList.vue';
 import CreateUserView from '@/views/CreateUserView.vue';
 import UserEditView from '@/views/UserEditView.vue';
+import RoleCreateView from '@/views/RoleCreateView.vue';
 
 
 
@@ -38,12 +39,6 @@ const router = createRouter({
           meta: { requiresAuth: true, roles: ['admin'] },
         },
         {
-          path: "/role-list",
-          name: "RoleList",
-          component: RoleList,
-          meta: { requiresAuth: true, roles: ['admin'] },
-        },
-        {
           path: "/create-user",
           name: "CreateUserView",
           component: CreateUserView,
@@ -55,8 +50,19 @@ const router = createRouter({
           component: UserEditView,
           meta: { requiresAuth: true, roles: ['admin'] },
         },
+        {
+          path: "/role-list",
+          name: "RoleList",
+          component: RoleList,
+          meta: { requiresAuth: true, roles: ['admin'] },
+        },
 
-        
+        {
+          path: "/create-role", // Add the new route
+          name: "RoleCreateView",
+          component: RoleCreateView,
+          meta: { requiresAuth: true, roles: ['admin'] },
+        },
       ],
     },
   ],
