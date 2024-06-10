@@ -26,7 +26,9 @@
              User Management
             </router-link>
           </div>
+     
 
+       
           <div class="flex flex-col items-center mt-auto mb-4">
             <p class="text-sm font-medium">{{ username }}</p>
             <p class="text-xs text-gray-600">{{ role }}</p>
@@ -57,6 +59,13 @@
             <path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32-14.3 32 32z" />
           </svg>
         </div>
+        <!-- Breadcrumb -->
+        <div class="text-sm breadcrumbs ml-4">
+          <ul>
+            <li><a @click="navigateTo('home')">Home</a></li>
+            <li v-if="breadcrumb.length > 1">{{ breadcrumb[1] }}</li>
+          </ul>
+        </div>
       </div>
       <div class="h-[calc(100vh-50px)] bg-gray-50 p-[20px]">
         <div class="border border-gray-300 rounded-md p-[20px] h-full">
@@ -74,12 +83,13 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue"; // Import watch
 import { useStore } from "vuex";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 const store = useStore();
 const router = useRouter();
+const route = useRoute();
 
 const username = computed(() => store.getters.getUser?.username || "Guest");
 const role = computed(() => store.getters.getRole);
@@ -87,6 +97,7 @@ const showDropDown = ref(false);
 const showSide = ref(true);
 const showSuccessMessage = ref(false);
 const showUserManagementDropdown = ref(false);
+const breadcrumb = ref(["Home"]);
 
 // hide show side bar
 const toggleSideBar = () => {
@@ -113,6 +124,20 @@ const logout = () => {
   // Redirect to login page
   router.push("/");
 };
+
+const navigateTo = (page) => {
+  if (page === 'home') {
+    router.push('/home');
+  }
+};
+
+watch(route, (newRoute) => {
+  if (newRoute.name === 'HomeView') {
+    breadcrumb.value = ["Home"];
+  } else if (newRoute.name === 'UserManagement') {
+    breadcrumb.value = ["Home", "User Management"];
+  } 
+});
 
 onMounted(() => {
   window.addEventListener("resize", handleResize);
