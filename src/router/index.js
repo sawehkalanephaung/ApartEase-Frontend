@@ -10,7 +10,9 @@ import UserCreateView from '@/views/UserCreateView.vue';
 import UserEditView from '@/views/UserEditView.vue';
 import RoleCreateView from '@/views/RoleCreateView.vue';
 import RoleEditView from '@/views/RoleEditView.vue';
-
+import ResidentList from '@/views/ResidentList.vue';
+import ResidentCreateView from '@/views/ResidentCreateView.vue'; 
+import ResidentEditView from '@/views/ResidentEditView.vue'; 
 
 
 const router = createRouter({
@@ -70,7 +72,25 @@ const router = createRouter({
           component: RoleEditView,
           meta: { requiresAuth: true, roles: ['admin'] },
         },
-        
+        {
+          path: "/resident-list",
+          name: "ResidentList",
+          component: ResidentList,
+          meta: { requiresAuth: true},
+        },
+        {
+          path: "/resident-create",
+          name: "ResidentCreateView",
+          component: ResidentCreateView,
+          meta: { requiresAuth: true},
+        },
+        {
+          path: "/resident-edit/:id", 
+          name: "ResidentEditView",
+          component: ResidentEditView,
+          meta: { requiresAuth: true},
+        },
+
       ],
     },
   ],
