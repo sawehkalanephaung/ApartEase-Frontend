@@ -180,13 +180,15 @@ import apiClient from '@/services/AxiosClient.js';
 import axios from 'axios';
 
 const roles = ref([]); // Reactive variable to store role data
-
+// const users = ref([]); 
 // Fetch role list from the backend API on component mount
 
 const fetchData = async () => {
   try {
     const response = await apiClient.get('/role/list');
-    users.value = response.data.Role;
+
+    roles.value = response.data.Role;
+  
   } catch (error) {
     console.error('Error fetching data:', error);
   }

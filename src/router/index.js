@@ -42,7 +42,7 @@ const router = createRouter({
           meta: { requiresAuth: true, roles: ['admin'] },
         },
         {
-          path: "/user-create",
+          path: "/create-user",
           name: "CreateUserView",
           component: UserCreateView,
           meta: { requiresAuth: true, roles: ['admin'] },

@@ -198,6 +198,7 @@ const users = ref([]); // Reactive variable to store user data
 const fetchData = async () => {
   try {
     const response = await apiClient.get('/user/list');
+    console.log(response);
     users.value = response.data.Users;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -211,7 +212,7 @@ onMounted(() => {
 });
 
 const onCreate = () => {
-  router.push('/user-create');
+  router.push('/create-user');
 };
 
 const onEdit = async (userId) => {
