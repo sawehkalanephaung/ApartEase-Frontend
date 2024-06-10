@@ -33,7 +33,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(u, index) in paginatedResidents" :key="index">
+          <tr v-for="(u, index) in residents" :key="index">
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.roomNumber }}</td>
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.name }}</td>
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.lineId }}</td>
@@ -57,47 +57,46 @@
         No residents found.
       </div>
 
-      <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-        <div class="flex flex-1 justify-between sm:hidden">
-          <a @click="prevPage" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">Previous</a>
-          <a @click="nextPage" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">Next</a>
-        </div>
-        <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-          <div>
-            <p class="text-xs text-gray-700">
-              Showing {{ ' ' }} <span class="font-medium">{{ start + 1 }}</span> {{ ' ' }} to {{ ' ' }} <span class="font-medium">{{ end }}</span> {{ ' ' }} of {{ ' ' }} <span class="font-medium">{{ totalResidents }}</span> {{ ' ' }} results
-            </p>
-          </div>
-          <div>
-            <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-              <a @click="prevPage" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer">
-                <ChevronLeftIcon class="h-4 w-4" aria-hidden="true" />
-              </a>
-              <span v-for="page in totalPages" :key="page" @click="goToPage(page)" class="relative inline-flex items-center px-3 py-1 text-xs font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer" :class="{ 'bg-emerald-600 text-white': page === currentPage }">{{ page }}</span>
-              <a @click="nextPage" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer">
-                <ChevronRightIcon class="h-4 w-4" aria-hidden="true" />
-              </a>
-            </nav>
-          </div>
-        </div>
+     <!-- Pagination controls -->
+     <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+    <div class="flex flex-1 justify-between sm:hidden">
+      <a @click="prevPage" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">Previous</a>
+      <a @click="nextPage" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">Next</a>
+    </div>
+    <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+      <div>
+        <p class="text-sm text-gray-700">
+          Showing {{ ' ' }} <span class="font-medium">{{ start + 1 }}</span> {{ ' ' }} to {{ ' ' }} <span class="font-medium">{{ end }}</span> {{ ' ' }} of {{ ' ' }} <span class="font-medium">{{ totalItems }}</span> {{ ' ' }} results
+        </p>
+      </div>
+      <div>
+        <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+          <a @click="prevPage" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer">
+            <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
+          </a>
+          <span v-for="page in totalPages" :key="page" @click="goToPage(page)" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer" :class="{ 'bg-emerald-600 text-white': page === currentPage }">{{ page }}</span>
+          <a @click="nextPage" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer">
+            <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
+          </a>
+        </nav>
       </div>
     </div>
+  </div>
+  </div>
   </div>
   <router-view />
 </template>
 
+
 <script setup>
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid';
-import { computed, ref, onMounted } from 'vue';
+import { ref, onMounted, watchEffect } from 'vue';
 import apiClient from '@/services/AxiosClient.js';
 import router from '@/router';
+import { usePagination } from '@/composables/usePagination';
 
 const searchQuery = ref('');
 const residents = ref([]);
-const totalResidents = ref(0);
-const totalPages = ref(0);
-const currentPage = ref(1);
-const perPage = 5;
 
 const fetchData = async () => {
   try {
@@ -107,15 +106,23 @@ const fetchData = async () => {
       },
     });
     const data = response.data.Resident;
-    residents.value = data.slice(0, -1);
-    const pageData = data[data.length - 1];
-    totalPages.value = pageData.total_pages;
-    currentPage.value = pageData.page;
-    totalResidents.value = pageData.total_resident;
+    if (data.length > 0) {
+      residents.value = data.slice(0, -1);
+      const pageData = data[data.length - 1];
+      totalPages.value = pageData.total_pages;
+      currentPage.value = pageData.page;
+      totalItems.value = pageData.total_resident;
+    } else {
+      residents.value = [];
+      totalPages.value = 0;
+      totalItems.value = 0;
+    }
   } catch (error) {
     console.error('Error fetching data:', error);
   }
 };
+
+const { currentPage, totalPages, totalItems, start, end, prevPage, nextPage, goToPage } = usePagination(fetchData);
 
 onMounted(() => {
   fetchData();
@@ -148,38 +155,23 @@ const searchResident = async () => {
     }
     const response = await apiClient.get(url);
     const result = response.data.Resident;
-    residents.value = Array.isArray(result) ? result : [result];
+    if (Array.isArray(result)) {
+      residents.value = result;
+    } else {
+      residents.value = [result];
+    }
     totalPages.value = 1;
     currentPage.value = 1;
+    totalItems.value = residents.value.length;
   } catch (error) {
     console.error('Error searching resident:', error);
+    residents.value = [];
+    totalPages.value = 1;
+    totalItems.value = 0;
   }
 };
 
-const prevPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-    fetchData();
-  }
-};
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++;
-    fetchData();
-  }
-};
-
-const goToPage = (page) => {
-  currentPage.value = page;
+watchEffect(() => {
   fetchData();
-};
-
-const paginatedResidents = computed(() => residents.value.slice(start.value, end.value));
-const start = computed(() => (currentPage.value - 1) * perPage);
-const end = computed(() => Math.min(start.value + perPage, totalResidents.value));
+});
 </script>
-
-<style scoped>
-/* Add your styles here */
-</style>

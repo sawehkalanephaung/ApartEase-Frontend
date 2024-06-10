@@ -116,89 +116,46 @@
         </tbody>
       </table>
       <!-- Pagination controls -->
-      <div
-        class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
-      >
-        <div class="flex flex-1 justify-between sm:hidden">
-          <a
-            @click="prevPage"
-            class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
-            >Previous</a
-          >
-          <a
-            @click="nextPage"
-            class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
-            >Next</a
-          >
-        </div>
-        <div
-          class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between"
-        >
-          <div>
-            <p class="text-sm text-gray-700">
-              Showing
-              {{ ' ' }}
-              <span class="font-medium">{{ start + 1 }}</span>
-              {{ ' ' }}
-              to
-              {{ ' ' }}
-              <span class="font-medium">{{ end }}</span>
-              {{ ' ' }}
-              of
-              {{ ' ' }}
-              <span class="font-medium">{{ totalUsers }}</span>
-              {{ ' ' }}
-              results
-            </p>
-         
-          </div>
-          <div>
-            <nav
-              class="isolate inline-flex -space-x-px rounded-md shadow-sm"
-              aria-label="Pagination"
-            >
-              <a
-                @click="prevPage"
-                class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer"
-              >
-                <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
-              </a>
-              <span
-                v-for="page in totalPages"
-                :key="page"
-                @click="goToPage(page)"
-                class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer"
-                :class="{ 'bg-emerald-600 text-white': page === currentPage }"
-                >{{ page }}</span
-              >
-              <a
-                @click="nextPage"
-                class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer"
-              >
-                <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
-              </a>
-            </nav>
-          </div>
-        </div>
+      <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+    <div class="flex flex-1 justify-between sm:hidden">
+      <a @click="prevPage" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">Previous</a>
+      <a @click="nextPage" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">Next</a>
+    </div>
+    <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+      <div>
+        <p class="text-sm text-gray-700">
+          Showing {{ ' ' }} <span class="font-medium">{{ start + 1 }}</span> {{ ' ' }} to {{ ' ' }} <span class="font-medium">{{ end }}</span> {{ ' ' }} of {{ ' ' }} <span class="font-medium">{{ totalItems }}</span> {{ ' ' }} results
+        </p>
+      </div>
+      <div>
+        <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+          <a @click="prevPage" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer">
+            <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
+          </a>
+          <span v-for="page in totalPages" :key="page" @click="goToPage(page)" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer" :class="{ 'bg-emerald-600 text-white': page === currentPage }">{{ page }}</span>
+          <a @click="nextPage" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer">
+            <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
+          </a>
+        </nav>
       </div>
     </div>
+  </div>
+  </div>
   </div>
   <router-view />
 </template>
 
+
 <script setup>
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid';
-import { useRouter } from 'vue-router';
 import { ref, onMounted, watchEffect } from 'vue';
+import { useRouter } from 'vue-router';
 import apiClient from '@/services/AxiosClient.js';
+import { usePagination } from '@/composables/usePagination';
 
 const router = useRouter();
-const users = ref([]); // Reactive variable to store user data
-const totalPages = ref(0);
-const currentPage = ref(1);
-const totalUsers = ref(0);
+const users = ref([]);
 
-// Fetch user list from the backend API on component mount
 const fetchData = async () => {
   try {
     const response = await apiClient.get('/user/list', {
@@ -207,15 +164,17 @@ const fetchData = async () => {
       },
     });
     const data = response.data.User;
-    users.value = data.slice(0, -1); // Exclude the last item which contains pagination info
+    users.value = data.slice(0, -1);
     const pageData = data[data.length - 1];
     totalPages.value = pageData.total_pages;
     currentPage.value = pageData.page;
-    totalUsers.value = users.value.length;
+    totalItems.value = pageData.total_users;
   } catch (error) {
     console.error('Error fetching data:', error);
   }
 };
+
+const { currentPage, totalPages, totalItems, start, end, prevPage, nextPage, goToPage } = usePagination(fetchData);
 
 onMounted(() => {
   fetchData();
@@ -234,45 +193,14 @@ const onDelete = async (userId) => {
     const response = await apiClient.delete(`/user/del/${userId}`);
     const result = await response.data;
     alert(result.message);
-
-    // Optionally, you can update the users list after successful deletion
-    users.value = users.value.filter((user) => user.id !== userId);
-    fetchData(); // Refresh the data after deletion
+    fetchData();
   } catch (error) {
     console.error(error);
   }
 };
 
-// Pagination controls
-const start = ref(0);
-const end = ref(0);
-
-const updatePagination = () => {
-  start.value = (currentPage.value - 1) * 5;
-  end.value = Math.min(start.value + 5, users.value.length);
-};
-
-const prevPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-    fetchData();
-  }
-};
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++;
-    fetchData();
-  }
-};
-
-const goToPage = (page) => {
-  currentPage.value = page;
-  fetchData();
-};
-
 watchEffect(() => {
-  updatePagination();
+  fetchData();
 });
 </script>
 
