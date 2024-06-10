@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center justify-center h-full">
     <div class="w-full max-w-xl p-6 bg-white rounded-md shadow-md">
-      <h3 class="text-2xl font-medium text-gray-700">Create Role</h3>
+      <h3 class="text-2xl font-medium text-gray-700 text-center">Edit Role</h3>
       <form @submit.prevent="onSubmit" class="rounded px-8 pt-6 pb-8 mb-4">
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="role_name">Role Name</label>
@@ -27,14 +27,28 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import apiClient from '@/services/AxiosClient';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 const router = useRouter();
+const route = useRoute();
 
 const role = ref({
   role_name: '',
+});
+
+const fetchData = async () => {
+  try {
+    const response = await apiClient.get(`/role/list/${route.params.id}`);
+    role.value = response.data.role;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
+onMounted(() => {
+  fetchData();
 });
 
 const cancel = () => {
@@ -43,18 +57,15 @@ const cancel = () => {
 
 const onSubmit = async () => {
   try {
-    const response = await apiClient.post('/dev/role/add', {
+    const response = await apiClient.post(`/role/edit/${route.params.id}`, {
       role_name: role.value.role_name,
     });
     alert(response.data.message);
-    router.push('/role-list'); // don't check status = ok but redirec to 
-
-    // // if will redirect to role-list if status is = ok
-    // if (response.data.status === 'ok') {
-    //   router.push('/role-list');
-    // }
+    if (response.data.status === 'ok') {
+      router.push('/role-list');
+    }
   } catch (error) {
-    console.error('Error creating role:', error);
+    console.error('Error updating data:', error);
   }
 };
 </script>

@@ -6,9 +6,10 @@ import HomeView from '@/views/HomeView.vue';
 
 import UserList from '@/views/UserList.vue';
 import RoleList from '@/views/RoleList.vue';
-import CreateUserView from '@/views/CreateUserView.vue';
+import UserCreateView from '@/views/UserCreateView.vue';
 import UserEditView from '@/views/UserEditView.vue';
 import RoleCreateView from '@/views/RoleCreateView.vue';
+import RoleEditView from '@/views/RoleEditView.vue';
 
 
 
@@ -39,9 +40,9 @@ const router = createRouter({
           meta: { requiresAuth: true, roles: ['admin'] },
         },
         {
-          path: "/create-user",
+          path: "/user-create",
           name: "CreateUserView",
-          component: CreateUserView,
+          component: UserCreateView,
           meta: { requiresAuth: true, roles: ['admin'] },
         },
         {
@@ -58,11 +59,18 @@ const router = createRouter({
         },
 
         {
-          path: "/create-role", // Add the new route
+          path: "/create-role",
           name: "RoleCreateView",
           component: RoleCreateView,
           meta: { requiresAuth: true, roles: ['admin'] },
         },
+        {
+          path: "/role-edit/:id", 
+          name: "RoleEditView",
+          component: RoleEditView,
+          meta: { requiresAuth: true, roles: ['admin'] },
+        },
+        
       ],
     },
   ],

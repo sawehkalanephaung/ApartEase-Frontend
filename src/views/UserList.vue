@@ -211,7 +211,7 @@ onMounted(() => {
 });
 
 const onCreate = () => {
-  router.push('/create-user');
+  router.push('/user-create');
 };
 
 const onEdit = async (userId) => {
