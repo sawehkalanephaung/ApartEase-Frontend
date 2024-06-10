@@ -77,8 +77,8 @@ const user = ref({
 const fetchData = async () => {
   try {
     const response = await apiClient.get(`/user/list/${route.params.id}`);
-    if (response.data && response.data.user) {
-      user.value = response.data.user;
+    if (response.data && response.data.User) {
+      user.value = response.data.User;
     } else {
       console.error('User data not available in API response');
     }
@@ -102,6 +102,7 @@ const onSubmit = async () => {
   }
 
   try {
+    console.log(`Submitting data to /user/edit/${route.params.id}`, user.value); // Debugging line
     const response = await apiClient.post(`/user/edit/${route.params.id}`, user.value);
     const result = response.data;
 
@@ -110,10 +111,8 @@ const onSubmit = async () => {
       return;
     }
 
-    alert(result.message);
-    if (result.status === 'ok') {
-      router.push('/user-list');
-    }
+    // alert(result.message);
+    router.push('/user-list');
   } catch (error) {
     console.error('Error updating data:', error);
   }

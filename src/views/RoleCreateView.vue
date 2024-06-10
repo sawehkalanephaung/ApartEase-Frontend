@@ -46,7 +46,7 @@ const onSubmit = async () => {
     const response = await apiClient.post('/dev/role/add', {
       role_name: role.value.role_name,
     });
-    alert(response.data.message);
+    // alert(response.data.message);
     router.push('/role-list'); // don't check status = ok but redirec to 
 
     // // if will redirect to role-list if status is = ok

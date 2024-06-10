@@ -8,7 +8,7 @@
         @click="onCreate"
         class="ml-3 bg-primary hover:bg-emerald-400 text-white px-4 py-2 rounded"
       >
-        <router-link to="/rolelist/create-role" class="flex items-center">
+        <router-link to="/create-role" class="flex items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -210,10 +210,10 @@ const onDelete = async (roleId) => {
   try {
     const response = await apiClient.delete(`/role/del/${roleId}`, {
       headers: {
-        "x-access-token": JWT_TOKEN,
+        "x-access-token": localStorage.getItem("token"),
       },
     });
-    alert(response.data.message);
+    // alert(response.data.message);
     fetchData();
   } catch (error) {
     console.error("Error deleting role:", error);

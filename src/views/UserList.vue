@@ -8,7 +8,7 @@
         @click="onCreate"
         class="ml-3 bg-primary hover:bg-emerald-400 text-white px-4 py-2 rounded"
       >
-        <router-link to="/userlist/create-user" class="flex items-center">
+        <router-link to="/create-user" class="flex items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -35,12 +35,12 @@
             <th
               class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
             >
-              username
+              Username
             </th>
             <th
               class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
             >
-              role
+              Role
             </th>
             <th
               class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider"
@@ -60,12 +60,11 @@
             </td>
           </tr>
           <!-- Render user rows with pagination -->
-          <tr v-else v-for="(user, index) in paginatedUsers" :key="index">
+          <tr v-else v-for="(user, index) in users" :key="index">
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
               {{ user.username }}
             </td>
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              <!-- {{ user.has_admin_role[0].name }} -->
               {{
                 user.has_admin_role && user.has_admin_role.length > 0
                   ? user.has_admin_role[0].name
@@ -147,10 +146,11 @@
               {{ ' ' }}
               of
               {{ ' ' }}
-              <span class="font-medium">{{ users.length }}</span>
+              <span class="font-medium">{{ totalUsers }}</span>
               {{ ' ' }}
               results
             </p>
+         
           </div>
           <div>
             <nav
@@ -188,24 +188,34 @@
 
 <script setup>
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid';
-import router from '@/router';
-import { computed, ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { ref, onMounted, watchEffect } from 'vue';
 import apiClient from '@/services/AxiosClient.js';
 
+const router = useRouter();
 const users = ref([]); // Reactive variable to store user data
+const totalPages = ref(0);
+const currentPage = ref(1);
+const totalUsers = ref(0);
 
 // Fetch user list from the backend API on component mount
 const fetchData = async () => {
   try {
-    const response = await apiClient.get('/user/list');
-    console.log(response);
-    users.value = response.data.Users;
+    const response = await apiClient.get('/user/list', {
+      params: {
+        page: currentPage.value,
+      },
+    });
+    const data = response.data.User;
+    users.value = data.slice(0, -1); // Exclude the last item which contains pagination info
+    const pageData = data[data.length - 1];
+    totalPages.value = pageData.total_pages;
+    currentPage.value = pageData.page;
+    totalUsers.value = users.value.length;
   } catch (error) {
     console.error('Error fetching data:', error);
-   
   }
 };
-
 
 onMounted(() => {
   fetchData();
@@ -227,43 +237,43 @@ const onDelete = async (userId) => {
 
     // Optionally, you can update the users list after successful deletion
     users.value = users.value.filter((user) => user.id !== userId);
+    fetchData(); // Refresh the data after deletion
   } catch (error) {
     console.error(error);
   }
 };
 
-// Pagination configuration
-const itemsPerPage = 5; // Number of items to display per page
-const currentPage = ref(1); // Current page number
+// Pagination controls
+const start = ref(0);
+const end = ref(0);
 
-// Computed properties for pagination
-const paginatedUsers = computed(() =>
-  users.value.slice(start.value, end.value)
-);
-const totalPages = computed(() => Math.ceil(users.value.length / itemsPerPage));
-const start = computed(() => (currentPage.value - 1) * itemsPerPage);
-const end = computed(() =>
-  Math.min(start.value + itemsPerPage, users.value.length)
-);
+const updatePagination = () => {
+  start.value = (currentPage.value - 1) * 5;
+  end.value = Math.min(start.value + 5, users.value.length);
+};
 
-// Function to navigate to previous page
 const prevPage = () => {
   if (currentPage.value > 1) {
     currentPage.value--;
+    fetchData();
   }
 };
 
-// Function to navigate to next page
 const nextPage = () => {
-  if (end.value < users.value.length) {
+  if (currentPage.value < totalPages.value) {
     currentPage.value++;
+    fetchData();
   }
 };
 
-// Function to navigate to a specific page
 const goToPage = (page) => {
   currentPage.value = page;
+  fetchData();
 };
+
+watchEffect(() => {
+  updatePagination();
+});
 </script>
 
 <style scoped>
