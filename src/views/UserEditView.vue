@@ -25,8 +25,9 @@
             required
           />
         </div>
+
         <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="avatar">Role</label>
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="role">Role</label>
           <select
             id="role"
             name="role"
@@ -60,95 +61,65 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import apiClient from '../services/AxiosClient'
+import { ref, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import apiClient from '@/services/AxiosClient.js';
 
-const router = useRouter()
-const route = useRoute()
+const router = useRouter();
+const route = useRoute();
 
 const user = ref({
   username: '',
   password: '',
   role: '',
-})
+});
 
 const fetchData = async () => {
   try {
-    const myHeaders = new Headers()
-    myHeaders.append('Content-Type', 'application/json')
-    myHeaders.append('x-access-token', JWT_TOKEN)
-
-    const requestOptions = {
-      method: 'GET',
-      headers: myHeaders,
-      redirect: 'follow',
+    const response = await apiClient.get(`/user/list/${route.params.id}`);
+    if (response.data && response.data.user) {
+      user.value = response.data.user;
+    } else {
+      console.error('User data not available in API response');
     }
-    const response = await fetch(`${API_URL}/user/list/${route.params.id}`, requestOptions)
-    if (!response.ok) {
-      console.error('Error fetching user data:', response.status, response.statusText)
-      return
-    }
-    const result = await response.json()
-    if (!result.user) {
-      console.error('User data not available in API response')
-      return
-    }
-    user.value = result.user
   } catch (error) {
-    console.error('Error fetching data:', error)
+    console.error('Error fetching data:', error);
   }
-}
+};
 
 onMounted(() => {
-  fetchData()
-})
+  fetchData();
+});
 
 const cancel = () => {
-  router.push('/userlist')
-}
+  router.push('/user-list');
+};
 
 const onSubmit = async () => {
   if (!user.value.username || !user.value.password || !user.value.role) {
-    console.error('User data is incomplete')
-    return
-  }
-
-  const myHeaders = new Headers()
-  myHeaders.append('Content-Type', 'application/json')
-  myHeaders.append('x-access-token', JWT_TOKEN)
-
-  const raw = JSON.stringify({
-    username: user.value.username,
-    password: user.value.password,
-    role: user.value.role,
-  })
-
-  const requestOptions = {
-    method: 'POST',
-    headers: myHeaders,
-    body: raw,
-    redirect: 'follow',
+    console.error('User data is incomplete');
+    return;
   }
 
   try {
-    const response = await fetch(`${API_URL}/user/edit/${route.params.id}`, requestOptions)
-    const result = await response.json()
+    const response = await apiClient.post(`/user/edit/${route.params.id}`, user.value);
+    const result = response.data;
 
     if (result.message === 'The role does not exist!') {
-      alert(result.message)
-      return
+      alert(result.message);
+      return;
     }
 
-    alert(result.message)
+    alert(result.message);
     if (result.status === 'ok') {
-      router.push('/userlist')
+      router.push('/user-list');
     }
   } catch (error) {
-    console.error('Error updating data:', error)
+    console.error('Error updating data:', error);
   }
-}
+};
 </script>
+
 <style scoped>
 /* Your scoped styles here */
 </style>

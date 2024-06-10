@@ -50,57 +50,77 @@
   </div>
 </template>
 
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import apiClient from "@/services/AxiosClient.js";
+import { useStore } from 'vuex';
 
-<script>
-import AuthService from '@/services/AuthService';
+const router = useRouter();
+const store = useStore();
 
-export default {
-  name: 'UserLogin',
-  data() {
-    return {
-      username: '',
-      password: '',
-      message: ''
+const username = ref('');
+const password = ref('');
+const message = ref('');
+
+const login = async () => {
+  try {
+    const user = {
+      username: username.value,
+      password: password.value
     };
-  },
-  methods: {
-    async login() {
-      try {
-        const user = {
-          username: this.username,
-          password: this.password
-        };
-        const response = await AuthService.login(user);
-        const userData = response.user;
 
+    const response = await apiClient.post("login", user);
 
-         // Set the user and role in Vuex store
-        this.$store.commit('setUser', userData);
-        
-         // Check if the role property exists in userData
+    // Log the entire response for debugging
+    console.log('API response:', response);
+
+    const userData = response.data?.User;
+    const token = response.data?.User?.token;
+
+    // Ensure userData and token are defined
+    if (!userData || !token) {
+      throw new Error('User data or token is undefined');
+    }
+
+    // Ensure the role property is set
+    if (!userData.role || !Array.isArray(userData.role) || userData.role.length === 0) {
+      userData.role = 'user'; // Set a default role if it's missing
+    } else {
+      // Extract the role name from the first role object
+      userData.role = userData.role[0].name;
+    }
+
+    // Set the token and user in localStorage
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(userData));
+
+    // Set the user and role in Vuex store
+    store.commit('setUser', userData);
+    store.commit('setJwtToken', token);
+    
+
+    // Check if the role property exists in userData
     if (userData && userData.role) {
-      this.$store.commit('setRole', userData.role);
+      store.commit('setRole', userData.role);
     } else {
       // Set a default role if the role property is missing or undefined
-      this.$store.commit('setRole', 'user');
+      store.commit('setRole', 'user');
     }
-    
-    this.$store.commit('setJwtToken', response.token);
-    
+
     // Redirect to SideNav after successful login
-    this.$router.push('/residentlist');
-      } catch (error) {
-        // Log the error for debugging
-        console.error('Login error:', error);
-        // Check if error object exists and contains data property
-        if (error.response && error.response.data && error.response.data.message) {
-          // Display the error message from the server
-          this.message = error.response.data.message;
-        } else {
-          // Display a generic error message
-          this.message = 'An error occurred during login. Please try again.';
-        }
-      }
+    router.push('/home');
+  } catch (error) {
+    // Log the error for debugging
+    console.error('Login error:', error);
+
+    // Check if error object exists and contains data property
+    if (error.response && error.response.data && error.response.data.message) {
+      // Display the error message from the server
+      message.value = error.response.data.message;
+    } else {
+      // Display a generic error message
+      message.value = 'An error occurred during login. Please try again.';
     }
   }
 };

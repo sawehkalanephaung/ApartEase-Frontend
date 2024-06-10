@@ -14,17 +14,10 @@
           />
         </div>
         <div class="flex items-center justify-between mt-10">
-          <button
-            type="submit"
-            class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
+          <button type="submit" class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
             Submit
           </button>
-          <button
-            type="button"
-            @click="cancel"
-            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
+          <button type="button" @click="cancel" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
             Cancel
           </button>
         </div>
@@ -34,62 +27,47 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import apiClient from '../services/AxiosClient'
+import { ref, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import apiClient from '@/services/AxiosClient';
 
-
-const router = useRouter()
-const route = useRoute()
+const router = useRouter();
+const route = useRoute();
 
 const role = ref({
   role_name: '',
-})
+});
 
 const fetchData = async () => {
   try {
-    const response = await fetch(`${API_URL}/role/list/${route.params.id}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-access-token': JWT_TOKEN,
-      },
-    })
-    const result = await response.json()
-    role.value = result.message
+    const response = await apiClient.get(`/role/list/${route.params.id}`);
+    role.value = response.data.role;
   } catch (error) {
-    console.error('Error fetching data:', error)
+    console.error('Error fetching data:', error);
   }
-}
+};
 
 onMounted(() => {
-  fetchData()
-})
+  fetchData();
+});
 
 const cancel = () => {
-  router.push('/rolelist')
-}
+  router.push('/role-list');
+};
 
 const onSubmit = async () => {
   try {
-    const response = await fetch(`${API_URL}/role/edit/${route.params.id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-access-token': JWT_TOKEN,
-      },
-      body: JSON.stringify({
-        role_name: role.value.role_name,
-      }),
-    })
-    const result = await response.json()
-    alert(result.message)
-    if (result.status === 'ok') {
-      router.push('/rolelist')
+    const response = await apiClient.post(`/role/edit/${route.params.id}`, {
+      role_name: role.value.role_name,
+    });
+    alert(response.data.message);
+    if (response.data.status === 'ok') {
+      router.push('/role-list');
     }
   } catch (error) {
-    console.error('Error updating data:', error)
+    console.error('Error updating data:', error);
   }
-}
+};
 </script>
 
 <style scoped>
