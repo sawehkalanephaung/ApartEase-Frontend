@@ -1,42 +1,40 @@
 <template>
   <div class="flex items-center justify-center h-full">
     <div class="w-full max-w-xl p-6 bg-white rounded-md shadow-md">
-      <h3 class="text-2xl font-medium text-gray-700 text-center">Create User</h3>
+      <h3 class="text-2xl font-medium text-gray-700 text-center">Create Resident</h3>
 
       <form @submit.prevent="register" class="rounded px-8 pt-6 pb-8 mb-4">
         <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Username</label>
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="roomNumber">Room No</label>
           <input
-            v-model="username"
+            v-model="roomNumber"
             type="text"
-            id="username"
+            id="roomNumber"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             required
           />
         </div>
 
         <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Name</label>
           <input
-            v-model="password"
-            type="password"
-            id="password"
+            v-model="name"
+            type="text"
+            id="name"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             required
           />
         </div>
+
         <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="role">Role</label>
-          <select
-            id="role"
-            name="role"
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="lineId">Line ID</label>
+          <input
+            v-model="lineId"
+            type="text"
+            id="lineId"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             required
-            v-model="role"
-            class="block w-full appearance-none bg-white border border-gray-300 rounded-md py-2 px-3 pr-10 text-gray-900 shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-600 sm:text-sm"
-          >
-            <option value="User">User</option>
-            <option value="Admin">Admin</option>
-          </select>
+          />
         </div>
 
         <div class="flex items-center justify-between mt-10">
@@ -67,24 +65,22 @@ import apiClient from "@/services/AxiosClient.js";
 
 const router = useRouter();
 
-const username = ref('');
-const password = ref('');
-const role = ref('User'); // default
+const roomNumber = ref('');
+const name = ref('');
+const lineId = ref('');
 const message = ref('');
 
 const register = async () => {
   try {
-    const user = {
-      username: username.value,
-      password: password.value,
-      role: role.value
+    const resident = {
+      roomNumber: roomNumber.value,
+      name: name.value,
+      lineId: lineId.value
     };
-    const response = await apiClient.post("/user/add", user);
-    // Redirect to user list page after successful registration
-    router.push('/user-list');
+    const response = await apiClient.post("/resident/add", resident);
+    // Redirect to resident list page after successful creating
+    router.push('/resident-list');
   } catch (error) {
-    // Log the error for debugging
-    console.error('Registration error:', error);
     // Check if error object exists and contains data property
     if (error.response && error.response.data && error.response.data.message) {
       // Display the error message from the server
@@ -97,7 +93,7 @@ const register = async () => {
 };
 
 const cancel = () => {
-  router.push('/user-list');
+  router.push('/resident-list');
 };
 </script>
 

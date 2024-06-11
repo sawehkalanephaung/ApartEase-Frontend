@@ -14,17 +14,10 @@
           />
         </div>
         <div class="flex items-center justify-between mt-10">
-          <button
-            type="submit"
-            class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
+          <button type="submit" class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
             Submit
           </button>
-          <button
-            type="button"
-            @click="cancel"
-            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
+          <button type="button" @click="cancel" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
             Cancel
           </button>
         </div>
@@ -34,41 +27,36 @@
 </template>
 
 <script setup>
-import apiClient from '@/services/AxiosClient'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import apiClient from '@/services/AxiosClient';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const router = useRouter()
+const router = useRouter();
 
 const role = ref({
   role_name: '',
-})
+});
 
 const cancel = () => {
-  router.push('/rolelist')
-}
+  router.push('/role-list');
+};
 
 const onSubmit = async () => {
   try {
-    const response = await fetch(`${API_URL}/role/add`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-access-token': JWT_TOKEN,
-      },
-      body: JSON.stringify({
-        role_name: role.value.role_name,
-      }),
-    })
-    const result = await response.json()
-    alert(result.message)
-    if (result.status === 'ok') {
-      router.push('/rolelist')
-    }
+    const response = await apiClient.post('/dev/role/add', {
+      role_name: role.value.role_name,
+    });
+    // alert(response.data.message);
+    router.push('/role-list'); // don't check status = ok but redirec to 
+
+    // // if will redirect to role-list if status is = ok
+    // if (response.data.status === 'ok') {
+    //   router.push('/role-list');
+    // }
   } catch (error) {
-    console.error('Error creating role:', error)
+    console.error('Error creating role:', error);
   }
-}
+};
 </script>
 
 <style scoped>
