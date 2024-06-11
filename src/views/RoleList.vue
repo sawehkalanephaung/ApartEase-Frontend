@@ -1,14 +1,14 @@
 <template>
-  <h3 class="text-3xl font-medium text-gray-700">User Management</h3>
+  <h3 class="text-3xl font-medium text-gray-700">Role Management</h3>
   <div class="mt-8">
-    <h2 class="text-xl font-semibold leading-tight text-gray-700">User List</h2>
+    <h2 class="text-xl font-semibold leading-tight text-gray-700">Role List</h2>
     <div class="mt-6 flex justify-between items-center">
       <div class="relative w-full max-w-md"></div>
       <button
         @click="onCreate"
         class="ml-3 bg-primary hover:bg-emerald-400 text-white px-4 py-2 rounded"
       >
-        <router-link to="/create-user" class="flex items-center">
+        <router-link to="/create-role" class="flex items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -23,7 +23,7 @@
               d="M12 4.5v15m7.5-7.5h-15"
             />
           </svg>
-          <span class="ml-2">Create User</span>
+          <span class="ml-2">Create Role</span>
         </router-link>
       </button>
     </div>
@@ -35,12 +35,7 @@
             <th
               class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
             >
-              Username
-            </th>
-            <th
-              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
-            >
-              Role
+              Role Name
             </th>
             <th
               class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider"
@@ -50,32 +45,23 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Display a message if no users are found -->
-          <tr v-if="!users || users.length === 0">
+          <tr v-if="!roles || roles.length === 0">
             <td
-              colspan="4"
+              colspan="2"
               class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center"
             >
-              No users found.
+              No roles found.
             </td>
           </tr>
-          <!-- Render user rows with pagination -->
-          <tr v-else v-for="(user, index) in users" :key="index">
+          <tr v-else v-for="(role, index) in roles" :key="index">
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              {{ user.username }}
-            </td>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-              {{
-                user.has_admin_role && user.has_admin_role.length > 0
-                  ? user.has_admin_role[0].name
-                  : ''
-              }}
+              {{ role.role_name }}
             </td>
             <td
               class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center"
             >
               <button
-                @click="() => onEdit(user.id)"
+                @click="() => onEdit(role.id)"
                 class="text-emerald-600 hover:text-emerald-900 mr-1"
               >
                 <svg
@@ -95,7 +81,7 @@
                 </svg>
               </button>
               <button
-                @click="() => onDelete(user.id)"
+                @click="() => onDelete(role.id)"
                 class="text-emerald-600 hover:text-emerald-900 ml-1"
               >
                 <svg
@@ -115,8 +101,9 @@
           </tr>
         </tbody>
       </table>
-      <!-- Pagination controls -->
-      <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+     
+ <!-- Pagination controls -->
+ <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
     <div class="flex flex-1 justify-between sm:hidden">
       <a @click="prevPage" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">Previous</a>
       <a @click="nextPage" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">Next</a>
@@ -144,33 +131,31 @@
   </div>
   <router-view />
 </template>
-
-
 <script setup>
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid';
-import { ref, onMounted, watchEffect } from 'vue';
+import { ref, computed, onMounted, watchEffect  } from 'vue';
 import { useRouter } from 'vue-router';
+
 import apiClient from '@/services/AxiosClient.js';
 import { usePagination } from '@/composables/usePagination';
-import { useStore } from 'vuex';
 
 const router = useRouter();
-const store = useStore();
-const users = ref([]);
+const roles = ref([]); // Reactive variable to store role data
 
+// Fetch role list from the backend API on component mount
 const fetchData = async () => {
   try {
-    const response = await apiClient.get('/user/list', {
+    const response = await apiClient.get('/role/list', {
       params: {
         page: currentPage.value,
       },
     });
-    const data = response.data.User;
-    users.value = data.slice(0, -1);
+    const data = response.data.Role;
+    roles.value = data.slice(0, -1);
     const pageData = data[data.length - 1];
     totalPages.value = pageData.total_pages;
     currentPage.value = pageData.page;
-    totalItems.value = pageData.total_users;
+    totalItems.value = pageData.total_roles;
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -183,31 +168,28 @@ onMounted(() => {
 });
 
 const onCreate = () => {
-  router.push('/create-user');
+  router.push('/create-role');
 };
 
-const onEdit = async (userId) => {
-  router.push({ name: 'UserEditView', params: { id: userId } });
+const onEdit = (roleId) => {
+  router.push({ name: 'RoleEditView', params: { id: roleId } });
 };
 
-const onDelete = async (userId) => {
-  const currentUser = store.state.user;
-  const userToDelete = users.value.find(user => user.id === userId);
-
-  if (currentUser && userToDelete && currentUser.username === userToDelete.username) {
-    alert("You cannot delete the currently logged-in account.");
-    return;
-  }
-
+const onDelete = async (roleId) => {
   try {
-    const response = await apiClient.delete(`/user/del/${userId}`);
-    const result = await response.data;
-    // alert(result.message);
+    const response = await apiClient.delete(`/role/del/${roleId}`, {
+      headers: {
+        "x-access-token": localStorage.getItem("token"),
+      },
+    });
+    // alert(response.data.message);
     fetchData();
   } catch (error) {
-    console.error(error);
+    console.error("Error deleting role:", error);
   }
 };
+
+
 
 watchEffect(() => {
   fetchData();
