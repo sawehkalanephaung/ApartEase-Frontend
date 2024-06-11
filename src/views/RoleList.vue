@@ -53,7 +53,7 @@
               No roles found.
             </td>
           </tr>
-          <tr v-else v-for="(role, index) in paginatedRoles" :key="index">
+          <tr v-else v-for="(role, index) in roles" :key="index">
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
               {{ role.role_name }}
             </td>
@@ -101,98 +101,67 @@
           </tr>
         </tbody>
       </table>
-      <!-- Pagination controls -->
-      <div
-        class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
-      >
-        <div class="flex flex-1 justify-between sm:hidden">
-          <a
-            @click="prevPage"
-            class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
-            >Previous</a
-          >
-          <a
-            @click="nextPage"
-            class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
-            >Next</a
-          >
-        </div>
-        <div
-          class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between"
-        >
-          <div>
-            <p class="text-sm text-gray-700">
-              Showing
-              {{ ' ' }}
-              <span class="font-medium">{{ start + 1 }}</span>
-              {{ ' ' }}
-              to
-              {{ ' ' }}
-              <span class="font-medium">{{ end }}</span>
-              {{ ' ' }}
-              of
-              {{ ' ' }}
-              <span class="font-medium">{{ roles.length }}</span>
-              {{ ' ' }}
-              results
-            </p>
-          </div>
-          <div>
-            <nav
-              class="isolate inline-flex -space-x-px rounded-md shadow-sm"
-              aria-label="Pagination"
-            >
-              <a
-                @click="prevPage"
-                class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer"
-              >
-                <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
-              </a>
-              <span
-                v-for="page in totalPages"
-                :key="page"
-                @click="goToPage(page)"
-                class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer"
-                :class="{ 'bg-emerald-600 text-white': page === currentPage }"
-                >{{ page }}</span
-              >
-              <a
-                @click="nextPage"
-                class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer"
-              >
-                <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
-              </a>
-            </nav>
-          </div>
-        </div>
+     
+ <!-- Pagination controls -->
+ <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+    <div class="flex flex-1 justify-between sm:hidden">
+      <a @click="prevPage" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">Previous</a>
+      <a @click="nextPage" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">Next</a>
+    </div>
+    <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+      <div>
+        <p class="text-sm text-gray-700">
+          Showing {{ ' ' }} <span class="font-medium">{{ start + 1 }}</span> {{ ' ' }} to {{ ' ' }} <span class="font-medium">{{ end }}</span> {{ ' ' }} of {{ ' ' }} <span class="font-medium">{{ totalItems }}</span> {{ ' ' }} results
+        </p>
+      </div>
+      <div>
+        <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+          <a @click="prevPage" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer">
+            <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
+          </a>
+          <span v-for="page in totalPages" :key="page" @click="goToPage(page)" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer" :class="{ 'bg-emerald-600 text-white': page === currentPage }">{{ page }}</span>
+          <a @click="nextPage" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer">
+            <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
+          </a>
+        </nav>
       </div>
     </div>
   </div>
+  </div>
+  </div>
   <router-view />
 </template>
-
 <script setup>
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid';
-import { ref, computed, onMounted } from 'vue';
-import router from '@/router';
+import { ref, computed, onMounted, watchEffect  } from 'vue';
+import { useRouter } from 'vue-router';
+
 import apiClient from '@/services/AxiosClient.js';
+import { usePagination } from '@/composables/usePagination';
 
-import axios from 'axios';
-
+const router = useRouter();
 const roles = ref([]); // Reactive variable to store role data
-// const users = ref([]); 
-// Fetch role list from the backend API on component mount
 
+// Fetch role list from the backend API on component mount
 const fetchData = async () => {
   try {
-    const response = await apiClient.get('/role/list');
-
-    roles.value = response.data.Role;
-  
+    const response = await apiClient.get('/role/list', {
+      params: {
+        page: currentPage.value,
+      },
+    });
+    const data = response.data.Role;
+    roles.value = data.slice(0, -1);
+    const pageData = data[data.length - 1];
+    totalPages.value = pageData.total_pages;
+    currentPage.value = pageData.page;
+    totalItems.value = pageData.total_roles;
   } catch (error) {
     console.error('Error fetching data:', error);
   }
 };
+
+const { currentPage, totalPages, totalItems, start, end, prevPage, nextPage, goToPage } = usePagination(fetchData);
 
 onMounted(() => {
   fetchData();
@@ -220,38 +189,11 @@ const onDelete = async (roleId) => {
   }
 };
 
-// Pagination configuration
-const itemsPerPage = 5; // Number of items to display per page
-const currentPage = ref(1); // Current page number
 
-// Computed properties for pagination
-const paginatedRoles = computed(() =>
-  roles.value.slice(start.value, end.value)
-);
-const totalPages = computed(() => Math.ceil(roles.value.length / itemsPerPage));
-const start = computed(() => (currentPage.value - 1) * itemsPerPage);
-const end = computed(() =>
-  Math.min(start.value + itemsPerPage, roles.value.length)
-);
 
-// Function to navigate to previous page
-const prevPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-  }
-};
-
-// Function to navigate to next page
-const nextPage = () => {
-  if (end.value < roles.value.length) {
-    currentPage.value++;
-  }
-};
-
-// Function to navigate to a specific page
-const goToPage = (page) => {
-  currentPage.value = page;
-};
+watchEffect(() => {
+  fetchData();
+});
 </script>
 
 <style scoped>

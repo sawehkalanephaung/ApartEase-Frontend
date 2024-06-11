@@ -101,7 +101,7 @@ const onSubmit = async () => {
   }
 
   try {
-    const response = await apiClient.post(`/resident/edit/${route.params.id}`, resident.value);
+    const response = await apiClient.put(`/resident/edit/${route.params.id}`, resident.value);
     const result = response.data;
 
     if (result.message === 'The resident does not exist!') {
@@ -109,10 +109,12 @@ const onSubmit = async () => {
       return;
     }
 
-    alert(result.message);
-    if (result.status === 'ok') {
-      router.push('/resident-list');
-    }
+    router.push('/resident-list');
+    // alert(result.message);
+    // router.push('/resident-list');
+    // if (result.status === 'ok') {
+    //   router.push('/resident-list');
+    // }
   } catch (error) {
     console.error('Error updating data:', error);
   }

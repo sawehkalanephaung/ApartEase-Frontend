@@ -66,7 +66,7 @@ const cancel = () => {
 
 const onSubmit = async () => {
   try {
-    const response = await apiClient.post(`/role/edit/${route.params.id}`, {
+    const response = await apiClient.put(`/role/edit/${route.params.id}`, {
       role_name: role.value.role_name,
     });
     // alert(response.data.message);

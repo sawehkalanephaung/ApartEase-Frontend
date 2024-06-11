@@ -79,7 +79,7 @@ const register = async () => {
       password: password.value,
       role: role.value
     };
-    const response = await apiClient.post("/dev/user/add", user);
+    const response = await apiClient.post("/user/add", user);
     // Redirect to user list page after successful registration
     router.push('/user-list');
   } catch (error) {

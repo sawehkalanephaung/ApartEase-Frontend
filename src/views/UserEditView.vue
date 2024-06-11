@@ -103,14 +103,13 @@ const onSubmit = async () => {
 
   try {
     console.log(`Submitting data to /user/edit/${route.params.id}`, user.value); // Debugging line
-    const response = await apiClient.post(`/user/edit/${route.params.id}`, user.value);
+    const response = await apiClient.put(`/user/edit/${route.params.id}`, user.value);
     const result = response.data;
 
     if (result.message === 'The role does not exist!') {
       alert(result.message);
       return;
     }
-
     // alert(result.message);
     router.push('/user-list');
   } catch (error) {

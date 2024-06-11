@@ -192,7 +192,7 @@ const onDelete = async (userId) => {
   try {
     const response = await apiClient.delete(`/user/del/${userId}`);
     const result = await response.data;
-    alert(result.message);
+    // alert(result.message);
     fetchData();
   } catch (error) {
     console.error(error);
