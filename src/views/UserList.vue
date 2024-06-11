@@ -189,6 +189,14 @@ const onEdit = async (userId) => {
 };
 
 const onDelete = async (userId) => {
+  const currentUser = store.state.user;
+  const userToDelete = users.value.find(user => user.id === userId);
+
+  if (currentUser && userToDelete && currentUser.username === userToDelete.username) {
+    alert("You cannot delete the currently logged-in account.");
+    return;
+  }
+
   try {
     const response = await apiClient.delete(`/user/del/${userId}`);
     const result = await response.data;
