@@ -81,8 +81,6 @@ const register = async () => {
     // Redirect to resident list page after successful creating
     router.push('/resident-list');
   } catch (error) {
-    // Log the error for debugging
-    console.error('Create Resident error:', error);
     // Check if error object exists and contains data property
     if (error.response && error.response.data && error.response.data.message) {
       // Display the error message from the server

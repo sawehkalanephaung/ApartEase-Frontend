@@ -152,8 +152,10 @@ import { ref, onMounted, watchEffect } from 'vue';
 import { useRouter } from 'vue-router';
 import apiClient from '@/services/AxiosClient.js';
 import { usePagination } from '@/composables/usePagination';
+import { useStore } from 'vuex';
 
 const router = useRouter();
+const store = useStore();
 const users = ref([]);
 
 const fetchData = async () => {

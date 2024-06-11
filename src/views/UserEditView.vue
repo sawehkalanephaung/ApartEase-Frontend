@@ -35,8 +35,7 @@
             v-model="user.role"
             class="block w-full appearance-none bg-white border border-gray-300 rounded-md py-2 px-3 pr-10 text-gray-900 shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-600 sm:text-sm"
           >
-            <option value="User">User</option>
-            <option value="Admin">Admin</option>
+            <option v-for="role in roles" :key="role.id" :value="role.role_name">{{ role.role_name }}</option>
           </select>
         </div>
 
@@ -74,6 +73,8 @@ const user = ref({
   role: '',
 });
 
+const roles = ref([]);
+
 const fetchData = async () => {
   try {
     const response = await apiClient.get(`/user/list/${route.params.id}`);
@@ -87,8 +88,18 @@ const fetchData = async () => {
   }
 };
 
+const fetchRoles = async () => {
+  try {
+    const response = await apiClient.get('/role/list');
+    roles.value = response.data.Role.slice(0, -1); // Assuming the last item is pagination info
+  } catch (error) {
+    console.error('Error fetching roles:', error);
+  }
+};
+
 onMounted(() => {
   fetchData();
+  fetchRoles();
 });
 
 const cancel = () => {

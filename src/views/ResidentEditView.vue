@@ -78,9 +78,7 @@ const fetchData = async () => {
     const response = await apiClient.get(`/resident/list/${route.params.id}`);
     if (response.data && response.data.resident) {
       resident.value = response.data.resident;
-    } else {
-      console.error('Resident data not available in API response');
-    }
+    } 
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -109,14 +107,17 @@ const onSubmit = async () => {
       return;
     }
 
+    alert(result.message);
     router.push('/resident-list');
-    // alert(result.message);
-    // router.push('/resident-list');
-    // if (result.status === 'ok') {
-    //   router.push('/resident-list');
-    // }
+    if (result.status === 'ok') {
+      router.push('/resident-list');
+    }
   } catch (error) {
-    console.error('Error updating data:', error);
+    // Check if error object exists and contains data property
+    if (error.response && error.response.data && error.response.data.message) {
+      // Display the error message from the server
+      message.value = error.response.data.message;
+    } 
   }
 };
 </script>

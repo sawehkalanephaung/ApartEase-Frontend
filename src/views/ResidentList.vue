@@ -106,12 +106,19 @@ const fetchData = async () => {
       },
     });
     const data = response.data.Resident;
+
+    // Check if the data includes pagination metadata
     if (data.length > 0) {
-      residents.value = data.slice(0, -1);
+      // Assuming the last element contains the pagination metadata
       const pageData = data[data.length - 1];
+
+      // Update pagination details from the metadata
       totalPages.value = pageData.total_pages;
       currentPage.value = pageData.page;
       totalItems.value = pageData.total_resident;
+
+      // Exclude the metadata from the residents array
+      residents.value = data.slice(0, -1);
     } else {
       residents.value = [];
       totalPages.value = 0;
@@ -121,6 +128,7 @@ const fetchData = async () => {
     console.error('Error fetching data:', error);
   }
 };
+
 
 const { currentPage, totalPages, totalItems, start, end, prevPage, nextPage, goToPage } = usePagination(fetchData);
 
@@ -155,14 +163,22 @@ const searchResident = async () => {
     }
     const response = await apiClient.get(url);
     const result = response.data.Resident;
+
+    // Directly set the residents array to the search results
     if (Array.isArray(result)) {
-      residents.value = result;
+      residents.value = result.slice(0, -1); // Assuming last item is metadata
+      const pageData = result[result.length - 1];
+
+      // Update pagination details for the search results
+      totalPages.value = pageData.total_pages;
+      currentPage.value = pageData.page;
+      totalItems.value = residents.value.length;
     } else {
       residents.value = [result];
+      totalPages.value = 1;
+      currentPage.value = 1;
+      totalItems.value = 1;
     }
-    totalPages.value = 1;
-    currentPage.value = 1;
-    totalItems.value = residents.value.length;
   } catch (error) {
     console.error('Error searching resident:', error);
     residents.value = [];
@@ -170,6 +186,7 @@ const searchResident = async () => {
     totalItems.value = 0;
   }
 };
+
 
 watchEffect(() => {
   fetchData();
