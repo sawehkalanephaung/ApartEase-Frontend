@@ -3,7 +3,7 @@
   <div class="mt-4">
     <h2 class="text-lg font-semibold leading-tight text-gray-700">Resident List</h2>
     <div class="mt-4 flex flex-col sm:flex-row justify-between items-left">
-      <div class="relative w-full max-w-md mb-4 sm:mb-0 sm:mr-4">
+      <div class="relative w-full max-w-md mb-4 sm:mb-0 sm:mr-4 flex items-center">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
           <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
@@ -16,6 +16,12 @@
           class="w-full px-4 py-2 pl-8 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
           @keyup.enter="searchResident"
         />
+        <button @click="searchResident" class="ml-5 p-2.5 text-sm font-medium text-text bg-primary rounded-lg border hover:bg-emerald-400 text-white ">
+          <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+          </svg>
+          <span class="sr-only">Search</span>
+        </button>
       </div>
       <button @click="onCreate" class="bg-primary hover:bg-emerald-400 text-white px-4 py-2 rounded text-sm">
         Create Resident
