@@ -55,8 +55,8 @@
           <!-- customize login account-->
           <div class="container">
             <h2 id="title">Account</h2>
-            <p id="username"> Name:{{ username }}</p>
-            <p id="role">Role: {{ role }}</p>
+            <p id="userN"> Name:{{ username }}</p>
+            <p id="userR">Role: {{ role }}</p>
           </div>
 
           <div class="h-[50px]">
@@ -254,7 +254,7 @@ const isUserManagementActive = computed(() => {
   font-size: 16px;
   color:#1a202c;
 }
-#username{
+#userN{
   position: relative;
   color: #1a202c;
   font-size: 14px;
@@ -263,7 +263,7 @@ const isUserManagementActive = computed(() => {
   left:20px;
 }
 
-#role{
+#userR{
   position: relative;
   left:20px;
   color: #1a202c;
