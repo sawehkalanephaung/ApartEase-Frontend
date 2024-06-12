@@ -78,8 +78,17 @@ const register = async () => {
       lineId: lineId.value
     };
     const response = await apiClient.post("/resident/add", resident);
-    // Redirect to resident list page after successful creating
-    router.push('/resident-list');
+   
+    // Check if the response status is 201 (Created)
+    if (response.status === 201) {
+          // Show the message from the backend
+          alert(response.data.message);
+          // Redirect to resident list page after successful creation
+          router.push('/resident-list');
+        } else {
+          // Display the message from the backend if status is not 201
+          alert(response.data.message);
+        }
   } catch (error) {
     // Check if error object exists and contains data property
     if (error.response && error.response.data && error.response.data.message) {
