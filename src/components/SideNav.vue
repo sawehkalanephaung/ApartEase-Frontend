@@ -28,8 +28,6 @@
             </router-link>
 
            <!-- User Management Dropdown -->
-
-          <!--  v-if="role === 'admin'  || role ==='Admin'" -->
            <div v-if="role === 'admin'  || role ==='Admin'" :class="{'active-link': isUserManagementActive}" class="relative"  @mouseover="showUserManagementDropdown = true" @mouseleave="showUserManagementDropdown = false">
               <div class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800 transition duration-400 ease-in-out cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2">
@@ -54,21 +52,43 @@
           </div>
           </div>
 
-          <div class="flex flex-col items-center mt-auto mb-4">
-            <p class="text-sm font-medium">{{ username }}</p>
-            <p class="text-xs text-gray-600">{{ role }}</p>
+          <!-- customize login account-->
+          <div class="container">
+            <h2 id="title">Account</h2>
+            <p id="username"> Name:{{ username }}</p>
+            <p id="role">Role: {{ role }}</p>
           </div>
 
           <div class="h-[50px]">
             <div class="flex items-center justify-between">
-              <router-link to="/" @click="logout" class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-300 hover:text-gray-800 transition duration-400 ease-in-out" exact-active-class="active-link">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0110.5 3h6a2.25 2.25 0 012.25 2.25v13.5A2.25 2.25 0 0116.5 21h-6a2.25 2.25 0 01-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" />
+              <button
+                @click="showLogoutConfirm = true"
+                class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-300 hover:text-gray-800 transition duration-400 ease-in-out"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6 mr-2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M8.25 9V5.25A2.25 2.25 0 0110.5 3h6a2.25 2.25 0 012.25 2.25v13.5A2.25 2.25 0 0116.5 21h-6a2.25 2.25 0 01-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25"
+                  />
                 </svg>
                 Logout
-              </router-link>
+              </button>
             </div>
           </div>
+
+          <LogoutModal
+            :show="showLogoutConfirm"
+            @confirm-logout="logout"
+            @close="showLogoutConfirm = false"
+          />
         </div>
       </div>
     </div>
@@ -86,6 +106,7 @@
         </div>
            <!-- Breadcrumb -->
            <div class="text-sm breadcrumbs ml-4">
+         
           <ul>
             <li><a @click="navigateTo('home')">Home</a></li>
             <li v-if="breadcrumb.length > 1">{{ breadcrumb[1] }}</li>
@@ -106,13 +127,16 @@
       </div>
     </div>
     <!-- Main -->
-  </div>
+
+</div>
+
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
+import LogoutModal from '../components/LogoutModal.vue'
 
 const store = useStore();
 const router = useRouter();
@@ -124,6 +148,7 @@ const showDropDown = ref(false);
 const showSide = ref(true);
 const showSuccessMessage = ref(false);
 const showUserManagementDropdown = ref(false);
+const showLogoutConfirm = ref(false)
 // breadcrumbs
 const breadcrumb = ref(["Home"]);
 
@@ -138,16 +163,20 @@ const handleResize = () => {
 };
 
 const logout = () => {
-  // Remove token and user from local storage
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
+  // // Remove token and user from local storage
+  // localStorage.removeItem("token");
+  // localStorage.removeItem("user");
 
-  // Clear user data in Vuex store
-  store.commit('setUser', null);
-  store.commit('setJwtToken', null);
+  // // Clear user data in Vuex store
+  // store.commit('setUser', null);
+  // store.commit('setJwtToken', null);
 
-  // Show the success message
-  showSuccessMessage.value = true;
+  // // Show the success message
+  // showSuccessMessage.value = true;
+  // Perform any logout logic here (e.g., clear user data, make API call)
+  console.log('User logged out')
+  showLogoutConfirm.value = false
+  router.push('/')
 
   // Redirect to login page
   router.push("/");
@@ -215,5 +244,69 @@ const isUserManagementActive = computed(() => {
 .active-link {
   background-color: #e2e8f0; /* Example background color for active link */
   color: #1a202c; /* Example text color for active link */
+}
+
+.container{
+  align-items: center;
+  position: absolute;
+  bottom: 100px;
+  left: 16px;
+  font-size: 16px;
+  color:#1a202c;
+}
+#username{
+  position: relative;
+  color: #1a202c;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  left:20px;
+}
+
+#role{
+  position: relative;
+  left:20px;
+  color: #1a202c;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 20px;
+
+}
+
+@media (max-width: 767px) {
+  #title {
+    text-align: center;
+    color: #1a202c;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #1a202c;
+    width: 30%;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  #title {
+    text-align: center;
+    color: #1a202c;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #1a202c;
+    width: 20%;
+  }
+}
+
+@media (min-width: 992px) {
+  #title {
+    padding: 10px;
+    text-align: center;
+    color: #1a202c;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #1a202c;
+    width: 14%;
+  }
 }
 </style>

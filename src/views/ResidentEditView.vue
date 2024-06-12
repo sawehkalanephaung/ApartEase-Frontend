@@ -37,20 +37,21 @@
           />
         </div>
 
+      
         <div class="flex items-center justify-between mt-10">
           <button
             type="submit"
+          
             class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             Submit
           </button>
-          <button
-            type="submit"
+          <button 
+            type="button"
             @click="cancel"
-            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Cancel
-          </button>
+           class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded">
+          Back
+        </button>
         </div>
       </form>
       <p v-if="message" class="text-error mt-5">{{ message }}</p>

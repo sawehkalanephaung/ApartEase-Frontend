@@ -33,7 +33,7 @@
         <thead>
           <tr>
             <th
-              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+              class=" px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider pl-10"
             >
               Role Name
             </th>
@@ -48,13 +48,13 @@
           <tr v-if="!roles || roles.length === 0">
             <td
               colspan="2"
-              class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center"
+              class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center "
             >
               No roles found.
             </td>
           </tr>
           <tr v-else v-for="(role, index) in roles" :key="index">
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm pl-10">
               {{ role.role_name }}
             </td>
             <td
@@ -62,7 +62,7 @@
             >
               <button
                 @click="() => onEdit(role.id)"
-                class="text-emerald-600 hover:text-emerald-900 mr-1"
+                class="text-emerald-600 hover:text-emerald-900 mr-1 pr-2"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -82,7 +82,7 @@
               </button>
               <button
                 @click="() => onDelete(role.id)"
-                class="text-emerald-600 hover:text-emerald-900 ml-1"
+                class="text-red-500 hover:text-red-700 ml-4"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

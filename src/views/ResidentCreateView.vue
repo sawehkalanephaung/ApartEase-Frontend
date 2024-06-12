@@ -1,10 +1,15 @@
 <template>
   <div class="flex items-center justify-center h-full">
     <div class="w-full max-w-xl p-6 bg-white rounded-md shadow-md">
-      <h3 class="text-2xl font-medium text-gray-700">Create Resident</h3>
-      <form @submit.prevent="register" class="rounded px-8 pt-6 pb-8 mb-4 needs-validation" novalidate>
+      <h3 class="text-2xl font-medium text-gray-700 text-center">Create Resident</h3>
+
+      <form @submit.prevent="register" class="rounded px-8 pt-6 pb-8 mb-4">
         <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="roomNumber">Room No</label>
+          <label
+            class="block text-gray-700 text-sm font-bold mb-2"
+            for="roomNumber"
+            >Room No</label
+          >
           <input
             v-model="roomNumber"
             type="text"
@@ -48,19 +53,20 @@
         <div class="flex items-center justify-between mt-10">
           <button
             type="submit"
+          
             class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             Submit
           </button>
-          <button
+          <button 
             type="button"
             @click="cancel"
-            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Cancel
-          </button>
+           class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded">
+          Back
+        </button>
         </div>
       </form>
+      <p v-if="message" class="text-error mt-5">{{ message }}</p>
     </div>
   </div>
 </template>
@@ -68,26 +74,25 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import apiClient from '@/services/AxiosClient';
+import apiClient from "@/services/AxiosClient.js";
 
 const router = useRouter();
 
 const roomNumber = ref('');
 const name = ref('');
 const lineId = ref('');
-const submitted = ref(false);
+const message = ref('');
 
 const register = async () => {
-  submitted.value = true;
-  if (roomNumber.value && name.value && lineId.value) {
-    try {
-      const response = await apiClient.post('/resident/add', {
-        roomNumber: roomNumber.value,
-        name: name.value,
-        lineId: lineId.value,
-      });
-
-     // Check if the response status is 201 (Created)
+  try {
+    const resident = {
+      roomNumber: roomNumber.value,
+      name: name.value,
+      lineId: lineId.value
+    };
+    const response = await apiClient.post("/resident/add", resident);
+   
+    // Check if the response status is 201 (Created)
     if (response.status === 201) {
           // Show the message from the backend
           alert(response.data.message);
@@ -97,22 +102,23 @@ const register = async () => {
           // Display the message from the backend if status is not 201
           alert(response.data.message);
         }
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      alert('Failed to submit form. Please try again.');
+  } catch (error) {
+    // Check if error object exists and contains data property
+    if (error.response && error.response.data && error.response.data.message) {
+      // Display the error message from the server
+      message.value = error.response.data.message;
+    } else {
+      // Display a generic error message
+      message.value = 'An error occurred during registration. Please try again.';
     }
-  } else {
-    // Show validation messages
-    alert('Please fill in all required fields.');
   }
 };
 
 const cancel = () => {
-  // Handle cancel action
-  router.push('/resident-list'); 
+  router.push('/resident-list');
 };
 </script>
 
 <style scoped>
-/* Add any additional styles if needed */
+/* Your scoped styles here */
 </style>
