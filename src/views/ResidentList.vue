@@ -90,13 +90,17 @@
 
 <script setup>
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid';
-import { ref, onMounted, watchEffect } from 'vue';
+import { ref, onMounted, watchEffect, watch } from 'vue';
 import apiClient from '@/services/AxiosClient.js';
 import router from '@/router';
 import { usePagination } from '@/composables/usePagination';
 
 const searchQuery = ref('');
 const residents = ref([]);
+
+const sortResidents = () => {
+  residents.value.sort((a, b) => a.roomNumber - b.roomNumber);
+};
 
 const fetchData = async () => {
   try {
@@ -119,6 +123,7 @@ const fetchData = async () => {
 
       // Exclude the metadata from the residents array
       residents.value = data.slice(0, -1);
+      sortResidents(); // Sort residents after fetching data
     } else {
       residents.value = [];
       totalPages.value = 0;
@@ -173,6 +178,7 @@ const searchResident = async () => {
       totalPages.value = pageData.total_pages;
       currentPage.value = pageData.page;
       totalItems.value = residents.value.length;
+      sortResidents(); // Sort residents after searching
     } else {
       residents.value = [result];
       totalPages.value = 1;
@@ -187,6 +193,12 @@ const searchResident = async () => {
   }
 };
 
+// Watch for changes in searchQuery and fetch data if it's cleared
+watch(searchQuery, (newQuery) => {
+  if (newQuery === '') {
+    fetchData();
+  }
+});
 
 watchEffect(() => {
   fetchData();
