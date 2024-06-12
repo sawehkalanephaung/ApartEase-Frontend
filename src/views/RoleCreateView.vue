@@ -13,15 +13,24 @@
             required
           />
         </div>
+       
         <div class="flex items-center justify-between mt-10">
-          <button type="submit" class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          <button
+            type="submit"
+          
+            class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
             Submit
           </button>
-          <button type="button" @click="cancel" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-            Cancel
-          </button>
+          <button 
+            type="button"
+            @click="cancel"
+           class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded">
+          Back
+        </button>
         </div>
       </form>
+      <p v-if="message" class="text-error mt-5">{{ message }}</p>
     </div>
   </div>
 </template>
@@ -32,6 +41,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+const message = ref('');
 
 const role = ref({
   role_name: '',
@@ -43,18 +53,22 @@ const cancel = () => {
 
 const onSubmit = async () => {
   try {
-    const response = await apiClient.post('/dev/role/add', {
+    const response = await apiClient.post('/role/add', {
       role_name: role.value.role_name,
     });
-    // alert(response.data.message);
-    router.push('/role-list'); // don't check status = ok but redirec to 
-
-    // // if will redirect to role-list if status is = ok
-    // if (response.data.status === 'ok') {
-    //   router.push('/role-list');
-    // }
+     // Check if the response status is 200 (Created)
+     if (response.status === 200) {
+          // Show the message from the backend
+          alert(response.data.message);
+          // Redirect to resident list page after successful creation
+          router.push('/role-list');
+        } 
   } catch (error) {
-    console.error('Error creating role:', error);
+    // Check if error object exists and contains data property
+    if (error.response && error.response.data && error.response.data.message) {
+      // Display the error message from the server
+      message.value = error.response.data.message;
+    } 
   }
 };
 </script>

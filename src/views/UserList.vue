@@ -33,7 +33,7 @@
         <thead>
           <tr>
             <th
-              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider pl-10"
             >
               Username
             </th>
@@ -61,7 +61,7 @@
           </tr>
           <!-- Render user rows with pagination -->
           <tr v-else v-for="(user, index) in users" :key="index">
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm pl-10">
               {{ user.username }}
             </td>
             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -76,7 +76,7 @@
             >
               <button
                 @click="() => onEdit(user.id)"
-                class="text-emerald-600 hover:text-emerald-900 mr-1"
+                class="text-emerald-600 hover:text-emerald-900 mr-1 pr-2"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -96,7 +96,7 @@
               </button>
               <button
                 @click="() => onDelete(user.id)"
-                class="text-emerald-600 hover:text-emerald-900 ml-1"
+                 class="text-red-500 hover:text-red-700 ml-4"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

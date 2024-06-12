@@ -14,13 +14,21 @@
             required
           />
         </div>
+      
         <div class="flex items-center justify-between mt-10">
-          <button type="submit" class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          <button
+            type="submit"
+          
+            class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
             Submit
           </button>
-          <button type="button" @click="cancel" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-            Cancel
-          </button>
+          <button 
+            type="button"
+            @click="cancel"
+           class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded">
+          Back
+        </button>
         </div>
       </form>
       <div v-if="error" class="text-center text-red-500">{{ error }}</div>
@@ -74,7 +82,7 @@ const onSubmit = async () => {
   
   } catch (err) {
     console.error('Error updating data:', err);
-    error.value = 'Failed to update role. Please try again later.';
+    error.value = "The name of this role is already in use.";
   }
 };
 </script>

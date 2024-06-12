@@ -1,16 +1,19 @@
 <template>
   <div id="home" class="rounded-md p-[20px] h-full">
-    <h1 class="text-white text-4xl">
+    <h1 class="text-white text-4xl text-center sm:text-center">
       <strong>Welcome to Home</strong>
     </h1>
     <p class="text-white text-2xl">Username: {{ username }}</p>
     <p class="text-white">Role: {{ role }}</p>
-  </div>
 
-  <div id="clock" class="p-10">
+
+    <div id="clock" class="p-10">
     <p class="date">{{ date }}</p>
     <p class="time">{{ time }}</p>
   </div>
+
+  </div>
+
 </template>
 
 <script setup>
@@ -82,7 +85,7 @@ p {
 
 .time {
   letter-spacing: 0.05em;
-  font-size: 80px;
+  font-size: 50px;
   padding: 5px 0;
 }
 
@@ -95,5 +98,58 @@ p {
   letter-spacing: 0.1em;
   font-size: 12px;
   padding: 20px 0 0;
+}
+/* Responsive styles */
+@media (max-width: 1280px) {
+  .time {
+    font-size: 40px;
+  }
+  .date {
+    font-size: 22px;
+  }
+  .text {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .time {
+    font-size: 30px;
+
+  }
+  .date {
+    font-size: 20px;
+  }
+  .text {
+    font-size: 10px;
+
+  }
+}
+
+@media (max-width: 640px) {
+  .time {
+    font-size: 20px;
+  }
+  .date {
+    font-size: 18px;
+  }
+  .text {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 480px) {
+  .time {
+    font-size: 20px;
+
+  }
+  .date {
+    font-size: 6px;
+    
+  }
+  .text {
+    font-size: 4px;
+   
+  }
 }
 </style>
