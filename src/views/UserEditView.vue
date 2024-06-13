@@ -71,15 +71,6 @@
           </button>
         </div>
       </form>
-
-      <!-- Temporary display for debugging -->
-      <div class="mt-4 p-4 bg-gray-100 rounded">
-        <h4 class="text-lg font-medium">Debug Info:</h4>
-        <p><strong>Username:</strong> {{ user.username }}</p>
-        <p><strong>Password:</strong> {{ user.password }}</p>
-        <p><strong>Role:</strong> {{ user.role }}</p>
-        <p><strong>Roles List:</strong> {{ roles }}</p>
-      </div>
     </div>
   </div>
 </template>
