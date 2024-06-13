@@ -1,37 +1,31 @@
 <template>
   <div class="flex items-center justify-center h-full">
     <div class="w-full max-w-xl p-6 bg-white rounded-md shadow-md">
-      <h3 class="text-2xl font-medium text-gray-700 text-center">
-        Create User
-      </h3>
-
-      <form @submit.prevent="register" class="rounded px-8 pt-6 pb-8 mb-4">
+      <h3 class="text-2xl font-medium text-gray-700 text-center">Create User</h3>
+      <Form @submit="register" :validation-schema="schema" class="rounded px-8 pt-6 pb-8 mb-4">
         <div class="mb-4">
-          <label
-            class="block text-gray-700 text-sm font-bold mb-2"
-            for="username"
-            >Username</label
-          >
-          <input
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Username</label>
+          <Field
             v-model="user.username"
             type="text"
             id="username"
+            name="username"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
+            placeholder="Username"
           />
+          <ErrorMessage name="username" class="text-red-500 text-xs italic" />
         </div>
 
-         <!--stat password-->
-                <div class="mb-4 relative">
+        <div class="mb-4 relative">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
-          <input
+          <Field
             v-model="user.password"
             :type="passwordVisible ? 'text' : 'password'"
             id="password"
+            name="password"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
+            placeholder="Password"
           />
-          <!-- eye password icon -->
           <button
             type="button"
             @click="togglePasswordVisibility"
@@ -46,28 +40,23 @@
               <path d="m10.748 13.93 2.523 2.523a9.987 9.987 0 0 1-3.27.547c-4.258 0-7.894-2.66-9.337-6.41a1.651 1.651 0 0 1 0-1.186A10.007 10.007 0 0 1 2.839 6.02L6.07 9.252a4 4 0 0 0 4.678 4.678Z" />
             </svg>
           </button>
+          <ErrorMessage name="password" class="text-red-500 text-xs italic" />
         </div>
 
-        <!-- end password-->
         <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="role"
-            >Role</label
-          >
-          <select
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="role">Role</label>
+          <Field
+            as="select"
+            v-model="user.role"
             id="role"
             name="role"
-            required
-            v-model="user.role"
             class="block w-full appearance-none bg-white border border-gray-300 rounded-md py-2 px-3 pr-10 text-gray-900 shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-600 sm:text-sm"
           >
-            <option
-              v-for="role in roles"
-              :key="role.id"
-              :value="role.role_name"
-            >
+            <option v-for="role in roles" :key="role.id" :value="role.role_name">
               {{ role.role_name }}
             </option>
-          </select>
+          </Field>
+          <ErrorMessage name="role" class="text-red-500 text-xs italic" />
         </div>
 
         <div class="flex items-center justify-between mt-10">
@@ -86,84 +75,82 @@
             Back
           </button>
         </div>
-      </form>
+      </Form>
       <p v-if="message" class="text-error mt-5">{{ message }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import apiClient from "@/services/AxiosClient.js";
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
+import apiClient from '@/services/AxiosClient.js';
 
 const router = useRouter();
 
 const user = ref({
-  username: "",
-  password: "",
-  role: "",
+  username: '',
+  password: '',
+  role: '',
 });
 
 const isSubmitting = ref(false);
-const message = ref("");
-const passwordVisible = ref(false); // State to track password visibility
+const message = ref('');
+const passwordVisible = ref(false);
 
-// list all role in role selection
 const roles = ref([]);
 
 const fetchRoles = async () => {
   try {
-    const response = await apiClient.get("/role/list");
-    roles.value = response.data.Role.slice(0, -1); // Assuming the last item is pagination info
+    const response = await apiClient.get('/role/list');
+    // roles.value = response.data.Role.slice(0, -1); // Assuming the last item is pagination information
+    roles.value = response.data.Role
   } catch (error) {
-    console.error("Error fetching roles:", error);
-    message.value = "Error fetching roles. Please try again later.";
+    console.error('Error fetching roles:', error);
+    message.value = 'Error fetching roles. Please try again later.';
   }
 };
 
 onMounted(() => {
   fetchRoles();
 });
+
 const togglePasswordVisibility = () => {
   passwordVisible.value = !passwordVisible.value;
 };
 
+const schema = yup.object().shape({
+  username: yup.string().required('Username is required!'),
+  password: yup.string().required('Password is required!'),
+  role: yup.string().required('Role is required!'),
+});
 
-const register = async () => {
-  if (!user.value.username || !user.value.password || !user.value.role) {
-    message.value = "Please fill in all required fields.";
-    return;
-  }
-
+const register = async (values) => {
   isSubmitting.value = true;
 
   try {
-    const userData = {
-      username: user.value.username,
-      password: user.value.password,
-      role: user.value.role,
-    };
-    const response = await apiClient.post("/user/add", userData);
+    const response = await apiClient.post('/user/add', values);
     const result = response.data;
-    if (result.message === "The role does not exist!") {
+    if (result.message === 'The role does not exist!') {
       message.value = result.message;
       isSubmitting.value = false;
       return;
     }
-    router.push("/user-list");
+    router.push('/user-list');
   } catch (error) {
     const errorMessage =
       error.response?.data?.message ||
-      "An error occurred while creating the user. Please try again later.";
-    console.error("Error creating user:", errorMessage);
+      'An error occurred while creating the user. Please try again later.';
+    console.error('Error creating user:', errorMessage);
     message.value = errorMessage;
     isSubmitting.value = false;
   }
 };
 
 const cancel = () => {
-  router.push("/user-list");
+  router.push('/user-list');
 };
 </script>
 
