@@ -47,6 +47,23 @@
       </form>
       <p v-if="message" class="text-error mt-5 ">{{ message }}</p>
     </div>
+        <!-- Success Modal start -->
+        <div v-if="showSuccessModal" class="fixed inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75">
+      <div class="rounded-lg bg-gray-50 px-16 py-14">
+        <div class="flex justify-center">
+          <div class="rounded-full bg-green-200 p-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-full bg-green-500 p-4">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 text-white">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <h3 class="my-4 text-center text-3xl font-semibold text-gray-700">Login Successfully !!!</h3>
+        <button @click="redirectToHome" class="mx-auto mt-10 block rounded-xl border-4 border-transparent bg-emerald-400 px-6 py-3 text-center text-base font-medium text-emerald-100 outline-8 hover:outline hover:duration-100">OK</button>
+      </div>
+    </div>
+    <!-- Success Modal End -->
   </div>
 </template>
 
@@ -62,6 +79,7 @@ const store = useStore();
 const username = ref('');
 const password = ref('');
 const message = ref('');
+const showSuccessModal = ref(false);
 
 const login = async () => {
   try {
@@ -108,8 +126,10 @@ const login = async () => {
       store.commit('setRole', 'user');
     }
 
+    // Show the success modal
+    showSuccessModal.value = true;
     // Redirect to SideNav after successful login
-    router.push('/home');
+    // router.push('/home');
   } catch (error) {
     // Log the error for debugging
     console.error('Login error:', error);
@@ -136,5 +156,9 @@ const login = async () => {
       message.value = 'Incorrect password. Please try again.';
     }
   }
+};
+const redirectToHome = () => {
+  showSuccessModal.value = false;
+  router.push('/home');
 };
 </script>
