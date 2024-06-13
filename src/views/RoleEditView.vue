@@ -18,7 +18,6 @@
         <div class="flex items-center justify-between mt-10">
           <button
             type="submit"
-          
             class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             Submit
@@ -26,9 +25,9 @@
           <button 
             type="button"
             @click="cancel"
-           class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded">
-          Back
-        </button>
+            class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded">
+            Back
+          </button>
         </div>
       </form>
       <div v-if="error" class="text-center text-red-500">{{ error }}</div>
@@ -50,11 +49,18 @@ const error = ref(null); // Error state
 
 const fetchData = async () => {
   try {
+    console.log('Fetching data for role ID:', route.params.id); // Log the role ID
     const response = await apiClient.get(`/role/list/${route.params.id}`);
-    if (response.data && response.data.Role) {
-      role.value = response.data.Role;
+    console.log('API Response:', response.data); // Log the API response
+
+    if (response.data && response.data.Role) { // Adjusted to match the API response structure
+      role.value = {
+        role_name: response.data.Role.name, // Map the 'name' property to 'role_name'
+      };
+      console.log('Role Data:', role.value); // Log the role data
     } else {
-      throw new Error('Role not found');
+      console.warn('No role data found in response:', response.data);
+      error.value = 'Failed to load role data. Please try again later.';
     }
   } catch (err) {
     console.error('Error fetching data:', err);
@@ -77,9 +83,7 @@ const onSubmit = async () => {
     const response = await apiClient.put(`/role/edit/${route.params.id}`, {
       role_name: role.value.role_name,
     });
-    // alert(response.data.message);
     router.push('/role-list');
-  
   } catch (err) {
     console.error('Error updating data:', err);
     error.value = "The name of this role is already in use.";
