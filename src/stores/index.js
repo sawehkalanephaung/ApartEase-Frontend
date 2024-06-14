@@ -3,12 +3,9 @@ import { createStore } from 'vuex';
 // handle refresh page and keep user logged in
 const userFromLocalStorage = JSON.parse(localStorage.getItem('user'));
 const tokenFromLocalStorage = localStorage.getItem('token');
+
 export default createStore({
   state: {
-    // user: { username: 'admin' }, // Example user object with a username
-    // user: null,
-    // jwtToken: null,
-    // role: 'user', // default
     user: userFromLocalStorage || null,
     jwtToken: tokenFromLocalStorage || null,
     role: userFromLocalStorage?.role || 'user', // default
@@ -16,7 +13,7 @@ export default createStore({
   mutations: {
     setUser(state, user) {
       state.user = user;
-      state.role = user.role || 'user'; // ensure role is set
+      state.role = user ? user.role : 'user'; // ensure role is set
     },
     setJwtToken(state, token) {
       state.jwtToken = token;

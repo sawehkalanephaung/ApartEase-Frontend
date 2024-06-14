@@ -101,7 +101,7 @@
         <div class="cursor-pointer w-[30px]" @click="toggleSideBar">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-[25px] h-[25px]">
             <!--! Font Awesome Pro 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
-            <path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z" />
+            <path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32-14.3 32-32z" />
           </svg>
         </div>
            <!-- Breadcrumb -->
@@ -163,20 +163,16 @@ const handleResize = () => {
 };
 
 const logout = () => {
-  // // Remove token and user from local storage
-  // localStorage.removeItem("token");
-  // localStorage.removeItem("user");
+  // Remove token and user from local storage
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
 
-  // // Clear user data in Vuex store
-  // store.commit('setUser', null);
-  // store.commit('setJwtToken', null);
+  // Clear user data in Vuex store
+  store.commit('setUser', null);
+  store.commit('setJwtToken', null);
 
-  // // Show the success message
-  // showSuccessMessage.value = true;
-  // Perform any logout logic here (e.g., clear user data, make API call)
-  console.log('User logged out')
-  showLogoutConfirm.value = false
-  router.push('/')
+  // Show the success message
+  showSuccessMessage.value = true;
 
   // Redirect to login page
   router.push("/");

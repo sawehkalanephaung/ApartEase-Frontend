@@ -41,7 +41,7 @@
             type="submit"
             class="w-full px-3 py-2 text-sm text-center text-white bg-primary rounded-md focus:outline-none hover:bg-emerald-500 "
           >
-            Sign in
+            Login
           </button>
         </div>
       </form>
@@ -59,7 +59,7 @@
             </div>
           </div>
         </div>
-        <h3 class="my-4 text-center text-3xl font-semibold text-gray-700">Login Successfully !!!</h3>
+        <h3 class="my-4 text-center text-3xl font-semibold text-gray-700">Login Successfully !</h3>
         <button @click="redirectToHome" class="mx-auto mt-10 block rounded-xl border-4 border-transparent bg-emerald-400 px-6 py-3 text-center text-base font-medium text-emerald-100 outline-8 hover:outline hover:duration-100">OK</button>
       </div>
     </div>

@@ -1,13 +1,26 @@
 <template>
   <transition name="fade">
-    <div v-if="show" class="fixed inset-0 flex items-center justify-center z-50">
+    <div
+      v-if="show"
+      class="fixed inset-0 flex items-center justify-center z-50"
+    >
       <div class="absolute inset-0 bg-black opacity-50"></div>
-      <div class="bg-white rounded-lg shadow-lg p-6 z-10">
-        <h2 class="text-lg font-semibold mb-4">Confirm Logout</h2>
-        <p class="mb-4">Are you sure you want to logout?</p>
+      <div class="bg-white rounded-lg shadow-lg p-8 z-10">
+        <h2 class="text-xl font-semibold mb-6">Confirm Logout</h2>
+        <p class="mb-6">Are you sure you want to logout?</p>
         <div class="flex justify-end">
-          <button @click="confirmLogout" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded mr-2">Yes</button>
-          <button @click="closeModal" class="bg-emerald-500 hover:bg-emerald-600 text-text px-4 py-2 rounded ">No</button>
+          <button
+            @click="confirmLogout"
+            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded mr-2"
+          >
+            Yes
+          </button>
+          <button
+            @click="closeModal"
+            class="bg-emerald-500 hover:bg-emerald-600 text-text px-4 py-2 rounded"
+          >
+            No
+          </button>
         </div>
       </div>
     </div>
@@ -16,7 +29,6 @@
 
 <script setup>
 import { defineProps, defineEmits } from 'vue'
-
 const props = defineProps({
   show: {
     type: Boolean,
