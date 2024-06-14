@@ -111,6 +111,12 @@
   </div>
   </div>
   </div>
+  <!-- Delete Confirmation Modal -->
+  <DeleteConfirmationModal
+    :show="showDeleteConfirm"
+    @confirm-delete="confirmDelete"
+    @close="showDeleteConfirm = false"
+  />
   <router-view />
 </template>
 
@@ -121,9 +127,12 @@ import { ref, onMounted, watchEffect, watch } from 'vue';
 import apiClient from '@/services/AxiosClient.js';
 import router from '@/router';
 import { usePagination } from '@/composables/usePagination';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
 
 const searchQuery = ref('');
 const residents = ref([]);
+const showDeleteConfirm = ref(false);
+const residentToDelete = ref(null);
 
 const sortResidents = () => {
   residents.value.sort((a, b) => a.roomNumber - b.roomNumber);
@@ -176,14 +185,21 @@ const onEdit = (id) => {
   router.push({ name: 'ResidentEditView', params: { id } });
 };
 
-const onDelete = async (id) => {
+const onDelete = (id) => {
+  residentToDelete.value = id;
+  showDeleteConfirm.value = true;
+};
+
+const confirmDelete = async () => {
   try {
-    await apiClient.delete(`/resident/del/${id}`);
+    await apiClient.delete(`/resident/del/${residentToDelete.value}`);
     fetchData();
+    showDeleteConfirm.value = false;
   } catch (error) {
     console.error('Error deleting resident:', error);
   }
 };
+
 
 const searchResident = async () => {
   try {
