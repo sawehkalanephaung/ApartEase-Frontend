@@ -119,7 +119,6 @@ const fetchData = async () => {
 const fetchRoles = async () => {
   try {
     const response = await apiClient.get('/role/list');
-    // roles.value = response.data.Role.slice(0, -1); // Assuming the last item is pagination info
     roles.value = response.data.Role; // role will list based on pagination info
     console.log('Roles Data:', roles.value); // Log the roles data
   } catch (error) {
@@ -131,10 +130,10 @@ onMounted(() => {
   fetchData();
   fetchRoles();
 });
+
 const togglePasswordVisibility = () => {
   passwordVisible.value = !passwordVisible.value;
 };
-
 
 const cancel = () => {
   router.push('/user-list');
@@ -154,8 +153,8 @@ const onSubmit = async () => {
       password: user.value.password,
       role: user.value.role,
     };
-    console.log(`Submitting data to /user/edit/${route.params.id}`, user.value); // Debugging line
-    const response = await apiClient.put(`/user/edit/${route.params.id}`, user.value);
+    console.log(`Submitting data to /user/edit/${route.params.id}`, userData); // Debugging line
+    const response = await apiClient.put(`/user/edit/${route.params.id}`, userData);
     const result = response.data;
 
     if (result.message === 'The role does not exist!') {
