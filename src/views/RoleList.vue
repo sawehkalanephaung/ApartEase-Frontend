@@ -129,6 +129,12 @@
   </div>
   </div>
   </div>
+   <!-- Delete Confirmation Modal -->
+   <DeleteConfirmationModal
+    :show="showDeleteConfirm"
+    @confirm-delete="confirmDelete"
+    @close="showDeleteConfirm = false"
+  />
   <router-view />
 </template>
 <script setup>
@@ -138,9 +144,12 @@ import { useRouter } from 'vue-router';
 
 import apiClient from '@/services/AxiosClient.js';
 import { usePagination } from '@/composables/usePagination';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
 
 const router = useRouter();
 const roles = ref([]); // Reactive variable to store role data
+const showDeleteConfirm = ref(false);
+const roleToDelete = ref(null);
 
 // Fetch role list from the backend API on component mount
 const fetchData = async () => {
@@ -175,20 +184,24 @@ const onEdit = (roleId) => {
   router.push({ name: 'RoleEditView', params: { id: roleId } });
 };
 
-const onDelete = async (roleId) => {
+const onDelete = (roleId) => {
+  roleToDelete.value = roleId;
+  showDeleteConfirm.value = true;
+};
+
+const confirmDelete = async () => {
   try {
-    const response = await apiClient.delete(`/role/del/${roleId}`, {
+    const response = await apiClient.delete(`/role/del/${roleToDelete.value}`, {
       headers: {
         "x-access-token": localStorage.getItem("token"),
       },
     });
-    // alert(response.data.message);
     fetchData();
+    showDeleteConfirm.value = false;
   } catch (error) {
     console.error("Error deleting role:", error);
   }
 };
-
 
 
 watchEffect(() => {

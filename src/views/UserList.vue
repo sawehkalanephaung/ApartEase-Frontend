@@ -140,6 +140,12 @@
   </div>
   </div>
   </div>
+  <!-- Delete Confirmation Modal -->
+  <DeleteConfirmationModal
+    :show="showDeleteConfirm"
+    @confirm-delete="confirmDelete"
+    @close="showDeleteConfirm = false"
+  />
   <router-view />
 </template>
 
@@ -151,10 +157,13 @@ import { useRouter } from 'vue-router';
 import apiClient from '@/services/AxiosClient.js';
 import { usePagination } from '@/composables/usePagination';
 import { useStore } from 'vuex';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
 
 const router = useRouter();
 const store = useStore();
 const users = ref([]);
+const showDeleteConfirm = ref(false);
+const userToDelete = ref(null);
 
 const fetchData = async () => {
   try {
@@ -188,24 +197,31 @@ const onEdit = async (userId) => {
   router.push({ name: 'UserEditView', params: { id: userId } });
 };
 
-const onDelete = async (userId) => {
-  const currentUser = store.state.user;
-  const userToDelete = users.value.find(user => user.id === userId);
+const onDelete = (userId) => {
+  userToDelete.value = userId;
+  showDeleteConfirm.value = true;
+};
 
-  if (currentUser && userToDelete && currentUser.username === userToDelete.username) {
+const confirmDelete = async () => {
+  const currentUser = store.state.user;
+  const userToDeleteObj = users.value.find(user => user.id === userToDelete.value);
+
+  if (currentUser && userToDeleteObj && currentUser.username === userToDeleteObj.username) {
     alert("You cannot delete the currently logged-in account.");
+    showDeleteConfirm.value = false;
     return;
   }
 
   try {
-    const response = await apiClient.delete(`/user/del/${userId}`);
+    const response = await apiClient.delete(`/user/del/${userToDelete.value}`);
     const result = await response.data;
-    // alert(result.message);
     fetchData();
+    showDeleteConfirm.value = false;
   } catch (error) {
     console.error(error);
   }
 };
+
 
 watchEffect(() => {
   fetchData();
