@@ -105,7 +105,7 @@ const fetchData = async () => {
       user.value = {
         username: response.data.User.username,
         password: '', // Password is not returned by the API, so set it to an empty string
-        role: response.data.User.has_admin_role.length > 0 ? response.data.User.has_admin_role[0].name : '', // Assuming the role is in the has_admin_role array
+        role: response.data.User.role
       };
       console.log('User Data:', user.value); // Log the user data
     } else {
