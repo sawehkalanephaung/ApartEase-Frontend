@@ -215,6 +215,7 @@ const confirmDelete = async () => {
   try {
     const response = await apiClient.delete(`/user/del/${userToDelete.value}`);
     const result = await response.data;
+    alert(result.message);
     fetchData();
     showDeleteConfirm.value = false;
   } catch (error) {

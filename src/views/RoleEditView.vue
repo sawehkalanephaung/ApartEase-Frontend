@@ -13,6 +13,7 @@
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             required
           />
+          <div v-if="error" class="text-red-500 text-xs italic mt-1">{{ error }}</div>
         </div>
       
         <div class="flex items-center justify-between mt-10">
@@ -30,7 +31,7 @@
           </button>
         </div>
       </form>
-      <div v-if="error" class="text-center text-red-500">{{ error }}</div>
+
     </div>
   </div>
 </template>
@@ -53,11 +54,14 @@ const fetchData = async () => {
     const response = await apiClient.get(`/role/list/${route.params.id}`);
     console.log('API Response:', response.data); // Log the API response
 
+
     if (response.data && response.data.Role) { // Adjusted to match the API response structure
       role.value = {
         role_name: response.data.Role.name, // Map the 'name' property to 'role_name'
       };
       console.log('Role Data:', role.value); // Log the role data
+    
+      
     } else {
       console.warn('No role data found in response:', response.data);
       error.value = 'Failed to load role data. Please try again later.';
@@ -83,6 +87,7 @@ const onSubmit = async () => {
     const response = await apiClient.put(`/role/edit/${route.params.id}`, {
       role_name: role.value.role_name,
     });
+    alert(response.data.message);
     router.push('/role-list');
   } catch (err) {
     console.error('Error updating data:', err);

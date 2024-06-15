@@ -13,6 +13,8 @@
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             required
           />
+          <!-- error message to check if usermame is already exist -->
+          <!-- <p v-if="message" name="username" class="text-red-500 text-xs italic mt-1">{{ message }}</p> -->
         </div>
 
         <div class="mb-4 relative">
@@ -156,7 +158,7 @@ const onSubmit = async () => {
     console.log(`Submitting data to /user/edit/${route.params.id}`, userData); // Debugging line
     const response = await apiClient.put(`/user/edit/${route.params.id}`, userData);
     const result = response.data;
-
+    alert(result.message);
     if (result.message === 'The role does not exist!') {
       alert(result.message);
       message.value = result.message;
@@ -164,8 +166,11 @@ const onSubmit = async () => {
       return;
     }
     router.push('/user-list');
+
+
   } catch (error) {
-    console.error('Error updating data:', error);
+    // this error will be logged when username is already exist, back don't check exit username
+    console.error('Error updating data because username already exit in database', error);
     isSubmitting.value = false;
   }
 };

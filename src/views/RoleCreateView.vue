@@ -13,7 +13,8 @@
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Role Name"
           />
-          <ErrorMessage name="role_name" class="text-red-500 text-xs italic" />
+          <ErrorMessage name="role_name" class="text-red-500 text-xs italic mt-1" />
+          <p v-if="message" class="text-red-500 text-xs italic mt-1">{{ message }}</p>
         </div>
 
         <div class="flex items-center justify-between mt-10">
@@ -32,7 +33,6 @@
           </button>
         </div>
       </Form>
-      <p v-if="message" class="text-error mt-5">{{ message }}</p>
     </div>
   </div>
 </template>
