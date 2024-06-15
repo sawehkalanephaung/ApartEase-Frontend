@@ -81,7 +81,7 @@
                 </svg>
               </button>
               <button
-                @click="() => onDelete(role.id)"
+                @click="() => onDelete(role.id, role.role_name)"
                 class="text-red-500 hover:text-red-700 ml-4"
               >
                 <svg
@@ -145,11 +145,13 @@ import { useRouter } from 'vue-router';
 import apiClient from '@/services/AxiosClient.js';
 import { usePagination } from '@/composables/usePagination';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
+import store from '@/stores/index'; // Import the store
 
 const router = useRouter();
 const roles = ref([]); // Reactive variable to store role data
 const showDeleteConfirm = ref(false);
 const roleToDelete = ref(null);
+const currentUserRole = store.state.role; // Get the current user's role
 
 // Fetch role list from the backend API on component mount
 const fetchData = async () => {
@@ -184,7 +186,11 @@ const onEdit = (roleId) => {
   router.push({ name: 'RoleEditView', params: { id: roleId } });
 };
 
-const onDelete = (roleId) => {
+const onDelete = (roleId, roleName) => {
+  if (roleName === currentUserRole) {
+    alert("You are currently assigned this role. It cannot be deleted.");
+    return;
+  }
   roleToDelete.value = roleId;
   showDeleteConfirm.value = true;
 };
