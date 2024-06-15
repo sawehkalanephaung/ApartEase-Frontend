@@ -58,7 +58,7 @@
               {{ role.role_name }}
             </td>
             <td
-              class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center"
+              class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center flex-row"
             >
               <button
                 @click="() => onEdit(role.id)"

@@ -23,12 +23,18 @@
           <span class="sr-only">Search</span>
         </button>
       </div>
+      <div class="flex items-center  mt-4 sm:mt-0">
+        <label for="sort" class="mr-2 text-sm font-medium text-gray-700">Sort by:</label>
+        <select id="sort" v-model="sortCriteria" @change="sortResidents" class="px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary text-sm">
+          <option value="roomNumber">Room Number</option>
+          <option value="name">Name</option>
+        </select>
+      </div>
       <button
         @click="onCreate"
-        class="ml-3 bg-primary hover:bg-emerald-400 text-white px-4 py-2 rounded"
+        class="ml-3 bg-primary hover:bg-emerald-400 text-white px-4 py-2 rounded mt-4"
       >
-        <router-link to="/resident/create" class="flex items-center">
-
+        <router-link to="/resident-create" class="flex items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -46,40 +52,50 @@
           <span class="ml-2">New Resident</span>
         </router-link>
       </button>
-
     </div>
 
     <div class="mt-4 overflow-x-auto">
-      <table v-if="residents.length > 0" class="min-w-full leading-normal text-md">
-        <thead>
-          <tr>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Room No</th>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Line ID</th>
-            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(u, index) in residents" :key="index">
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.roomNumber }}</td>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.name }}</td>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.lineId }}</td>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
-              <button @click="() => onEdit(u.id)" class="text-emerald-600 hover:text-emerald-900 mr-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
-                  <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
-                </svg>
-              </button>
-              <button @click="() => onDelete(u.id)" class="text-red-500 hover:text-red-700 ml-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                </svg>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      
+    <table v-if="residents.length > 0" class="min-w-full leading-normal text-md">
+      <thead>
+        <tr>
+          <th @click="toggleSort('roomNumber')" class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer">
+            Room No
+            <span v-if="sortCriteria === 'roomNumber'">
+              {{ sortOrder === 'asc' ? '↑' : '↓' }}
+            </span>
+          </th>
+          <th @click="toggleSort('name')" class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer">
+            Name
+            <span v-if="sortCriteria === 'name'">
+              {{ sortOrder === 'asc' ? '↑' : '↓' }}
+            </span>
+          </th>
+          <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Line ID</th>
+          <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(u, index) in residents" :key="index">
+          <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.roomNumber }}</td>
+          <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.name }}</td>
+          <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.lineId }}</td>
+          <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center flex-row">
+            <button @click="() => onEdit(u.id)" class="text-emerald-600 hover:text-emerald-900 mr-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
+                <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+            <button @click="() => onDelete(u.id)" class="text-red-500 hover:text-red-700 ml-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
       <div v-else class="text-center text-gray-500 mt-4">
         No residents found.
       </div>
@@ -133,10 +149,41 @@ const searchQuery = ref('');
 const residents = ref([]);
 const showDeleteConfirm = ref(false);
 const residentToDelete = ref(null);
+const sortCriteria = ref('roomNumber'); // Default sort criteria
+const sortOrder = ref('asc'); // Default sorting order
+
 
 const sortResidents = () => {
-  residents.value.sort((a, b) => a.roomNumber - b.roomNumber);
+  if (sortCriteria.value === 'roomNumber') {
+    residents.value.sort((a, b) => {
+      if (sortOrder.value === 'asc') {
+        return a.roomNumber - b.roomNumber;
+      } else {
+        return b.roomNumber - a.roomNumber;
+      }
+    });
+  } else if (sortCriteria.value === 'name') {
+    residents.value.sort((a, b) => {
+      if (sortOrder.value === 'asc') {
+        return a.name.localeCompare(b.name);
+      } else {
+        return b.name.localeCompare(a.name);
+      }
+    });
+  }
 };
+
+const toggleSort = (criteria) => {
+  if (sortCriteria.value === criteria) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortCriteria.value = criteria;
+    sortOrder.value = 'asc';
+  }
+  sortResidents();
+};
+
+
 
 const fetchData = async () => {
   try {
