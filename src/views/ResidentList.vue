@@ -78,7 +78,7 @@
       <tbody>
         <tr v-for="(u, index) in residents" :key="index">
           <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.roomNumber }}</td>
-          <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.name }}</td>
+          <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ capitalizeName(u.name) }}</td>
           <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.lineId }}</td>
           <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center flex-row">
             <button @click="() => onEdit(u.id)" class="text-emerald-600 hover:text-emerald-900 mr-4">
@@ -153,6 +153,10 @@ const sortCriteria = ref('roomNumber'); // Default sort criteria
 const sortOrder = ref('asc'); // Default sorting order
 
 
+// capitelize resident name
+const capitalizeName = (name) => {
+  return name.replace(/\b\w/g, char => char.toUpperCase());
+};
 const sortResidents = () => {
   if (sortCriteria.value === 'roomNumber') {
     residents.value.sort((a, b) => {

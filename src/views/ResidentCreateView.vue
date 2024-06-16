@@ -84,6 +84,7 @@ const schema = yup.object().shape({
   lineId: yup.string().required('Line ID is required!'),
 });
 
+
 const register = async () => {
   try {
     const resident = {
