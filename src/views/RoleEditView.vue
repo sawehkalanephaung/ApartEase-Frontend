@@ -11,7 +11,7 @@
             type="text"
             id="role_name"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
+            :placeholder="originalRoleName || 'Role Name'"
           />
           <div v-if="error" class="text-red-500 text-xs italic mt-1">{{ error }}</div>
         </div>
@@ -31,7 +31,6 @@
           </button>
         </div>
       </form>
-
     </div>
   </div>
 </template>
@@ -44,9 +43,10 @@ import apiClient from '@/services/AxiosClient';
 const router = useRouter();
 const route = useRoute();
 
-const role = ref({ role_name: '' }); // Initialize with an empty object
-const loading = ref(true); // Loading state
-const error = ref(null); // Error state
+const role = ref({ role_name: '' });
+const originalRoleName = ref('');
+const loading = ref(true);
+const error = ref(null);
 
 const fetchData = async () => {
   try {
@@ -54,14 +54,12 @@ const fetchData = async () => {
     const response = await apiClient.get(`/role/list/${route.params.id}`);
     console.log('API Response:', response.data); // Log the API response
 
-
     if (response.data && response.data.Role) { // Adjusted to match the API response structure
       role.value = {
         role_name: response.data.Role.name, // Map the 'name' property to 'role_name'
       };
+      originalRoleName.value = response.data.Role.name; // Store the original role name
       console.log('Role Data:', role.value); // Log the role data
-    
-      
     } else {
       console.warn('No role data found in response:', response.data);
       error.value = 'Failed to load role data. Please try again later.';
@@ -84,6 +82,11 @@ const cancel = () => {
 
 const onSubmit = async () => {
   try {
+    // If the role name field is left blank, use the original role name
+    if (!role.value.role_name) {
+      role.value.role_name = originalRoleName.value;
+    }
+
     const response = await apiClient.put(`/role/edit/${route.params.id}`, {
       role_name: role.value.role_name,
     });

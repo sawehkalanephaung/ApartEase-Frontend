@@ -11,10 +11,8 @@
             type="text"
             id="username"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
+            :placeholder="originalUsername || 'Username'"
           />
-          <!-- error message to check if usermame is already exist -->
-          <!-- <p v-if="message" name="username" class="text-red-500 text-xs italic mt-1">{{ message }}</p> -->
         </div>
 
         <div class="mb-4 relative">
@@ -26,7 +24,6 @@
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             required
           />
-          <!-- eye password icon -->
           <button
             type="button"
             @click="togglePasswordVisibility"
@@ -41,6 +38,7 @@
               <path d="m10.748 13.93 2.523 2.523a9.987 9.987 0 0 1-3.27.547c-4.258 0-7.894-2.66-9.337-6.41a1.651 1.651 0 0 1 0-1.186A10.007 10.007 0 0 1 2.839 6.02L6.07 9.252a4 4 0 0 0 4.678 4.678Z" />
             </svg>
           </button>
+          <ErrorMessage name="password" class="text-red-500 text-xs italic mt-1" />
         </div>
 
         <div class="mb-4">
@@ -81,6 +79,8 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import apiClient from '@/services/AxiosClient.js';
+import { useField, Form, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
 
 const router = useRouter();
 const route = useRoute();
@@ -90,7 +90,7 @@ const user = ref({
   password: '',
   role: '',
 });
-
+const originalUsername = ref('');
 const isSubmitting = ref(false);
 const message = ref("");
 const passwordVisible = ref(false); // State to track password visibility
@@ -109,6 +109,7 @@ const fetchData = async () => {
         password: '', // Password is not returned by the API, so set it to an empty string
         role: response.data.User.role
       };
+      originalUsername.value = response.data.User.username; // Store the original username
       console.log('User Data:', user.value); // Log the user data
     } else {
       console.warn('No user data found in response:', response.data);
@@ -142,7 +143,7 @@ const cancel = () => {
 };
 
 const onSubmit = async () => {
-  if (!user.value.username || !user.value.password || !user.value.role) {
+  if (!user.value.password || !user.value.role) {
     console.error('User data is incomplete');
     return;
   }
@@ -150,6 +151,11 @@ const onSubmit = async () => {
   isSubmitting.value = true;
 
   try {
+    // If the username field is left blank, use the original username
+    if (!user.value.username) {
+      user.value.username = originalUsername.value;
+    }
+
     const userData = {
       username: user.value.username,
       password: user.value.password,
@@ -166,14 +172,19 @@ const onSubmit = async () => {
       return;
     }
     router.push('/user-list');
-
-
   } catch (error) {
     // this error will be logged when username is already exist, back don't check exit username
-    console.error('Error updating data because username already exit in database', error);
+    console.error('Error updating data because username already exists in the database', error);
     isSubmitting.value = false;
   }
 };
+
+// Vee-validate schema
+const schema = yup.object({
+  password: yup.string().required('Password is required!'),
+});
+
+const { value: password, errorMessage: passwordError } = useField('password', schema.password);
 </script>
 
 <style scoped>
