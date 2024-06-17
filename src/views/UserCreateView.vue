@@ -105,8 +105,7 @@ const roles = ref([]);
 const fetchRoles = async () => {
   try {
     const response = await apiClient.get('/role/list');
-    // roles.value = response.data.Role.slice(0, -1); // Assuming the last item is pagination information
-    roles.value = response.data.Role
+    roles.value = response.data.Role;
   } catch (error) {
     console.error('Error fetching roles:', error);
     message.value = 'Error fetching roles. Please try again later.';
@@ -122,8 +121,16 @@ const togglePasswordVisibility = () => {
 };
 
 const schema = yup.object().shape({
-  username: yup.string().required('Username is required!'),
-  password: yup.string().required('Password is required!'),
+  username: yup
+    .string()
+    .required('Username is required!')
+    .min(4, 'Username must be at least 4 characters or more!')
+    .max(10, 'Username must be at most 10 characters or less!'),
+  password: yup
+    .string()
+    .required('Password is required!')
+    .min(6, 'Password must be at least 6 characters or more!')
+    .max(20, 'Password must be at most 20 characters or less!'),
   role: yup.string().required('Role is required!'),
 });
 
