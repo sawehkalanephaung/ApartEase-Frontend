@@ -25,9 +25,8 @@
             id="name"
             name="name"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Name"
+            :placeholder="originalName || 'Name'"
           />
-          <ErrorMessage name="name" class="text-red-500 text-xs italic" />
         </div>
 
         <div class="mb-4">
@@ -78,11 +77,11 @@ const resident = ref({
   name: '',
   lineId: '',
 });
+const originalName = ref('');
 const message = ref('');
 
 const schema = yup.object().shape({
   roomNumber: yup.string().required('Room number is required!'),
-  name: yup.string().required('Name is required!'),
   lineId: yup.string().required('Line ID is required!'),
 });
 
@@ -98,6 +97,7 @@ const fetchData = async () => {
         name: response.data.Resident.name,
         roomNumber: response.data.Resident.roomNumber,
       };
+      originalName.value = response.data.Resident.name; // Store the original name
       console.log('Resident Data:', resident.value); // Log the resident data
     } else {
       console.warn('No resident data found in response:', response.data);
@@ -117,6 +117,11 @@ const cancel = () => {
 
 const onSubmit = async () => {
   try {
+    // If the name field is left blank, use the original name
+    if (!resident.value.name) {
+      resident.value.name = originalName.value;
+    }
+
     const response = await apiClient.put(`/resident/edit/${route.params.id}`, resident.value);
     const result = response.data;
     alert(result.message);
