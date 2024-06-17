@@ -174,14 +174,14 @@ const login = async (values) => {
     // Handle specific error messages based on backend responses
     if (error.response && error.response.status === 401) {
       if (error.response.data === 'Could not verify user!') {
-        message.value = 'No user found';
+        message.value = 'Incorrect username and password';
       } else if (error.response.data === 'Could not verify!') {
         message.value = 'Missing username or password.';
       } else {
         message.value = 'Could not verify user!';
       }
     } else if (error.response && error.response.status === 403) {
-      message.value = 'Incorrect password.';
+      message.value = 'Wrong password.';
     }
   } finally {
     isSubmitting.value = false;
