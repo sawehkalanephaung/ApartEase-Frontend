@@ -23,7 +23,7 @@
               d="M12 4.5v15m7.5-7.5h-15"
             />
           </svg>
-          <span class="ml-2">Create User</span>
+          <span class="flex-none w-32">Create User</span>
         </router-link>
       </button>
     </div>
@@ -72,7 +72,7 @@
             >
               <button
                 @click="() => onEdit(user.id)"
-                class="text-emerald-600 hover:text-emerald-900 mr-1 pr-2"
+                class="text-emerald-600 hover:text-emerald-900 "
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

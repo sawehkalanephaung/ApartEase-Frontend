@@ -111,4 +111,12 @@ router.beforeEach((to, from, next) => {
   }
 });
 
+
+// Add afterEach hook to hide sidebar on navigation
+router.afterEach(() => {
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar && window.innerWidth < 768) {
+    sidebar.classList.add('hidden');
+  }
+});
 export default router;

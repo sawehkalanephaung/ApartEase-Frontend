@@ -23,8 +23,8 @@
           <span class="sr-only">Search</span>
         </button>
       </div>
-      <div class="flex items-center  mt-4 sm:mt-0">
-        <label for="sort" class="mr-2 text-sm font-medium text-gray-700">Sort by:</label>
+      <div class="flex items-center t-4 sm:mt- mb-4 sm:mb-0 sm:mr-4">
+        <label for="sort" class="mr-2 text-sm  font-medium text-gray-700">Sort by:</label>
         <select id="sort" v-model="sortCriteria" @change="sortResidents" class="px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary text-sm">
           <option value="roomNumber">Room Number</option>
           <option value="name">Name</option>
@@ -32,9 +32,9 @@
       </div>
       <button
         @click="onCreate"
-        class="ml-3 bg-primary hover:bg-emerald-400 text-white px-4 py-2 rounded mt-4"
+        class=" sm:w-full md:w-auto sm:ml-0 md:ml-3 bg-primary hover:bg-emerald-400 text-white px-4 py-2 rounded"
       >
-        <router-link to="/resident-create" class="flex items-center">
+        <router-link to="/resident-create" class="flex sm:flex-row md:flex-row items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -49,7 +49,7 @@
               d="M12 4.5v15m7.5-7.5h-15"
             />
           </svg>
-          <span class="ml-2">New Resident</span>
+          <span class="flex-none w-32">New Resident</span>
         </router-link>
       </button>
     </div>
@@ -81,7 +81,7 @@
           <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ capitalizeName(u.name) }}</td>
           <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.lineId }}</td>
           <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center flex-row">
-            <button @click="() => onEdit(u.id)" class="text-emerald-600 hover:text-emerald-900 mr-4">
+            <button @click="() => onEdit(u.id)" class="text-emerald-600 hover:text-emerald-900 mr-1">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
                 <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
