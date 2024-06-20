@@ -3,28 +3,30 @@
     <div class="w-full max-w-xl p-6 bg-white rounded-md shadow-md">
       <h3 class="text-2xl font-medium text-gray-700 text-center">User Edit</h3>
 
-      <form @submit.prevent="onSubmit" class="rounded px-8 pt-6 pb-8 mb-4">
+      <Form @submit="onSubmit" :validation-schema="schema" class="rounded px-8 pt-6 pb-8 mb-4">
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Username</label>
-          <input
+          <Field
             v-model="user.username"
             type="text"
             id="username"
+            name="username"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
+            placeholder="Username"
           />
+          <ErrorMessage name="username" class="text-red-500 text-xs italic" />
         </div>
 
         <div class="mb-4 relative">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
-          <input
+          <Field
             v-model="user.password"
             :type="passwordVisible ? 'text' : 'password'"
             id="password"
+            name="password"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
+            placeholder="Password"
           />
-          <!-- eye password icon -->
           <button
             type="button"
             @click="togglePasswordVisibility"
@@ -39,19 +41,23 @@
               <path d="m10.748 13.93 2.523 2.523a9.987 9.987 0 0 1-3.27.547c-4.258 0-7.894-2.66-9.337-6.41a1.651 1.651 0 0 1 0-1.186A10.007 10.007 0 0 1 2.839 6.02L6.07 9.252a4 4 0 0 0 4.678 4.678Z" />
             </svg>
           </button>
+          <ErrorMessage name="password" class="text-red-500 text-xs italic" />
         </div>
 
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="role">Role</label>
-          <select
+          <Field
+            as="select"
+            v-model="user.role"
             id="role"
             name="role"
-            required
-            v-model="user.role"
             class="block w-full appearance-none bg-white border border-gray-300 rounded-md py-2 px-3 pr-10 text-gray-900 shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-600 sm:text-sm"
           >
-            <option v-for="role in roles" :key="role.id" :value="role.role_name">{{ role.role_name }}</option>
-          </select>
+            <option v-for="role in roles" :key="role.id" :value="role.role_name">
+              {{ role.role_name }}
+            </option>
+          </Field>
+          <ErrorMessage name="role" class="text-red-500 text-xs italic" />
         </div>
 
         <div class="flex items-center justify-between mt-10">
@@ -70,7 +76,8 @@
             Back
           </button>
         </div>
-      </form>
+      </Form>
+      <p v-if="message" class="text-error mt-5">{{ message }}</p>
     </div>
   </div>
 </template>
@@ -78,6 +85,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
 import apiClient from '@/services/AxiosClient.js';
 
 const router = useRouter();
@@ -90,10 +99,20 @@ const user = ref({
 });
 
 const isSubmitting = ref(false);
-const message = ref("");
-const passwordVisible = ref(false); // State to track password visibility
-// list all role in roles selection
+const message = ref('');
+const passwordVisible = ref(false);
+
 const roles = ref([]);
+
+const fetchRoles = async () => {
+  try {
+    const response = await apiClient.get('/role/list');
+    roles.value = response.data.Role;
+  } catch (error) {
+    console.error('Error fetching roles:', error);
+    message.value = 'Error fetching roles. Please try again later.';
+  }
+};
 
 const fetchData = async () => {
   try {
@@ -116,16 +135,6 @@ const fetchData = async () => {
   }
 };
 
-const fetchRoles = async () => {
-  try {
-    const response = await apiClient.get('/role/list');
-    roles.value = response.data.Role; // role will list based on pagination info
-    console.log('Roles Data:', roles.value); // Log the roles data
-  } catch (error) {
-    console.error('Error fetching roles:', error);
-  }
-};
-
 onMounted(() => {
   fetchData();
   fetchRoles();
@@ -139,33 +148,39 @@ const cancel = () => {
   router.push('/user-list');
 };
 
-const onSubmit = async () => {
-  if (!user.value.username || !user.value.password || !user.value.role) {
-    console.error('User data is incomplete');
-    return;
-  }
+const schema = yup.object().shape({
+  username: yup
+    .string()
+    .required('Username is required!')
+    .min(4, 'Username must be at least 4 characters or more!')
+    .max(20, 'Username must be at most 20 characters or less!'),
+  password: yup
+    .string()
+    .required('Password is required!')
+    .min(6, 'Password must be at least 6 characters or more!')
+    .max(20, 'Password must be at most 20 characters or less!'),
+  role: yup.string().required('Role is required!'),
+});
 
+const onSubmit = async (values) => {
   isSubmitting.value = true;
 
   try {
-    const userData = {
-      username: user.value.username,
-      password: user.value.password,
-      role: user.value.role,
-    };
-    console.log(`Submitting data to /user/edit/${route.params.id}`, userData); // Debugging line
-    const response = await apiClient.put(`/user/edit/${route.params.id}`, userData);
+    const response = await apiClient.put(`/user/edit/${route.params.id}`, values);
     const result = response.data;
 
     if (result.message === 'The role does not exist!') {
-      alert(result.message);
       message.value = result.message;
       isSubmitting.value = false;
       return;
     }
     router.push('/user-list');
   } catch (error) {
-    console.error('Error updating data:', error);
+    const errorMessage =
+      error.response?.data?.message ||
+      'An error occurred while updating the user. Please try again later.';
+    console.error('Error updating user:', errorMessage);
+    message.value = errorMessage;
     isSubmitting.value = false;
   }
 };
