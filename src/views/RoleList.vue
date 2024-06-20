@@ -23,7 +23,7 @@
               d="M12 4.5v15m7.5-7.5h-15"
             />
           </svg>
-          <span class="ml-2">Create Role</span>
+          <span class="flex-initial w-32 ">Create Role</span>
         </router-link>
       </button>
     </div>

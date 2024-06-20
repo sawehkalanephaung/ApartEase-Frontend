@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center justify-center h-full">
     <div class="w-full max-w-xl p-6 bg-white rounded-md shadow-md">
-      <h3 class="text-2xl font-medium text-gray-700">Create Role</h3>
+      <h3 class="text-2xl font-medium text-gray-700 text-center">Create Role</h3>
       <Form @submit="onSubmit" :validation-schema="schema" class="rounded px-8 pt-6 pb-8 mb-4">
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="role_name">Role Name</label>
@@ -13,7 +13,8 @@
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             placeholder="Role Name"
           />
-          <ErrorMessage name="role_name" class="text-red-500 text-xs italic" />
+          <ErrorMessage name="role_name" class="text-red-500 text-xs italic mt-1" />
+          <p v-if="message" class="text-red-500 text-xs italic mt-1">{{ message }}</p>
         </div>
 
         <div class="flex items-center justify-between mt-10">
@@ -32,7 +33,6 @@
           </button>
         </div>
       </Form>
-      <p v-if="message" class="text-error mt-5">{{ message }}</p>
     </div>
   </div>
 </template>
