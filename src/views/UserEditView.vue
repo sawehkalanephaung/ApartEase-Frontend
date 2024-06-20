@@ -3,24 +3,27 @@
     <div class="w-full max-w-xl p-6 bg-white rounded-md shadow-md">
       <h3 class="text-2xl font-medium text-gray-700 text-center">User Edit</h3>
 
-      <form @submit.prevent="onSubmit" class="rounded px-8 pt-6 pb-8 mb-4">
+      <Form @submit="onSubmit" :validation-schema="schema" class="rounded px-8 pt-6 pb-8 mb-4">
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Username</label>
-          <input
+          <Field
             v-model="user.username"
             type="text"
             id="username"
+            name="username"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             :placeholder="originalUsername || 'Username'"
           />
+          <ErrorMessage name="username" class="text-red-500 text-xs italic mt-1" />
         </div>
 
         <div class="mb-4 relative">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
-          <input
+          <Field
             v-model="user.password"
             :type="passwordVisible ? 'text' : 'password'"
             id="password"
+            name="password"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             required
           />
@@ -43,15 +46,16 @@
 
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="role">Role</label>
-          <select
+          <Field
+            as="select"
+            v-model="user.role"
             id="role"
             name="role"
-            required
-            v-model="user.role"
             class="block w-full appearance-none bg-white border border-gray-300 rounded-md py-2 px-3 pr-10 text-gray-900 shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-600 sm:text-sm"
           >
             <option v-for="role in roles" :key="role.id" :value="role.role_name">{{ role.role_name }}</option>
-          </select>
+          </Field>
+          <ErrorMessage name="role" class="text-red-500 text-xs italic" />
         </div>
 
         <div class="flex items-center justify-between mt-10">
@@ -60,7 +64,7 @@
             class="bg-emerald-500 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             :disabled="isSubmitting"
           >
-          {{ isSubmitting ? "Submitting..." : "Submit" }}
+            {{ isSubmitting ? "Submitting..." : "Submit" }}
           </button>
           <button
             type="button"
@@ -70,7 +74,7 @@
             Back
           </button>
         </div>
-      </form>
+      </Form>
     </div>
   </div>
 </template>
@@ -79,7 +83,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import apiClient from '@/services/AxiosClient.js';
-import { useField, Form, ErrorMessage } from 'vee-validate';
+import { useField, Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
 const router = useRouter();
@@ -142,49 +146,42 @@ const cancel = () => {
   router.push('/user-list');
 };
 
-const onSubmit = async () => {
-  if (!user.value.password || !user.value.role) {
-    console.error('User data is incomplete');
-    return;
-  }
-
+const onSubmit = async (values) => {
   isSubmitting.value = true;
 
   try {
-    // If the username field is left blank, use the original username
-    if (!user.value.username) {
-      user.value.username = originalUsername.value;
-    }
-
-    const userData = {
-      username: user.value.username,
-      password: user.value.password,
-      role: user.value.role,
-    };
-    console.log(`Submitting data to /user/edit/${route.params.id}`, userData); // Debugging line
-    const response = await apiClient.put(`/user/edit/${route.params.id}`, userData);
+    const response = await apiClient.put(`/user/edit/${route.params.id}`, values);
     const result = response.data;
-    alert(result.message);
     if (result.message === 'The role does not exist!') {
-      alert(result.message);
       message.value = result.message;
       isSubmitting.value = false;
       return;
     }
     router.push('/user-list');
   } catch (error) {
-    // this error will be logged when username is already exist, back don't check exit username
-    console.error('Error updating data because username already exists in the database', error);
+    const errorMessage =
+      error.response?.data?.message ||
+      'An error occurred while updating the user. Please try again later.';
+    console.error('Error updating user:', errorMessage);
+    message.value = errorMessage;
     isSubmitting.value = false;
   }
 };
 
 // Vee-validate schema
-const schema = yup.object({
-  password: yup.string().required('Password is required!'),
+const schema = yup.object().shape({
+  username: yup
+    .string()
+    .required('Username is required!')
+    .min(4, 'Username must be at least 4 characters or more!')
+    .max(20, 'Username must be at most 20 characters or less!'),
+  password: yup
+    .string()
+    .required('Password is required!')
+    .min(6, 'Password must be at least 6 characters or more!')
+    .max(20, 'Password must be at most 20 characters or less!'),
+  role: yup.string().required('Role is required!'),
 });
-
-const { value: password, errorMessage: passwordError } = useField('password', schema.password);
 </script>
 
 <style scoped>
