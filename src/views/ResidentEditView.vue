@@ -11,7 +11,7 @@
             id="roomNumber"
             name="roomNumber"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            placeholder="Room Number"
+            :placeholder="originalRoomNo ||'Room Number' "
           />
           <ErrorMessage name="roomNumber" class="text-red-500 text-xs italic" />
           <p v-if="message" class="text-error text-xs italic mt-2">{{ message }}</p>
@@ -78,6 +78,7 @@ const resident = ref({
   lineId: '',
 });
 const originalName = ref('');
+const originalRoomNo = ref('');
 const message = ref('');
 
 const schema = yup.object().shape({
@@ -98,6 +99,7 @@ const fetchData = async () => {
         roomNumber: response.data.Resident.roomNumber,
       };
       originalName.value = response.data.Resident.name; // Store the original name
+      originalRoomNo.value = response.data.Resident.roomNumber; // Store the original room number
       console.log('Resident Data:', resident.value); // Log the resident data
     } else {
       console.warn('No resident data found in response:', response.data);
@@ -121,6 +123,10 @@ const onSubmit = async () => {
     if (!resident.value.name) {
       resident.value.name = originalName.value;
     }
+    if (!resident.value.roomNumber) {
+      resident.value.roomNumber = originalRoomNo.value;
+    }
+    
 
     const response = await apiClient.put(`/resident/edit/${route.params.id}`, resident.value);
     const result = response.data;
