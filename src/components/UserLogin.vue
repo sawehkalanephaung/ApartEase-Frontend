@@ -168,18 +168,15 @@ const login = async (values) => {
       message.value = error.response.data.message;
     } else {
       // Display a generic error message
-      message.value = 'An error occurred during login. Please try again.';
+      message.value =
+        "We're experiencing technical difficulties connecting to the backend server. Please try again in a few minutes or contact support if the issue continues."
+;
     }
 
     // Handle specific error messages based on backend responses
     if (error.response && error.response.status === 401) {
-      if (error.response.data === 'Could not verify user!') {
-        message.value = 'Incorrect username and password';
-      } else if (error.response.data === 'Could not verify!') {
-        message.value = 'Missing username or password.';
-      } else {
         message.value = 'Could not verify user!';
-      }
+
     } else if (error.response && error.response.status === 403) {
       message.value = 'Wrong password.';
     }
