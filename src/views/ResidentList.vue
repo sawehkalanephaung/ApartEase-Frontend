@@ -97,7 +97,7 @@
       </tbody>
     </table>
       <div v-else class="text-center text-gray-500 mt-4">
-        No residents found.
+        {{ isSearch ? 'Search Result - No Resident Found' : 'There is no residents data yet!' }}
       </div>
 
      <!-- Pagination controls -->
@@ -151,6 +151,7 @@ const showDeleteConfirm = ref(false);
 const residentToDelete = ref(null);
 const sortCriteria = ref('roomNumber'); // Default sort criteria
 const sortOrder = ref('asc'); // Default sorting order
+const isSearch = ref(false); // New state variable to track if it's a search
 
 
 // capitelize resident name
@@ -216,6 +217,7 @@ const fetchData = async () => {
       totalPages.value = 0;
       totalItems.value = 0;
     }
+    isSearch.value = false; // Reset search state
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -279,11 +281,13 @@ const searchResident = async () => {
       currentPage.value = 1;
       totalItems.value = 1;
     }
+    isSearch.value = true; // Set search state
   } catch (error) {
     console.error('Error searching resident:', error);
     residents.value = [];
     totalPages.value = 1;
     totalItems.value = 0;
+    isSearch.value = true; // Set search state even on error
   }
 };
 
