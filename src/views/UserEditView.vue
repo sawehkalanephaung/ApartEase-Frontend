@@ -15,6 +15,9 @@
             :placeholder="originalUsername || 'Username'"
           />
           <ErrorMessage name="username" class="text-red-500 text-xs italic mt-1" />
+          <p v-if="message" name="username" class="text-red-500 text-xs italic mt-1">{{ message }}</p>
+
+
         </div>
 
         <div class="mb-4 relative">
@@ -163,6 +166,11 @@ const onSubmit = async (values) => {
       error.response?.data?.message ||
       'An error occurred while updating the user. Please try again later.';
     console.error('Error updating user:', errorMessage);
+    if (error.response && error.response.status === 409) {
+      message.value = 'The username already exists';
+    } else {
+      message.value = errorMessage;
+    }
     message.value = errorMessage;
     isSubmitting.value = false;
   }
