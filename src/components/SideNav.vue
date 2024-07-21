@@ -14,7 +14,7 @@
       <div class="h-[calc(100vh-50px)] bg-primary py-[20px]">
         <div class="flex flex-col justify-between h-full px-[20px] space-y-[10px]">
           <div class="flex flex-col justify-between space-y-[10px]">
-            <!-- Add router-link for Home -->
+            <!-- start Home -->
             <div :class="{ 'hidden': !showSide }" class="sidebar">
               <router-link to="/home" @click="handleNavClick" class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800 transition duration-400 ease-in-out" exact-active-class="active-link">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-[25px] h-[25px] fill-current mr-2">
@@ -23,15 +23,28 @@
                 Home
               </router-link>
             </div>
+            <!-- end home-->
 
+
+            <!-- start unit management -->
+            <router-link to="/unit-management" @click="handleNavClick" class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800 transition duration-400 ease-in-out" exact-active-class="active-link">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+              </svg>
+
+              Unit Management
+            </router-link>
+
+            <!-- start Resident List -->
             <router-link to="/resident-list" @click="handleNavClick" class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800 transition duration-400 ease-in-out" exact-active-class="active-link">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-[25px] h-[25px] fill-current mr-2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
               </svg>
               Resident Table
             </router-link>
+            <!-- end of Resident Table -->
 
-            <!-- User Management Dropdown -->
+            <!-- start User Management Dropdown -->
             <div v-if="role === 'admin'  || role ==='Admin'" :class="{'active-link': isUserManagementActive}" class="relative" @mouseover="showUserManagementDropdown = true" @mouseleave="showUserManagementDropdown = false">
               <div class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800 transition duration-400 ease-in-out cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2">
@@ -51,7 +64,10 @@
                   <router-link to="/role-list" @click="handleNavClick" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" exact-active-class="active-link">Role</router-link>
                 </div>
               </transition>
+
             </div>
+              <!-- end User Management Dropdown -->
+
           </div>
 
           <!-- customize login account-->
