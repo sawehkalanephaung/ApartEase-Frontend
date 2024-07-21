@@ -14,6 +14,7 @@ import ResidentList from '@/views/ResidentList.vue';
 import ResidentCreateView from '@/views/ResidentCreateView.vue'; 
 import ResidentEditView from '@/views/ResidentEditView.vue';
 import UnitManagement from "@/components/UnitManagement.vue";
+import UnitManagementCreate from "@/components/UnitManagementCreate.vue";
 
 
 const router = createRouter({
@@ -97,6 +98,13 @@ const router = createRouter({
        component: UnitManagement,
        meta: { requiresAuth: true},
    },
+        {
+          path: "/unit-management-create",
+          name: "UnitManagementCreate",
+          component: UnitManagementCreate,
+          meta: { requiresAuth: true},
+        },
+
 
       ],
     },

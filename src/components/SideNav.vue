@@ -190,9 +190,11 @@ watch(route, (newRoute) => {
   } else if (newRoute.name === 'RoleList') {
     breadcrumb.value = ["Home", "Role List"];
   } else if (newRoute.name === 'ResidentList') {
-    breadcrumb.value = ["Home", "Resident List"];
-  } 
-  // add more
+    breadcrumb.value = ["Home", "Resident Table"];
+  } else if (newRoute.name === 'UnitManagement') {
+  breadcrumb.value = ["Home", "Unit Management"];
+}
+// add more
 });
 
 onMounted(() => {

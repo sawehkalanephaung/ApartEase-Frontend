@@ -1,11 +1,11 @@
 <template>
-  <h3 class="text-2xl font-medium text-gray-700">Resident Management</h3>
-  <div class="mt-4">
-    <h2 class="text-lg font-semibold leading-tight text-gray-700">Unit Management</h2>
+  <h3 class="text-2xl font-medium text-gray-700 ml-0">Unit Management</h3>
+  <div class="mt-6">
+
     <div class="mt-4 flex flex-col sm:flex-row justify-between items-left  sm:space-x-1">
       <button
           @click="onCreate"
-          class="sm:w-60 md:w-60 sm:ml-0 md:ml-3 bg-primary hover:bg-emerald-400 text-white px-4 py-2 rounded mb-2 sm:mb-0 lg:w-60 lg:h-13"
+          class="sm:w-60 md:w-60 sm:ml-0 md:ml-0 lg:ml-0 bg-primary hover:bg-emerald-400 text-white px-4 py-2 rounded mb-2 sm:mb-0 lg:w-60 lg:h-13"
       >
         <router-link to="/resident-create" class="flex sm:flex-row md:flex-row items-center ">
           <svg
@@ -29,7 +29,7 @@
       <div class="flex flex-col sm:flex-row sm:justify-end sm:space-x-1 ">
         <button
             @click="updateAllSelected"
-            class="border border-emerald-400 text-emerald-400 hover:bg-emerald-500 hover:text-white px-4 py-2 rounded mb-2 sm:mb-0 lg:w-26 lg:h-12 sm:w-26 sm:h-12"
+            class="border border-emerald-400 text-emerald-400 hover:bg-emerald-500 hover:text-white px-4 py-2 rounded lg:mr-2 md:mr-2 sm:mr-2 mb-2 sm:mb-0 lg:w-26 lg:h-12 sm:w-26 sm:h-12"
             :disabled="selectedUnits.length === 0"
         >
           Update
@@ -183,7 +183,7 @@ onMounted(() => {
 });
 
 const onCreate = () => {
-  router.push('/resident-create');
+  router.push('/unit-management-create');
 };
 
 const onEdit = (id) => {
