@@ -5,7 +5,7 @@
     <div class="mt-4 flex flex-col sm:flex-row justify-between items-left  sm:space-x-1">
       <button
           @click="onCreate"
-          class="sm:w-60 md:w-60 sm:ml-0 md:ml-0 lg:ml-0 bg-primary hover:bg-emerald-400 text-white px-4 py-2 rounded mb-2 sm:mb-0 lg:w-60 lg:h-13"
+          class="sm:w-60 md:w-60 sm:ml-0 md:ml-0 lg:ml-0 bg-primary hover:bg-emerald-400 text-white px-4 py-2 rounded mb-2 sm:mb-0 "
       >
         <router-link to="/resident-create" class="flex sm:flex-row md:flex-row items-center ">
           <svg
@@ -29,14 +29,14 @@
       <div class="flex flex-col sm:flex-row sm:justify-end sm:space-x-1 ">
         <button
             @click="updateAllSelected"
-            class="border border-emerald-400 text-emerald-400 hover:bg-emerald-500 hover:text-white px-4 py-2 rounded lg:mr-2 md:mr-2 sm:mr-2 mb-2 sm:mb-0 lg:w-26 lg:h-12 sm:w-26 sm:h-12"
+            class="border border-emerald-400 text-emerald-400 hover:bg-emerald-500 hover:text-white px-4 py-2 rounded lg:mr-2 md:mr-2 sm:mr-2 mb-2 sm:mb-0 "
             :disabled="selectedUnits.length === 0"
         >
           Update
         </button>
         <button
             @click="deleteAllSelected"
-            class="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded lg:w-26 lg:h-12 sm:w-26 sm:h-12"
+            class="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded"
             :disabled="selectedUnits.length === 0"
         >
           Delete
@@ -49,7 +49,7 @@
         <thead>
         <tr>
           <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-            <input type="checkbox" @change="toggleSelectAll" v-model="selectAll" />
+            <input type="checkbox" @change="toggleSelectAll" v-model="selectAll" class="lg:w-5 lg:h-5 md:w-4 md:h-4 sm:w-4 sm:h-4" />
           </th>
           <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"> Unit Image </th>
           <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"> Room No </th>
@@ -61,10 +61,10 @@
         <tbody>
         <tr v-for="(u, index) in units" :key="index">
           <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-            <input type="checkbox" v-model="selectedUnits" :value="u.id" />
+            <input type="checkbox" v-model="selectedUnits" :value="u.id" class="lg:w-5 lg:h-5 md:w-4 md:h-4 sm:w-4 sm:h-4 " />
           </td>
           <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-            <img :src="u.unitImage" alt="Unit Image" class="w-16 h-16 object-cover" />
+            <img :src="u.unitImage || 'https://via.placeholder.com/600'" alt="Unit Image" class="w-14 h-14 object-cover cursor-pointer" @click="openImageModal(u.unitImage)" />
           </td>
           <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.res_room }}</td>
           <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -134,6 +134,20 @@
       @confirm-delete="confirmDelete"
       @close="showDeleteConfirm = false"
   />
+  <!-- Image Modal -->
+  <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal">
+    <div class="relative bg-white rounded-lg shadow-lg max-w-full max-h-full p-4" @click.stop>
+      <button @click="closeImageModal" class="absolute top-2 right-2 text-gray-700 hover:text-gray-900">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <div class="mt-8">
+        <img :src="currentImage || 'https://via.placeholder.com/700'" alt="Unit Image" class="w-full h-full object-contain" />
+      </div>
+    </div>
+  </div>
+
   <router-view />
 </template>
 
@@ -150,6 +164,8 @@ const showDeleteConfirm = ref(false);
 const unitsToDelete = ref(null);
 const selectedUnits = ref([]);
 const selectAll = ref(false);
+const showImageModal = ref(false);
+const currentImage = ref('');
 
 const fetchData = async () => {
   try {
@@ -254,8 +270,25 @@ const toggleSelectAll = () => {
   }
 };
 
+const openImageModal = (imageUrl) => {
+  currentImage.value = imageUrl;
+  showImageModal.value = true;
+};
+
+const closeImageModal = () => {
+  showImageModal.value = false;
+  currentImage.value = '';
+};
+
 watchEffect(() => {
   fetchData();
 });
 </script>
 
+<style scoped>
+/* Custom styles for the image modal */
+.image-modal {
+  max-width: 100%;
+  max-height: 100%;
+}
+</style>

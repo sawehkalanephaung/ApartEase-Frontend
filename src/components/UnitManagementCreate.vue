@@ -14,7 +14,8 @@
                 placeholder="Enter room number"
             />
             <ErrorMessage name="roomNumber" class="text-red-500 text-xs italic" />
-            <div v-if="roomNumberError" class="text-red-500 text-xs italic">{{ roomNumberError }}</div>
+            <div v-if="roomNumberError" class=" mt-2 text-red-500 text-xs italic">{{ roomNumberError }}</div>
+            <div v-if="message" class=" mt-2 text-red-500 text-xs italic">{{ message }}</div>
           </div>
 
           <div class="mb-4">
@@ -59,7 +60,7 @@
             </button>
           </div>
         </Form>
-        <div v-if="message" class="mt-4 text-red-500 text-xs italic">{{ message }}</div>
+<!--        <div v-if="message" class="mt-4 text-red-500 text-xs italic">{{ message }}</div>-->
       </div>
     </div>
     <div class="flex items-center justify-center h-full">
