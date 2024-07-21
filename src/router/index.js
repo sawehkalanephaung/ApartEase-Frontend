@@ -12,7 +12,8 @@ import RoleCreateView from '@/views/RoleCreateView.vue';
 import RoleEditView from '@/views/RoleEditView.vue';
 import ResidentList from '@/views/ResidentList.vue';
 import ResidentCreateView from '@/views/ResidentCreateView.vue'; 
-import ResidentEditView from '@/views/ResidentEditView.vue'; 
+import ResidentEditView from '@/views/ResidentEditView.vue';
+import UnitManagement from "@/components/UnitManagement.vue";
 
 
 const router = createRouter({
@@ -90,6 +91,12 @@ const router = createRouter({
           component: ResidentEditView,
           meta: { requiresAuth: true},
         },
+   {
+     path: "/unit-management",
+         name: "UnitManagement",
+       component: UnitManagement,
+       meta: { requiresAuth: true},
+   },
 
       ],
     },
