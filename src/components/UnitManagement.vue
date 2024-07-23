@@ -69,16 +69,16 @@
           <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ u.res_room }}</td>
           <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
             <div class="flex items-center">
-              <div :class="{'bg-green-500': u.approveStatus, 'bg-red-500': !u.approveStatus}" class="w-4 h-4 rounded-full mr-1"></div>
-              <select
-                  @change="toggleApproveStatus(u.id, $event)"
-                  class="px-2 py-1 rounded"
-              >
-                <option :value="true" :selected="u.approveStatus">Approved</option>
-                <option :value="false" :selected="!u.approveStatus">Disapproved</option>
-              </select>
+              <div :class="{'bg-green-500': u.approveStatus, 'bg-red-500': !u.approveStatus}" class="w-4 h-4 rounded-full mr-1 flex items-center justify-center">
+                <svg v-if="u.approveStatus" xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/>
+                </svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-11.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <span>{{ u.approveStatus ? 'Approved' : 'Disapproved' }}</span>
             </div>
-
           </td>
           <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ formatDate(u.date) }}</td>
           <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center flex-row">
@@ -203,7 +203,7 @@ const onCreate = () => {
 };
 
 const onEdit = (id) => {
-  router.push({ name: 'ResidentEditView', params: { id } });
+  router.push({ name: 'UnitManagementUpdate', params: { id } });
 };
 
 const onDelete = (id) => {
@@ -239,6 +239,7 @@ const updateAllSelected = async () => {
       return apiClient.put(`/unit/update/${id}`, { approveStatus: !unit.approveStatus });
     }));
     fetchData();
+    // router.push({ name: 'UnitManagementUpdate', params: { id } });
   } catch (error) {
     console.error('Error updating selected units:', error);
   }
