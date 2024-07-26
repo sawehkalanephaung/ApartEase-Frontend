@@ -13,6 +13,7 @@ import RoleEditView from '@/views/RoleEditView.vue';
 import ResidentList from '@/views/ResidentList.vue';
 import ResidentCreateView from '@/views/ResidentCreateView.vue'; 
 import ResidentEditView from '@/views/ResidentEditView.vue'; 
+import { checkLoginStatus } from '@/utils/checkLoginStatus';
 
 
 const router = createRouter({
@@ -97,6 +98,7 @@ const router = createRouter({
 });
 // Global navigation guard for authentication
 router.beforeEach((to, from, next) => {
+  checkLoginStatus();
   const token = localStorage.getItem('token');
   const userRole = store.state.role; // Access role from Vuex store state
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
@@ -109,6 +111,7 @@ router.beforeEach((to, from, next) => {
   } else {
     next(); // Proceed to the route
   }
+  next();
 });
 
 
@@ -119,4 +122,6 @@ router.afterEach(() => {
     sidebar.classList.add('hidden');
   }
 });
+
+
 export default router;
