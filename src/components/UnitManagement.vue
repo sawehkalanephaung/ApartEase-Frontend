@@ -1,83 +1,66 @@
 <template>
   <h3 class="ml-0 text-2xl font-medium text-gray-700">Unit Management</h3>
   <div class="mt-6">
+    <div class="flex flex-col justify-between mt-4 sm:flex-row items-right sm:space-x-1">
+      <div class="flex items-center ml-auto space-x-2">
+        <h2>Start</h2>
+        <DatePicker v-model="startDate" @update:modelValue="handleStartDateChange" :format="dateFormat" />
 
-    <div class="flex flex-col justify-between mt-4 sm:flex-row items-left sm:space-x-1">
-      <button
-          @click="onCreate"
-          class="px-4 py-2 mb-2 text-white rounded sm:w-60 md:w-60 sm:ml-0 md:ml-0 lg:ml-0 bg-primary hover:bg-emerald-400 sm:mb-0 "
-      >
-        <router-link to="/resident-create" class="flex items-center sm:flex-row md:flex-row ">
-          <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6"
-          >
-            <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-            />
-          </svg>
-          <span class="flex-none w-32">New Unit</span>
-        </router-link>
-      </button>
+        <h2>End</h2>
+        <DatePicker v-model="endDate" @update:modelValue="handleEndDateChange" :format="dateFormat" />
+      </div>
     </div>
 
     <div class="mt-4 overflow-x-auto">
-      <table v-if="units.length > 0" class="min-w-full leading-normal text-md">
+      <table class="min-w-full leading-normal text-md">
         <thead>
-        <tr>
-          <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Unit Image </th>
-          <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Room No </th>
-          <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Status </th>
-          <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Date </th>
-          <th class="px-5 py-3 text-xs font-semibold tracking-wider text-center text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Action</th>
-        </tr>
+          <tr>
+            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Unit Image </th>
+            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Room No </th>
+            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Status </th>
+            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Date </th>
+            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-center text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Action</th>
+          </tr>
         </thead>
         <tbody>
-        <tr v-for="(u, index) in units" :key="index">
-       
-          <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-            <img :src="u.unitImage || 'https://via.placeholder.com/600'" alt="Unit Image" class="object-cover cursor-pointer w-14 h-14" @click="openImageModal(u.unitImage)" />
-          </td>
-          <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ u.res_room }}</td>
-          <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-            <div class="flex items-center">
-              <div :class="{'bg-green-500': u.approveStatus, 'bg-red-500': !u.approveStatus}" class="flex items-center justify-center w-4 h-4 mr-1 rounded-full">
-                <svg v-if="u.approveStatus" xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/>
-                </svg>
-                <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-11.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z" clip-rule="evenodd"/>
-                </svg>
+          <tr v-if="units.length === 0">
+            <td colspan="5" class="px-5 py-5 text-sm text-center bg-white border-b border-gray-200">No data found.</td>
+          </tr>
+          <tr v-for="(u, index) in filteredUnits" :key="index">
+            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+              <img :src="u.unitImage || 'https://via.placeholder.com/600'" alt="Unit Image" class="object-cover cursor-pointer w-14 h-14" @click="openImageModal(u.unitImage)" />
+            </td>
+            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ u.res_room }}</td>
+            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+              <div class="flex items-center">
+                <div :class="{'bg-green-500': u.approveStatus, 'bg-red-500': !u.approveStatus}" class="flex items-center justify-center w-4 h-4 mr-1 rounded-full">
+                  <svg v-if="u.approveStatus" xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a 1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/>
+                  </svg>
+                  <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-11.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <span>{{ u.approveStatus ? 'Approved' : 'Disapproved' }}</span>
               </div>
-              <span>{{ u.approveStatus ? 'Approved' : 'Disapproved' }}</span>
-            </div>
-          </td>
-          <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ formatDate(u.date) }}</td>
-          <td class="flex-row px-5 py-5 text-sm text-center bg-white border-b border-gray-200">
-            <button @click="() => onEdit(u.id)" class="mr-1 text-emerald-600 hover:text-emerald-900">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
-                <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
-              </svg>
-            </button>
-            <button @click="() => onDelete(u.id)" class="ml-1 text-red-500 hover:text-red-700">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
-              </svg>
-            </button>
-          </td>
-        </tr>
+            </td>
+            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ formatDate(u.date) }}</td>
+            <td class="flex-row px-5 py-5 text-sm text-center bg-white border-b border-gray-200">
+              <button @click="() => onEdit(u.id)" class="mr-1 text-emerald-600 hover:text-emerald-900">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
+                  <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+              <button @click="() => onDelete(u.id)" class="ml-1 text-red-500 hover:text-red-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+            </td>
+          </tr>
         </tbody>
       </table>
-      <div v-else class="mt-4 text-center text-gray-500">
-        No data found.
-      </div>
 
       <!-- Pagination controls -->
       <div class="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
@@ -129,25 +112,31 @@
   <router-view />
 </template>
 
+
 <script setup>
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid';
-import { ref, onMounted, watchEffect } from 'vue';
+import { ref, onMounted, watchEffect, computed } from 'vue';
 import apiClient from '@/services/AxiosClient.js';
 import router from '@/router';
 import { usePagination } from '@/composables/usePagination';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
+import DatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 
 const units = ref([]);
 const showDeleteConfirm = ref(false);
 const unitsToDelete = ref(null);
 const showImageModal = ref(false);
 const currentImage = ref('');
+const startDate = ref(null);
+const endDate = ref(null);
 
 const fetchData = async () => {
   try {
     const response = await apiClient.get('/unit/list', {
       params: {
         page: currentPage.value,
+        startDate: startDate.value,
+        endDate: endDate.value,
       },
     });
     const data = response.data.Unit;
@@ -174,10 +163,6 @@ onMounted(() => {
   fetchData();
 });
 
-const onCreate = () => {
-  router.push('/unit-management-create');
-};
-
 const onEdit = (id) => {
   router.push({ name: 'UnitManagementUpdate', params: { id } });
 };
@@ -197,14 +182,10 @@ const confirmDelete = async () => {
   }
 };
 
-
-
-
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleDateString();
 };
-
 
 const openImageModal = (imageUrl) => {
   currentImage.value = imageUrl;
@@ -216,9 +197,36 @@ const closeImageModal = () => {
   currentImage.value = '';
 };
 
+const handleStartDateChange = (date) => {
+  startDate.value = date;
+  fetchData();
+};
+
+const handleEndDateChange = (date) => {
+  endDate.value = date;
+  fetchData();
+};
+
+const filteredUnits = computed(() => {
+  if (!startDate.value && !endDate.value) {
+    return units.value;
+  }
+
+  const start = new Date(startDate.value);
+  const end = new Date(endDate.value);
+
+  return units.value.filter(unit => {
+    const unitDate = new Date(unit.date);
+    return (!startDate.value || unitDate >= start) && (!endDate.value || unitDate <= end);
+  });
+});
+
 watchEffect(() => {
   fetchData();
 });
+
+// Date format for the date picker
+const dateFormat = 'MM/dd/yyyy';
 </script>
 
 <style scoped>
@@ -226,5 +234,25 @@ watchEffect(() => {
 .image-modal {
   max-width: 100%;
   max-height: 100%;
+}
+/* Custom styles for the DatePicker component */
+.vue-datepicker {
+  --dp-primary-color: #10b981; /* Change primary color to green */
+  --dp-primary-hover-color: red; /* Change primary hover color to a darker green */
+  --dp-primary-active-color: #047857; /* Change primary active color to an even darker green */
+}
+
+/* Custom styles for the button */
+button {
+  --tw-ring-color: #10b981; /* Change focus ring color to green */
+}
+
+button:hover {
+  background-color: #d1fae5; /* Change hover background color to a light green */
+}
+
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5); /* Change focus box shadow color to a semi-transparent green */
 }
 </style>
