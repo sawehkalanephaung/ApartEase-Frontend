@@ -32,7 +32,7 @@
       </div>
       <button
         @click="onCreate"
-        class="px-4 py-2 text-white rounded sm:w-full md:w-auto sm:ml-0 md:ml-3 bg-primary hover:bg-emerald-400"
+        class="px-4 py-2 text-white rounded  sm:w-full md:w-auto sm:ml-0 md:ml-3 bg-primary hover:bg-emerald-400"
       >
         <router-link to="/resident-create" class="flex items-center sm:flex-row md:flex-row">
           <svg
@@ -56,50 +56,49 @@
 
     <div class="mt-4 overflow-x-auto">
       
-      <table class="min-w-full leading-normal text-md">
-  <thead>
-    <tr>
-      <th @click="toggleSort('roomNumber')" class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200 cursor-pointer">
-        Room No
-        <span v-if="sortCriteria === 'roomNumber'">
-          {{ sortOrder === 'asc' ? '↑' : '↓' }}
-        </span>
-      </th>
-      <th @click="toggleSort('name')" class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200 cursor-pointer">
-        Name
-        <span v-if="sortCriteria === 'name'">
-          {{ sortOrder === 'asc' ? '↑' : '↓' }}
-        </span>
-      </th>
-      <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Line ID</th>
-      <th class="px-5 py-3 text-xs font-semibold tracking-wider text-center text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr v-if="residents.length === 0">
-      <td colspan="4" class="px-5 py-5 text-sm text-center bg-white border-b border-gray-200">No residents found.</td>
-    </tr>
-    <tr v-for="(u, index) in residents" :key="index">
-      <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ u.roomNumber }}</td>
-      <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ capitalizeName(u.name) }}</td>
-      <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ u.lineId }}</td>
-      <td class="flex-row px-5 py-5 text-sm text-center bg-white border-b border-gray-200">
-        <button @click="() => onEdit(u.id)" class="mr-1 text-emerald-600 hover:text-emerald-900">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
-            <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
-          </svg>
-        </button>
-        <button @click="() => onDelete(u.id)" class="ml-1 text-red-500 hover:text-red-700">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
-          </svg>
-        </button>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
+    <table v-if="residents.length > 0" class="min-w-full leading-normal text-md">
+      <thead>
+        <tr>
+          <th @click="toggleSort('roomNumber')" class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200 cursor-pointer">
+            Room No
+            <span v-if="sortCriteria === 'roomNumber'">
+              {{ sortOrder === 'asc' ? '↑' : '↓' }}
+            </span>
+          </th>
+          <th @click="toggleSort('name')" class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200 cursor-pointer">
+            Name
+            <span v-if="sortCriteria === 'name'">
+              {{ sortOrder === 'asc' ? '↑' : '↓' }}
+            </span>
+          </th>
+          <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Line ID</th>
+          <th class="px-5 py-3 text-xs font-semibold tracking-wider text-center text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(u, index) in residents" :key="index">
+          <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ u.roomNumber }}</td>
+          <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ capitalizeName(u.name) }}</td>
+          <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ u.lineId }}</td>
+          <td class="flex-row px-5 py-5 text-sm text-center bg-white border-b border-gray-200">
+            <button @click="() => onEdit(u.id)" class="mr-1 text-emerald-600 hover:text-emerald-900">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
+                <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+            <button @click="() => onDelete(u.id)" class="ml-1 text-red-500 hover:text-red-700">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+      <div v-else class="mt-4 text-center text-gray-500">
+        No residents found.
+      </div>
 
      <!-- Pagination controls -->
      <div class="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
