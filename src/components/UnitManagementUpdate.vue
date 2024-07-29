@@ -1,65 +1,65 @@
 <template>
   <h2 class="mt-0 mb-2 text-xl font-bold">Update Unit</h2>
-  <div class="max-w-sm rounded-lg drop-shadow-md bg-gray-100 dark:border-gray-700 min-w-full">
+  <div class="max-w-sm min-w-full bg-gray-100 rounded-lg drop-shadow-md dark:border-gray-700">
     <div class="flex flex-col items-center">
-      <h1 class="font-bold text-xl mt-4 underline">{{ roomNumber }}</h1>    </div>
-    <div class="mt-1 h-full">
+      <h1 class="mt-4 text-xl font-bold underline">{{ roomNumber }}</h1>    </div>
+    <div class="h-full mt-1">
       <div class="flex justify-around mb-4 space-x-4">
-        <div class="text-center items-center flex flex-col rounded-lg p-4 w-full">
+        <div class="flex flex-col items-center w-full p-4 text-center rounded-lg">
           <img src="https://via.placeholder.com/600" alt="Last month" style="width: 100px; height: 100px;" @click="openImageModal('https://via.placeholder.com/600')">
-          <label for="lastMonth" class="block text-sm font-medium text-gray-700 mt-2">Last month</label>
+          <label for="lastMonth" class="block mt-2 text-sm font-medium text-gray-700">Last month</label>
           <div class="flex items-center mt-1">
-            <input v-model="lastMonth" type="number" id="lastMonth" class="block w-28 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            <input v-model="lastMonth" type="number" id="lastMonth" class="block px-3 py-2 border border-gray-300 rounded-md shadow-sm w-28 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
             <span class="ml-2">kw</span>
           </div>
         </div>
-        <div class="text-center items-center flex flex-col rounded-lg p-4 w-full">
+        <div class="flex flex-col items-center w-full p-4 text-center rounded-lg">
           <img src="https://via.placeholder.com/600" alt="This month" style="width: 100px; height: 100px;" @click="openImageModal('https://via.placeholder.com/600')">
-          <label for="thisMonth" class="block text-sm font-medium text-gray-700 mt-2">This month</label>
+          <label for="thisMonth" class="block mt-2 text-sm font-medium text-gray-700">This month</label>
           <div class="flex items-center mt-1">
-            <input v-model="thisMonth" type="number" id="thisMonth" class="block w-28 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            <input v-model="thisMonth" type="number" id="thisMonth" class="block px-3 py-2 border border-gray-300 rounded-md shadow-sm w-28 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
             <span class="ml-2">kw</span>
           </div>
         </div>
       </div>
 
       <hr class="my-2 gray-hr">
-      <h2 class="mb-2 px-6 py-2 font-bold">Detail Units Table</h2>
+      <h2 class="px-6 py-2 mb-2 font-bold">Detail Units Table</h2>
 
       <div class="overflow-x-auto">
-        <table class="min-w-full h-full divide-y divide-gray-200 ">
+        <table class="h-full min-w-full divide-y divide-gray-200 ">
           <tbody class="divide-y divide-gray-200">
           <tr class="text-sm">
-            <td class="px-6 py-2 whitespace-nowrap font-medium text-gray-900">Real Usage</td>
-            <td class="px-6 py-2 whitespace-nowrap text-gray-500">{{ thisMonth }} - {{ lastMonth }} = {{ realUsage }} kw</td>
+            <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Real Usage</td>
+            <td class="px-6 py-2 text-gray-500 whitespace-nowrap">{{ thisMonth }} - {{ lastMonth }} = {{ realUsage }} kw</td>
           </tr>
           <tr class="text-sm">
-            <td class="px-6 py-2 whitespace-nowrap font-medium text-gray-900">Unit Calculation</td>
-            <td class="px-6 py-2 whitespace-nowrap text-gray-500">
-              <input v-model="costPerUnit" type="number" class="w-32 px-2 py-1 border border-gray-300 rounded-md mb-1" /> baht/unit
+            <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Unit Calculation</td>
+            <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
+              <input v-model="costPerUnit" type="number" class="w-32 px-2 py-1 mb-1 border border-gray-300 rounded-md" /> baht/unit
               <p>{{ realUsage }} * {{ costPerUnit }} = {{ unitCalculation }} baht</p>
             </td>
           </tr>
           <tr class="text-sm">
-            <td class="px-6 py-2 whitespace-nowrap font-medium text-gray-900">Water cost</td>
-            <td class="px-6 py-2 whitespace-nowrap text-gray-500">
+            <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Water cost</td>
+            <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
               <input v-model="waterCost" type="number" class="w-32 px-2 py-1 border border-gray-300 rounded-md" /> baht
             </td>
           </tr>
           <tr class="text-sm">
-            <td class="px-6 py-2 whitespace-nowrap font-medium text-gray-900">Rent cost</td>
-            <td class="px-6 py-2 whitespace-nowrap text-gray-500">
+            <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Rent cost</td>
+            <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
               <input v-model="rentCost" type="number" class="w-32 px-2 py-1 border border-gray-300 rounded-md" /> baht
             </td>
           </tr>
           <tr class="text-sm">
-            <td class="px-6 py-2 whitespace-nowrap font-medium text-gray-900">Total bill</td>
-            <td class=" font-bold px-6 py-2 whitespace-nowrap text-gray-500">{{ totalBill }} baht</td>
+            <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Total bill</td>
+            <td class="px-6 py-2 font-bold text-gray-500 whitespace-nowrap">{{ totalBill }} baht</td>
           </tr>
           <tr class="text-sm">
-            <td class="px-6 py-2 whitespace-nowrap font-medium text-gray-900">Status</td>
-            <td class="font-bold px-6 py-2 whitespace-nowrap text-gray-500 ">
-              <select v-model="status" class="border border-gray-300 rounded-md px-2 py-1 mb-4">
+            <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Status</td>
+            <td class="px-6 py-2 font-bold text-gray-500 whitespace-nowrap ">
+              <select v-model="status" class="px-2 py-1 mb-4 border border-gray-300 rounded-md">
                 <option value="approve">Approve</option>
                 <option value="disapprove">Disapprove</option>
               </select>
@@ -70,20 +70,20 @@
       </div>
     </div>
   </div>
-    <div class="fixed bottom-8 right-2 flex justify-end mt-2 space-x-2 p-4 mr-4">
-      <button @click="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-md">Save</button>
-      <button @click="cancel" class="px-4 py-2 bg-gray-600 text-white rounded-md">Cancel</button>
+    <div class="fixed flex justify-end p-4 mt-2 mr-4 space-x-2 bottom-8 right-2">
+      <button @click="submit" class="px-4 py-2 text-white rounded-md bg-emerald-600">Save</button>
+      <button @click="cancel" class="px-4 py-2 text-white bg-gray-600 rounded-md">Cancel</button>
     </div>
   <!-- Image Modal -->
   <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal">
-    <div class="relative bg-white rounded-lg shadow-lg max-w-full max-h-full p-4" @click.stop>
-      <button @click="closeImageModal" class="absolute top-2 right-2 text-gray-700 hover:text-gray-900">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div class="relative max-w-full max-h-full p-4 bg-white rounded-lg shadow-lg" @click.stop>
+      <button @click="closeImageModal" class="absolute text-gray-700 top-2 right-2 hover:text-gray-900">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
       <div class="mt-8">
-        <img :src="currentImage || 'https://via.placeholder.com/700'" alt="Unit Image" class="w-full h-full object-contain" />
+        <img :src="currentImage || 'https://via.placeholder.com/700'" alt="Unit Image" class="object-contain w-full h-full" />
       </div>
     </div>
   </div>
@@ -102,7 +102,7 @@ const thisMonth = ref('');
 const costPerUnit = ref(3);
 const waterCost = ref(100);
 const rentCost = ref(3500);
-const status = ref(true); // default is approve
+const status = ref(false); // default is disapprove
 const roomNumber = ref('');
 const message = ref('');
 
