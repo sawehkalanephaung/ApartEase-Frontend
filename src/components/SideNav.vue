@@ -1,11 +1,11 @@
 
 <template>
-  <div class="w-screen h-screen flex">
+  <div class="flex w-screen h-screen">
     <!-- Side bar -->
     <div class="w-[300px] h-full bg-gray-200 text-text" v-show="showSide">
       <div class="h-[50px] bg-primary flex justify-start items-center">
         <div class="px-[20px]">
-          <router-link to="/home" class="font-bold text-xl">
+          <router-link to="/home" class="text-xl font-bold">
             ApartEase
           </router-link>
         </div>
@@ -44,6 +44,15 @@
             </router-link>
             <!-- end of Resident Table -->
 
+            <!-- start Bill List -->
+                  <router-link to="/send-bill" @click="handleNavClick" class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800 transition duration-400 ease-in-out" exact-active-class="active-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+                    </svg>
+                    Send Bill
+                  </router-link>
+            <!-- end of Bill List -->
+
             <!-- start User Management Dropdown -->
             <div v-if="role === 'admin'  || role ==='Admin'" :class="{'active-link': isUserManagementActive}" class="relative" @mouseover="showUserManagementDropdown = true" @mouseleave="showUserManagementDropdown = false">
               <div class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800 transition duration-400 ease-in-out cursor-pointer">
@@ -59,7 +68,7 @@
                 </svg>
               </div>
               <transition name="fade">
-                <div v-show="showUserManagementDropdown" class="absolute left-0 w-full mt-2 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                <div v-show="showUserManagementDropdown" class="absolute left-0 z-10 w-full mt-2 bg-white border border-gray-200 rounded-md shadow-lg">
                   <router-link to="/user-list" @click="handleNavClick" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" exact-active-class="active-link">User</router-link>
                   <router-link to="/role-list" @click="handleNavClick" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" exact-active-class="active-link">Role</router-link>
                 </div>
@@ -100,12 +109,11 @@
         <!-- Hamburger menu -->
         <div class="cursor-pointer w-[30px]" @click="toggleSideBar">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="w-[25px] h-[25px]">
-            <!--! Font Awesome Pro 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
             <path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32-14.3 32-32z" />
           </svg>
         </div>
         <!-- Breadcrumb -->
-        <div class="text-sm breadcrumbs ml-4">
+        <div class="ml-4 text-sm breadcrumbs">
           <ul>
             <li><a @click="navigateTo('home')">Home</a></li>
             <li v-if="breadcrumb.length > 1">{{ breadcrumb[1] }}</li>
@@ -116,7 +124,7 @@
       <div class="h-[calc(100vh-50px)] bg-gray-50 p-[20px]">
         <div class="border border-gray-300 rounded-md p-[20px] h-full">
           <!-- Success message -->
-          <div v-if="showSuccessMessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+          <div v-if="showSuccessMessage" class="relative px-4 py-3 text-green-700 bg-green-100 border border-green-400 rounded" role="alert">
             <strong class="font-bold">Success!</strong>
             <span class="block sm:inline"> You have successfully logged out.</span>
           </div>
@@ -193,7 +201,11 @@ watch(route, (newRoute) => {
     breadcrumb.value = ["Home", "Resident Table"];
   } else if (newRoute.name === 'UnitManagement') {
   breadcrumb.value = ["Home", "Unit Management"];
-}
+  }else if (newRoute.name === 'UnitManagement') {
+    breadcrumb.value = ["Home", "Unit Management"];
+  } else if (newRoute.name === 'SendBill') {
+    breadcrumb.value = ["Home", "Send Bill"];
+  }
 // add more
 });
 

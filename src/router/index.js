@@ -18,6 +18,7 @@ import UnitManagement from "@/components/UnitManagement.vue";
 import UnitManagementCreate from "@/components/UnitManagementCreate.vue";
 import UnitManagementUpdate from "@/components/UnitManagementUpdate.vue";
 import { checkLoginStatus } from '@/utils/checkLoginStatus';
+import SendBill from '@/components/SendBill.vue';
 
 
 
@@ -113,6 +114,13 @@ const router = createRouter({
           name: "UnitManagementUpdate",
           component: UnitManagementUpdate,
           meta: { requiresAuth: true},
+          props: true,
+        },
+        {
+          path: '/send-bill',
+          name: 'SendBill',
+          component: SendBill,
+          props: route => ({ units: route.query.units }) 
         },
 
 

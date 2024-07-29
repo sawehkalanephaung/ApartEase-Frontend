@@ -24,13 +24,13 @@
       </div>
 
       <hr class="my-2 gray-hr">
-      <h2 class="px-6 py-2 mb-2 font-bold">Detail Units Table</h2>
+      <h2 class="px-6 py-2 mb-2 font-bold">Detail Units Information</h2>
 
       <div class="overflow-x-auto">
         <table class="h-full min-w-full divide-y divide-gray-200 ">
           <tbody class="divide-y divide-gray-200">
           <tr class="text-sm">
-            <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Real Usage</td>
+            <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Units Usage</td>
             <td class="px-6 py-2 text-gray-500 whitespace-nowrap">{{ thisMonth }} - {{ lastMonth }} = {{ realUsage }} kw</td>
           </tr>
           <tr class="text-sm">
