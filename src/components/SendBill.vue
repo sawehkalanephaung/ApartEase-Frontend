@@ -2,9 +2,9 @@
   <div class="relative">
     <h3 class="text-2xl font-medium text-gray-700">Send Bill</h3>
     <button @click="sendBills" class="absolute top-0 right-0 px-4 py-2 text-white rounded-md bg-emerald-600 hover:bg-emerald-700">Send Bills</button>
-    <div class="mt-4 overflow-auto max-h-[500px]"> <!-- Add overflow-auto and max-height -->
+    <div class="mt-4 overflow-auto max-h-[500px] custom-scrollbar"> <!-- Add custom-scrollbar class -->
       <table class="min-w-full leading-normal text-md">
-        <thead>
+        <thead class="sticky-header">
           <tr>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
               <input type="checkbox" @change="toggleSelectAll" v-model="selectAll" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" />
@@ -101,5 +101,38 @@ const selectedUnitsCount = computed(() => {
 
 .max-h-[500px] {
   max-height: 500px;
+}
+
+/* Add styles for sticky header */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  background-color: white; /* Ensure the background color matches the table header */
+  z-index: 1; /* Ensure it stays above the table rows */
+}
+
+/* Custom scrollbar styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 12px; /* Width of the scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #09b064  ; 
+  border-radius: 10px; 
+  border: 3px solid #f1f1f1; 
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #09b064 ; 
+}
+
+/* For Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin; 
+  scrollbar-color: #09b064   #f1f1f1; 
 }
 </style>
