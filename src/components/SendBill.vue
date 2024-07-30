@@ -2,7 +2,8 @@
   <div class="relative">
     <h3 class="text-2xl font-medium text-gray-700">Send Bill</h3>
     <button @click="sendBills" class="absolute top-0 right-0 px-4 py-2 text-white rounded-md bg-emerald-600 hover:bg-emerald-700">Send Bills</button>
-    <div class="mt-4 overflow-auto max-h-[500px] custom-scrollbar"> <!-- Add custom-scrollbar class -->
+    <button @click="deleteSelectedBills" class="absolute top-0 px-4 py-2 text-white bg-red-600 rounded-md right-28 hover:bg-red-700">Delete</button>    
+    <div class="mt-4 overflow-auto max-h-[700px] custom-scrollbar">
       <table class="min-w-full leading-normal text-md">
         <thead class="sticky-header">
           <tr>
@@ -12,12 +13,13 @@
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Room No</th>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Units Used</th>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Total Bill</th>
+            <!-- <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Email</th> -->
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Action</th>
           </tr>
         </thead>
         <tbody>
           <tr v-if="unitList.length === 0">
-            <td colspan="5" class="px-5 py-5 text-sm text-center bg-white border-b border-gray-200">No Bill Data</td>
+            <td colspan="6" class="px-5 py-5 text-sm text-center bg-white border-b border-gray-200">No Bill Data</td>
           </tr>
           <tr v-else v-for="unit in unitList" :key="unit.id">
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
@@ -26,6 +28,7 @@
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ unit.roomNumber }}</td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ unit.unitsUsed }}</td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ unit.totalBill }}</td>
+            <!-- <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ unit.lineId }}</td> -->
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
               <button @click="editUnit(unit.id)" class="text-emerald-600 hover:text-emerald-900">Edit</button>
             </td>
@@ -35,8 +38,8 @@
     </div>
     <!-- Display total units and selected units below the table -->
     <div class="mt-4 text-right">
-      <span class="font-semibold text-md">Total Units: {{ totalUnits }}</span>
-      <span class="ml-4 font-semibold text-md">Selected Units: {{ selectedUnitsCount }}</span>
+      <span class="font-semibold text-md">Total bills: {{ totalBills }}</span>
+      <span class="ml-4 font-semibold text-md">Selected bills: {{ selectedBillsCount }}</span>
     </div>
   </div>
 </template>
@@ -51,12 +54,59 @@ const route = useRoute();
 const unitList = ref([]);
 const selectAll = ref(false);
 
-onMounted(() => {
+onMounted(async () => {
   const storedUnits = localStorage.getItem('selectedUnits');
   if (storedUnits) {
     unitList.value = JSON.parse(storedUnits).map(unit => ({...unit, selected: false}));
   }
+
+  await fetchData();
 });
+const fetchData = async () => {
+  try {
+    const response = await apiClient.get('/resident/list');
+    const residents = response.data.Resident;
+
+    // Fetch additional data for each unit
+    for (const unit of unitList.value) {
+      const unitResponse = await apiClient.get(`/unit/list/${unit.id}`);
+      const unitData = unitResponse.data.Unit;
+      console.log('API Response for Unit:', unitData); // Log the entire response
+
+      // Convert string values to numbers and provide default values if necessary
+      const extractionStatus = Number(unitData.extractionStatus) || 0;
+      const numberOfUnits = Number(unitData.numberOfUnits) || 0;
+      const costPerUnit = Number(unitData.costPerUnit) || 3; // Default value 3
+      const waterCost = Number(unitData.waterCost) || 100; // Default value 100
+      const rentCost = Number(unitData.rentCost) || 3500; // Default value 4000
+
+      // Log the values being used for calculation
+      console.log(`Extraction Status: ${extractionStatus}, Number of Units: ${numberOfUnits}, Cost Per Unit: ${costPerUnit}, Water Cost: ${waterCost}, Rent Cost: ${rentCost}`);
+
+      // Calculate totalBill based on the fetched data
+      unit.unitsUsed = extractionStatus - numberOfUnits;
+      unit.totalBill = unit.unitsUsed * costPerUnit + waterCost + rentCost;
+      
+      console.log(`Unit ID: ${unit.id}, Units Used: ${unit.unitsUsed}, Total Bill: ${unit.totalBill}`); // debugging line
+    }
+
+    unitList.value = unitList.value.map(unit => {
+      const resident = residents.find(res => res.roomNumber === unit.roomNumber);
+      return {
+        ...unit,
+        // change to resident email address 
+        lineId: resident ? resident.lineId : 'N/A',
+      };
+    });
+  } catch (error) {
+    console.error('Error fetching resident email address or total bill:', error);
+  }
+};
+
+
+
+
+
 
 const toggleSelectAll = () => {
   unitList.value.forEach(unit => unit.selected = selectAll.value);
@@ -84,13 +134,28 @@ const sendBills = async () => {
 };
 
 // Computed properties to calculate total units and selected units
-const totalUnits = computed(() => {
+const totalBills = computed(() => {
   return unitList.value.length;
 });
 
-const selectedUnitsCount = computed(() => {
+const selectedBillsCount = computed(() => {
   return unitList.value.filter(unit => unit.selected).length;
 });
+
+const deleteSelectedBills = () => {
+  if (selectedBillsCount.value === 0) {
+    alert('Please select at least one bill to delete.');
+    return;
+  }
+  
+  if (confirm(`Are you sure you want to delete ${selectedBillsCount.value} selected bill(s)?`)) {
+    unitList.value = unitList.value.filter(unit => !unit.selected);
+    localStorage.setItem('selectedUnits', JSON.stringify(unitList.value));
+    selectAll.value = false;
+    alert('Selected bills deleted successfully!');
+  }
+};
+
 </script>
 
 <style scoped>
@@ -99,8 +164,8 @@ const selectedUnitsCount = computed(() => {
   overflow: auto;
 }
 
-.max-h-[500px] {
-  max-height: 500px;
+.max-h-[600px] {
+  max-height: 600px;
 }
 
 /* Add styles for sticky header */
@@ -121,18 +186,18 @@ const selectedUnitsCount = computed(() => {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #09b064  ; 
+  background-color: gray; 
   border-radius: 10px; 
   border: 3px solid #f1f1f1; 
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #09b064 ; 
+  background: gray; 
 }
 
 /* For Firefox */
 .custom-scrollbar {
   scrollbar-width: thin; 
-  scrollbar-color: #09b064   #f1f1f1; 
+  scrollbar-color: gray #f1f1f1; 
 }
 </style>

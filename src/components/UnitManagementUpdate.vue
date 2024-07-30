@@ -2,7 +2,8 @@
   <h2 class="mt-0 mb-2 text-xl font-bold">Update Unit</h2>
   <div class="max-w-sm min-w-full bg-gray-100 rounded-lg drop-shadow-md dark:border-gray-700">
     <div class="flex flex-col items-center">
-      <h1 class="mt-4 text-xl font-bold underline">{{ roomNumber }}</h1>    </div>
+      <h1 class="mt-4 text-xl font-bold underline">{{ roomNumber }}</h1>
+    </div>
     <div class="h-full mt-1">
       <div class="flex justify-around mb-4 space-x-4">
         <div class="flex flex-col items-center w-full p-4 text-center rounded-lg">
@@ -23,57 +24,91 @@
         </div>
       </div>
 
-      <hr class="my-2 gray-hr">
-      <h2 class="px-6 py-2 mb-2 font-bold">Detail Units Information</h2>
+      <!-- Navigation Menu taps -->
+      <div class="mx-6 mt-10 border-b-2 border-gray-300 mb- ml-b-2 mflex">
+        <button
+          @click="selectedTab = 'unitInfo'"
+          :class="{'bg-primary text-white': selectedTab === 'unitInfo', 'bg-gray-200 text-gray-700': selectedTab !== 'unitInfo'}"
+          class="px-4 py-2 text-sm font-medium focus:outline-none"
+        >
+          Units Information
+        </button>
+        <button
+          @click="selectedTab = 'residentInfo'"
+          :class="{'bg-primary text-white': selectedTab === 'residentInfo', 'bg-gray-200 text-gray-700': selectedTab !== 'residentInfo'}"
+          class="px-4 py-2 text-sm font-medium focus:outline-none"
+        >
+          Resident Information
+        </button>
+      </div>
 
-      <div class="overflow-x-auto">
-        <table class="h-full min-w-full divide-y divide-gray-200 ">
+      <!-- Detail Units Information Section -->
+      <div v-if="selectedTab === 'unitInfo'" class="px-6 py-2 ">
+        <h2 class="mt-6 mb-6 font-bold">Detail Units Information</h2>
+        <table class="min-w-full divide-y divide-gray-200">
           <tbody class="divide-y divide-gray-200">
-          <tr class="text-sm">
-            <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Units Usage</td>
-            <td class="px-6 py-2 text-gray-500 whitespace-nowrap">{{ thisMonth }} - {{ lastMonth }} = {{ realUsage }} kw</td>
-          </tr>
-          <tr class="text-sm">
-            <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Unit Calculation</td>
-            <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-              <input v-model="costPerUnit" type="number" class="w-32 px-2 py-1 mb-1 border border-gray-300 rounded-md" /> baht/unit
-              <p>{{ realUsage }} * {{ costPerUnit }} = {{ unitCalculation }} baht</p>
-            </td>
-          </tr>
-          <tr class="text-sm">
-            <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Water cost</td>
-            <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-              <input v-model="waterCost" type="number" class="w-32 px-2 py-1 border border-gray-300 rounded-md" /> baht
-            </td>
-          </tr>
-          <tr class="text-sm">
-            <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Rent cost</td>
-            <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-              <input v-model="rentCost" type="number" class="w-32 px-2 py-1 border border-gray-300 rounded-md" /> baht
-            </td>
-          </tr>
-          <tr class="text-sm">
-            <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Total bill</td>
-            <td class="px-6 py-2 font-bold text-gray-500 whitespace-nowrap">{{ totalBill }} baht</td>
-          </tr>
-          <tr class="text-sm">
-            <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Status</td>
-            <td class="px-6 py-2 font-bold text-gray-500 whitespace-nowrap ">
-              <select v-model="status" class="px-2 py-1 mb-4 border border-gray-300 rounded-md">
-                <option value="approve">Approve</option>
-                <option value="disapprove">Disapprove</option>
-              </select>
-            </td>
-          </tr>
+            <tr class="text-sm">
+              <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Units Usage</td>
+              <td class="px-6 py-2 text-gray-500 whitespace-nowrap">{{ thisMonth }} - {{ lastMonth }} = {{ realUsage }} kw</td>
+            </tr>
+            <tr class="text-sm">
+              <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Unit Calculation</td>
+              <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
+                <input v-model="costPerUnit" type="number" class="w-32 px-2 py-1 mb-1 border border-gray-300 rounded-md" /> baht/unit
+                <p>{{ realUsage }} * {{ costPerUnit }} = {{ unitCalculation }} baht</p>
+              </td>
+            </tr>
+            <tr class="text-sm">
+              <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Water cost</td>
+              <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
+                <input v-model="waterCost" type="number" class="w-32 px-2 py-1 border border-gray-300 rounded-md" /> baht
+              </td>
+            </tr>
+            <tr class="text-sm">
+              <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Rent cost</td>
+              <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
+                <input v-model="rentCost" type="number" class="w-32 px-2 py-1 border border-gray-300 rounded-md" /> baht
+              </td>
+            </tr>
+            <tr class="text-sm">
+              <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Total bill</td>
+              <td class="px-6 py-2 font-bold text-gray-500 whitespace-nowrap">{{ totalBill }} baht</td>
+            </tr>
+            <tr class="text-sm">
+              <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Status</td>
+              <td class="px-6 py-2 font-bold text-gray-500 whitespace-nowrap ">
+                <select v-model="status" class="px-2 py-1 mb-4 border border-gray-300 rounded-md">
+                  <option value="approve">Approve</option>
+                  <option value="disapprove">Disapprove</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Resident Information Section -->
+      <div v-if="selectedTab === 'residentInfo'" class="px-6 py-2">
+        <h2 class="mt-6 mb-6 font-bold ">Resident Information</h2>
+        <table class="min-w-full divide-y divide-gray-200">
+          <tbody class="divide-y divide-gray-200">
+            <tr class="text-sm">
+              <td class="px-6 py-2 font-medium text-gray-900 font whitespace-nowrap ">Name:</td>       
+              <td class="px-6 py-2 text-gray-500 whitespace-nowrap">{{ residentName }}</td>
+            </tr>
+            <tr class="text-sm">
+              <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Email:</td>
+              <td class="px-6 py-2 text-gray-500 whitespace-nowrap">{{ residentEmail }}</td>
+            </tr>
           </tbody>
         </table>
       </div>
     </div>
   </div>
-    <div class="fixed flex justify-end p-4 mt-2 mr-4 space-x-2 bottom-8 right-2">
-      <button @click="submit" class="px-4 py-2 text-white rounded-md bg-emerald-600">Save</button>
-      <button @click="cancel" class="px-4 py-2 text-white bg-gray-600 rounded-md">Cancel</button>
-    </div>
+  <div class="fixed flex justify-end p-4 mt-2 mr-4 space-x-2 bottom-8 right-2">
+    <button @click="submit" class="px-4 py-2 text-white rounded-md bg-primary">Save</button>
+    <button @click="cancel" class="px-4 py-2 text-white bg-gray-600 rounded-md">Cancel</button>
+  </div>
   <!-- Image Modal -->
   <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal">
     <div class="relative max-w-full max-h-full p-4 bg-white rounded-lg shadow-lg" @click.stop>
@@ -106,9 +141,17 @@ const status = ref(false); // default is disapprove
 const roomNumber = ref('');
 const message = ref('');
 
+// New reactive properties for resident information
+const residentName = ref('');
+const residentEmail = ref('');
+
+// Reactive property for selected tab
+const selectedTab = ref('unitInfo'); // Default to "Detail Units Information"
+
 const realUsage = computed(() => thisMonth.value - lastMonth.value);
 const unitCalculation = computed(() => realUsage.value * costPerUnit.value);
 const totalBill = computed(() => unitCalculation.value + waterCost.value + rentCost.value);
+
 
 const fetchData = async () => {
   try {
@@ -126,11 +169,31 @@ const fetchData = async () => {
       rentCost.value = response.data.Unit.rentCost || rentCost.value;
       status.value = response.data.Unit.approveStatus || status.value; // Corrected status fetching
       roomNumber.value = response.data.Unit.res_room || roomNumber.value;
+
+      // Fetch resident information
+      await fetchResidentInfo(response.data.Unit.res_room);
     } else {
       console.warn('No unit data found in response:', response.data);
     }
   } catch (error) {
     console.error("Error fetching data:", error);
+  }
+};
+
+// New method to fetch resident information
+const fetchResidentInfo = async (roomNumber) => {
+  try {
+    const response = await apiClient.get(`/resident/list/room?query=${roomNumber}`);
+    const resident = response.data.Resident[0]; // Assuming the first result is the correct one
+
+    if (resident) {
+      residentName.value = resident.name;
+      residentEmail.value = resident.lineId;
+    } else {
+      console.warn('No resident data found for room number:', roomNumber);
+    }
+  } catch (error) {
+    console.error("Error fetching resident information:", error);
   }
 };
 
@@ -141,6 +204,8 @@ onMounted(() => {
 const cancel = () => {
   router.push('/unit-management');
 };
+
+
 const submit = async () => {
   try {
     console.debug('Submit function called');
@@ -152,6 +217,7 @@ const submit = async () => {
       rentCost: rentCost.value,
       approveStatus: status.value,
       res_room: roomNumber.value,
+      // totalBill: totalBill.value, // Ensure totalBill is included in the updated data
       date: new Date().toISOString().split('T')[0] // Add the date field
     };
 
@@ -178,6 +244,7 @@ const submit = async () => {
     }
   }
 };
+
 
 
 const showImageModal = ref(false);

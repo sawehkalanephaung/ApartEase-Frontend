@@ -2,7 +2,7 @@
   <h3 class="ml-0 text-2xl font-medium text-gray-700">Unit Management</h3>
   <div class="mt-6">
     <div class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center sm:space-x-1">
-      <button @click="sendUnits" class="px-4 py-2 text-white rounded sm:w-full md:w-auto sm:ml-0 md:ml-3 bg-emerald-500 ">Send Units</button>
+      <button @click="sendUnits" class="px-4 py-2 text-white rounded sm:w-full md:w-auto sm:ml-0 md:ml-3 bg-primary ">Send Units</button>
       <div class="flex items-center mt-4 space-x-2 sm:mt-0">
         <h2>Start</h2>
         <DatePicker v-model="startDate" @update:modelValue="handleStartDateChange" :format="dateFormat" />
@@ -250,15 +250,25 @@ const sendUnits = () => {
 
   if (selectedUnits.length > 0) {
     const existingUnits = JSON.parse(localStorage.getItem('selectedUnits')) || [];
-    const updatedUnits = [...existingUnits, ...selectedUnits];
-    localStorage.setItem('selectedUnits', JSON.stringify(updatedUnits)); // Append units to local storage
-    router.push({ 
-      name: 'SendBill'
-    });
+    const existingRoomNumbers = existingUnits.map(unit => unit.roomNumber);
+
+    // Filter out units that already exist in the selectedUnits
+    const newUnits = selectedUnits.filter(unit => !existingRoomNumbers.includes(unit.roomNumber));
+
+    if (newUnits.length > 0) {
+      const updatedUnits = [...existingUnits, ...newUnits];
+      localStorage.setItem('selectedUnits', JSON.stringify(updatedUnits)); // Append units to local storage
+      router.push({ 
+        name: 'SendBill'
+      });
+    } else {
+      alert('All selected units are already in the bill list.');
+    }
   } else {
     alert('Please select at least one unit to send.');
   }
 };
+
 </script>
 
 
