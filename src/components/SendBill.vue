@@ -126,7 +126,7 @@ const sendBills = async () => {
     await apiClient.post('/send-bills', { units: selectedUnits });
     alert('Bills sent successfully!');
     localStorage.removeItem('selectedUnits'); // Clear local storage after sending bills
-    unitList.value = []; // Clear the unit list
+    unitList.value = unitList.value.filter(unit => !unit.selected); // Clear only selected units from the list
   } catch (error) {
     console.error('Error sending bills:', error);
     alert('Failed to send bills. Please try again.');
