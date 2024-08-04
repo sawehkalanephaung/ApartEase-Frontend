@@ -52,12 +52,14 @@
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">{{ thisMonth }} - {{ lastMonth }} = {{ realUsage }} kw</td>
             </tr>
             <tr class="text-sm">
-              <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Unit Calculation</td>
-              <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-                <input v-model="costPerUnit" type="number" class="w-32 px-2 py-1 mb-1 border border-gray-300 rounded-md" /> baht/unit
-                <p>{{ realUsage }} * {{ costPerUnit }} = {{ unitCalculation }} baht</p>
-              </td>
-            </tr>
+            <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Unit Calculation</td>
+            <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
+              <input v-model="costPerUnit" type="number" class="w-32 px-2 py-1 mb-1 border border-gray-300 rounded-md" /> baht/unit
+              <p>{{ realUsage }} * {{ costPerUnit }} = {{ unitCalculation }} baht</p>
+            </td>
+          </tr>
+        
+
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Water cost</td>
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">

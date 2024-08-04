@@ -1,14 +1,79 @@
 <template>
-  <h3 class="ml-0 text-2xl font-medium text-gray-700">Unit Management</h3>
-  <div class="mt-6">
-    <div class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center sm:space-x-1">
-      <button @click="sendUnits" class="px-4 py-2 text-white rounded sm:w-full md:w-auto sm:ml-0 md:ml-3 bg-primary ">Send Units</button>
-      <div class="flex items-center mt-4 space-x-2 sm:mt-0">
-        <h2>Start</h2>
-        <DatePicker v-model="startDate" @update:modelValue="handleStartDateChange" :format="dateFormat" />
-        <h2>End</h2>
-        <DatePicker v-model="endDate" @update:modelValue="handleEndDateChange" :format="dateFormat" />
+    <div class="flex flex-col">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+      <h3 class="ml-0 text-2xl font-medium text-gray-700">Unit Management</h3>
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center">
+    <label for="costPerUnit" class="mr-2">Cost Per Unit:</label>
+    <input
+      id="costPerUnit"
+      v-model="costPerUnit"
+      type="number"
+      class="w-20 px-2 py-1 border border-gray-300 rounded-md"
+      @change="updateCostPerUnit"
+    />
+  </div>
+  <button @click="sendUnits" class="px-4 py-2 text-white rounded bg-primary hover:bg-emerald-400">
+    Send Units
+  </button>
+</div>
+
+    </div>
+              
+    <div class="mt-6 space-y-4 sm:space-y-0 sm:flex sm:items-center sm:space-x-4">
+        <!-- Search Bar -->
+        <div class="relative flex-grow sm:flex-grow-0 sm:w-64">
+        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+          <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+          </svg>
       </div>
+  <input
+    type="text"
+    v-model="searchQuery"
+    placeholder="Search by Room Number..."
+    class="w-full px-4 py-2 pl-8 pr-10 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+    @keyup.enter="searchUnit"
+  />
+  <div v-if="searchQuery" class="absolute inset-y-0 right-0 flex items-center pr-3">
+    <button @click="clearSearch" class="text-gray-400 hover:text-gray-600">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+</div>
+      <!--filter by status-->
+      <div class="flex-grow sm:flex-grow-0">
+    <select id="statusFilter" v-model="statusFilter" @change="filterUnits" class="px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+      <option value="all">Status</option>
+      <option value="approved">Approved</option>
+      <option value="disapproved">Disapproved</option>
+    </select>
+  </div>
+      <!-- Add the button for sending units -->
+      <div class="flex items-center space-x-2">
+
+        <DatePicker v-model="startDate" @update:modelValue="handleStartDateChange" :format="dateFormat" class="w-10">
+          <template #default="{ inputValue, togglePopover }">
+            <div @click="togglePopover">
+              <span>Start: </span>
+              <span>{{ inputValue }}</span>
+            </div>
+          </template>
+        </DatePicker>
+        <DatePicker v-model="endDate" @update:modelValue="handleEndDateChange" :format="dateFormat" class="w-10">
+          <template #default="{ inputValue, togglePopover }">
+            <div @click="togglePopover">
+              <span>End: </span>
+              <span>{{ inputValue }}</span>
+            </div>
+          </template>
+        </DatePicker>
+      </div>
+      
+      </div>
+  
     </div>
     <div class="mt-4 overflow-x-auto">
       <table class="min-w-full leading-normal text-md">
@@ -95,7 +160,6 @@
         </div>
       </div>
     </div>
-  </div>
   <!-- Delete Confirmation Modal -->
   <DeleteConfirmationModal
       :show="showDeleteConfirm"
@@ -121,7 +185,8 @@
 
 
 <script setup>
-import { ref, computed, onMounted, watchEffect } from 'vue';
+import { ref, computed, onMounted, watchEffect, watch } from 'vue';
+import { useStore } from 'vuex';
 import apiClient from '@/services/AxiosClient.js';
 import router from '@/router';
 import { usePagination } from '@/composables/usePagination';
@@ -137,7 +202,28 @@ const currentImage = ref('');
 const startDate = ref(null);
 const endDate = ref(null);
 const selectAll = ref(false);
+const searchQuery = ref('');
+const statusFilter = ref('all');
 
+const store = useStore();
+const costPerUnit = computed({
+  get: () => store.getters.getCostPerUnit,
+  set: (value) => store.dispatch('updateCostPerUnit', value),
+});
+
+const updateCostPerUnit = async () => {
+  try {
+    console.log('Updating cost per unit:', costPerUnit.value);
+    units.value = units.value.map(unit => ({
+      ...unit,
+      costPerUnit: costPerUnit.value
+    }));
+    await new Promise(resolve => setTimeout(resolve, 500));
+    console.log('Cost per unit updated successfully');
+  } catch (error) {
+    console.error('Error updating cost per unit:', error);
+  }
+};
 const fetchData = async () => {
   try {
     const response = await apiClient.get('/unit/list', {
@@ -148,6 +234,7 @@ const fetchData = async () => {
       },
     });
     const data = response.data.Unit;
+    statusFilter.value = 'all'; // Reset status filter when fetching all data
 
     if (Array.isArray(data) && data.length > 0) {
       const pageData = data[data.length - 1];
@@ -155,6 +242,7 @@ const fetchData = async () => {
       currentPage.value = pageData.page;
       totalItems.value = pageData.total_record;
       units.value = data.slice(0, -1);
+      costPerUnit.value = data[0].costPerUnit; // Update the cost per unit
     } else {
       units.value = [];
       totalPages.value = 0;
@@ -220,22 +308,83 @@ const handleEndDateChange = (date) => {
 };
 
 const filteredUnits = computed(() => {
-  if (!startDate.value && !endDate.value) {
-    return units.value;
+  let filtered = units.value;
+
+  if (statusFilter.value !== 'all') {
+    filtered = filtered.filter(unit => 
+      (statusFilter.value === 'approved' && unit.approveStatus) ||
+      (statusFilter.value === 'disapproved' && !unit.approveStatus)
+    );
   }
 
-  const start = new Date(startDate.value);
-  const end = new Date(endDate.value);
+  if (startDate.value && endDate.value) {
+    const start = new Date(startDate.value);
+    const end = new Date(endDate.value);
+    filtered = filtered.filter(unit => {
+      const unitDate = new Date(unit.date);
+      return unitDate >= start && unitDate <= end;
+    });
+  }
 
-  return units.value.filter(unit => {
-    const unitDate = new Date(unit.date);
-    return (!startDate.value || unitDate >= start) && (!endDate.value || unitDate <= end);
-  });
+  return filtered;
 });
+
+
+const searchUnit = async () => {
+  try {
+    const response = await apiClient.get(`/unit/list/room?query=${searchQuery.value}&page=1`);
+    const data = response.data.Unit;
+
+    if (Array.isArray(data) && data.length > 0) {
+      const pageData = data[data.length - 1];
+      totalPages.value = pageData.total_pages;
+      currentPage.value = pageData.page;
+      totalItems.value = pageData.total_record;
+      units.value = data.slice(0, -1);
+    } else {
+      units.value = [];
+      totalPages.value = 0;
+      totalItems.value = 0;
+    }
+  } catch (error) {
+    console.error('Error searching unit:', error);
+    units.value = [];
+    totalPages.value = 1;
+    totalItems.value = 0;
+  }
+};
+
+const filterUnits = () => {
+  if (statusFilter.value === 'all') {
+    fetchData();
+  } else {
+    const filteredUnits = units.value.filter(unit => 
+      (statusFilter.value === 'approved' && unit.approveStatus) ||
+      (statusFilter.value === 'disapproved' && !unit.approveStatus)
+    );
+    units.value = filteredUnits;
+    totalItems.value = filteredUnits.length;
+    totalPages.value = Math.ceil(totalItems.value / itemsPerPage);
+    currentPage.value = 1;
+  }
+};
+
 
 watchEffect(() => {
   fetchData();
 });
+
+// Watch for changes in searchQuery and fetch data if it's cleared
+watch(searchQuery, (newQuery) => {
+  if (newQuery === '') {
+    fetchData();
+  }
+});
+const clearSearch = () => {
+  searchQuery.value = '';
+  fetchData();
+};
+
 
 // Date format for the date picker
 const dateFormat = 'MM/dd/yyyy';

@@ -9,6 +9,7 @@ export default createStore({
     user: userFromLocalStorage || null,
     jwtToken: tokenFromLocalStorage || null,
     role: userFromLocalStorage?.role || 'user', // default
+    costPerUnit: 3, // default cost per unit
   },
   mutations: {
     setUser(state, user) {
@@ -29,10 +30,15 @@ export default createStore({
     setJwtToken({ commit }, token) {
       commit('setJwtToken', token);
     },
+    // cost per unit in local storage
+    updateCostPerUnit({ commit }, cost) {
+      commit('setCostPerUnit', cost);
+    },
   },
   getters: {
     getUser: (state) => state.user,
     getRole: (state) => state.role,
     getJwtToken: (state) => state.jwtToken,
+    getCostPerUnit: (state) => state.costPerUnit,
   },
 });
