@@ -83,7 +83,7 @@ const message = ref('');
 
 const schema = yup.object().shape({
   roomNumber: yup.string().required('Room number is required!'),
-  lineId: yup.string().required('Line ID is required!'),
+  lineId: yup.string().email('Please include "@" in email address ').required('Email is required!'),
 });
 
 const fetchData = async () => {

@@ -27,6 +27,7 @@
           </svg>
       </div>
   <input
+  
     type="text"
     v-model="searchQuery"
     placeholder="Search by Room Number..."

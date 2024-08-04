@@ -81,7 +81,7 @@ const message = ref('');
 const schema = yup.object().shape({
   roomNumber: yup.string().required('Room number is required!'),
   name: yup.string().required('Name is required!'),
-  lineId: yup.string().required('Email is required!'),
+  lineId: yup.string().email('Email must be a valid email address').required('Email is required!'),
 });
 
 
