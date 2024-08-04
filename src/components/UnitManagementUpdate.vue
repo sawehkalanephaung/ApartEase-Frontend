@@ -61,13 +61,13 @@
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Water cost</td>
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-                <input v-model="waterCost" type="number" class="w-32 px-2 py-1 border border-gray-300 rounded-md" /> baht
+                <input v-model="waterCostInput" type="number" class="w-32 px-2 py-1 border border-gray-300 rounded-md" /> baht
               </td>
             </tr>
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Rent cost</td>
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-                <input v-model="rentCost" type="number" class="w-32 px-2 py-1 border border-gray-300 rounded-md" /> baht
+                <input v-model="rentCostInput" type="number" class="w-32 px-2 py-1 border border-gray-300 rounded-md" /> baht
               </td>
             </tr>
             <tr class="text-sm">
@@ -136,8 +136,8 @@ const store = useStore();
 
 const lastMonth = ref('');
 const thisMonth = ref('');
-const waterCost = ref(100);
-const rentCost = ref(3500);
+const waterCostInput = ref(100);
+const rentCostInput = ref(3500);
 const status = ref(false); // default is disapprove
 const roomNumber = ref('');
 const message = ref('');
@@ -151,10 +151,14 @@ const selectedTab = ref('unitInfo'); // Default to "Detail Units Information"
 
 // Get cost per unit from Vuex store
 const costPerUnit = computed(() => store.getters.getCostPerUnit);
+const totalUnitUsage = computed(() => store.getters.getTotalUnitUsage);
+const rentCost = computed(() => store.getters.getRentCost);
+const waterCost = computed(() => store.getters.getWaterCost);
+const totalBillComputed = computed(() => store.getters.getTotalBill);
 
 const realUsage = computed(() => thisMonth.value - lastMonth.value);
 const unitCalculation = computed(() => realUsage.value * costPerUnit.value);
-const totalBill = computed(() => unitCalculation.value + waterCost.value + rentCost.value);
+const totalBill = computed(() => unitCalculation.value + waterCostInput.value + rentCostInput.value);
 
 const fetchData = async () => {
   try {
@@ -167,8 +171,8 @@ const fetchData = async () => {
     if (response.data && response.data.Unit) {
       lastMonth.value = response.data.Unit.numberOfUnits || lastMonth.value;
       thisMonth.value = response.data.Unit.extractionStatus || thisMonth.value;
-      waterCost.value = response.data.Unit.waterCost || waterCost.value;
-      rentCost.value = response.data.Unit.rentCost || rentCost.value;
+      waterCostInput.value = response.data.Unit.waterCost || waterCostInput.value;
+      rentCostInput.value = response.data.Unit.rentCost || rentCostInput.value;
       status.value = response.data.Unit.approveStatus || status.value; // Corrected status fetching
       roomNumber.value = response.data.Unit.res_room || roomNumber.value;
 
@@ -214,8 +218,8 @@ const submit = async () => {
       numberOfUnits: lastMonth.value,
       extractionStatus: thisMonth.value,
       costPerUnit: costPerUnit.value,
-      waterCost: waterCost.value,
-      rentCost: rentCost.value,
+      waterCost: waterCostInput.value,
+      rentCost: rentCostInput.value,
       approveStatus: status.value,
       res_room: roomNumber.value,
       date: new Date().toISOString().split('T')[0] // Add the date field

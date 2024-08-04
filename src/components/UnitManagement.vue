@@ -201,8 +201,6 @@ const selectAll = ref(false);
 const searchQuery = ref('');
 const statusFilter = ref('all');
 
-
-
 const store = useStore();
 const costPerUnit = computed({
   get: () => store.getters.getCostPerUnit,
@@ -225,6 +223,7 @@ const updateCostPerUnit = async () => {
 
 const fetchData = async () => {
   try {
+    await store.dispatch('fetchUnitData');
     const response = await apiClient.get('/unit/list', {
       params: {
         page: currentPage.value,
@@ -241,7 +240,6 @@ const fetchData = async () => {
       currentPage.value = pageData.page;
       totalItems.value = pageData.total_record;
       units.value = data.slice(0, -1);
-      costPerUnit.value = data[0].costPerUnit || 3; // Ensure default cost per unit is 3
     } else {
       units.value = [];
       totalPages.value = 0;
@@ -414,6 +412,10 @@ const sendUnits = () => {
   }
 };
 </script>
+
+
+
+
 
 <style scoped>
 /* Custom styles for the image modal */
