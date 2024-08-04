@@ -1,25 +1,23 @@
 <template>
     <div class="flex flex-col">
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center">
       <h3 class="ml-0 text-2xl font-medium text-gray-700">Unit Management</h3>
       <div class="flex items-center space-x-4">
         <div class="flex items-center">
-    <label for="costPerUnit" class="mr-2">Cost Per Unit:</label>
-    <input
-      id="costPerUnit"
-      v-model="costPerUnit"
-      type="number"
-      class="w-20 px-2 py-1 border border-gray-300 rounded-md"
-      @change="updateCostPerUnit"
-    />
-  </div>
-  <button @click="sendUnits" class="px-4 py-2 text-white rounded bg-primary hover:bg-emerald-400">
-    Send Units
-  </button>
-</div>
-
+          <label for="costPerUnit" class="mr-2">Cost Per Unit:</label>
+          <input
+            id="costPerUnit"
+            v-model="costPerUnit"
+            type="number"
+            class="w-20 px-2 py-1 border border-gray-300 rounded-md"
+            @change="updateCostPerUnit"
+          />
+        </div>
+        <button @click="sendUnits" class="px-4 py-2 text-white rounded bg-primary hover:bg-emerald-400">
+          Send Units
+        </button>
+      </div>
     </div>
-              
     <div class="mt-6 space-y-4 sm:space-y-0 sm:flex sm:items-center sm:space-x-4">
         <!-- Search Bar -->
         <div class="relative flex-grow sm:flex-grow-0 sm:w-64">
@@ -182,8 +180,6 @@
 
   <router-view />
 </template>
-
-
 <script setup>
 import { ref, computed, onMounted, watchEffect, watch } from 'vue';
 import { useStore } from 'vuex';
@@ -205,6 +201,8 @@ const selectAll = ref(false);
 const searchQuery = ref('');
 const statusFilter = ref('all');
 
+
+
 const store = useStore();
 const costPerUnit = computed({
   get: () => store.getters.getCostPerUnit,
@@ -224,6 +222,7 @@ const updateCostPerUnit = async () => {
     console.error('Error updating cost per unit:', error);
   }
 };
+
 const fetchData = async () => {
   try {
     const response = await apiClient.get('/unit/list', {
@@ -242,7 +241,7 @@ const fetchData = async () => {
       currentPage.value = pageData.page;
       totalItems.value = pageData.total_record;
       units.value = data.slice(0, -1);
-      costPerUnit.value = data[0].costPerUnit; // Update the cost per unit
+      costPerUnit.value = data[0].costPerUnit || 3; // Ensure default cost per unit is 3
     } else {
       units.value = [];
       totalPages.value = 0;
@@ -329,7 +328,6 @@ const filteredUnits = computed(() => {
   return filtered;
 });
 
-
 const searchUnit = async () => {
   try {
     const response = await apiClient.get(`/unit/list/room?query=${searchQuery.value}&page=1`);
@@ -369,7 +367,6 @@ const filterUnits = () => {
   }
 };
 
-
 watchEffect(() => {
   fetchData();
 });
@@ -384,7 +381,6 @@ const clearSearch = () => {
   searchQuery.value = '';
   fetchData();
 };
-
 
 // Date format for the date picker
 const dateFormat = 'MM/dd/yyyy';
@@ -417,9 +413,7 @@ const sendUnits = () => {
     alert('Please select at least one unit to send.');
   }
 };
-
 </script>
-
 
 <style scoped>
 /* Custom styles for the image modal */

@@ -52,14 +52,12 @@
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">{{ thisMonth }} - {{ lastMonth }} = {{ realUsage }} kw</td>
             </tr>
             <tr class="text-sm">
-            <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Unit Calculation</td>
-            <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-              <input v-model="costPerUnit" type="number" class="w-32 px-2 py-1 mb-1 border border-gray-300 rounded-md" /> baht/unit
-              <p>{{ realUsage }} * {{ costPerUnit }} = {{ unitCalculation }} baht</p>
-            </td>
-          </tr>
-        
-
+              <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Unit Calculation</td>
+              <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
+                <input v-model="costPerUnit" type="number" class="w-32 px-2 py-1 mb-1 border border-gray-300 rounded-md" disabled /> baht/unit
+                <p>{{ realUsage }} * {{ costPerUnit }} = {{ unitCalculation }} baht</p>
+              </td>
+            </tr>
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Water cost</td>
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
@@ -129,14 +127,15 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { useStore } from 'vuex';
 import apiClient from '@/services/AxiosClient.js';
 
 const router = useRouter();
 const route = useRoute();
+const store = useStore();
 
 const lastMonth = ref('');
 const thisMonth = ref('');
-const costPerUnit = ref(3);
 const waterCost = ref(100);
 const rentCost = ref(3500);
 const status = ref(false); // default is disapprove
@@ -150,10 +149,12 @@ const residentEmail = ref('');
 // Reactive property for selected tab
 const selectedTab = ref('unitInfo'); // Default to "Detail Units Information"
 
+// Get cost per unit from Vuex store
+const costPerUnit = computed(() => store.getters.getCostPerUnit);
+
 const realUsage = computed(() => thisMonth.value - lastMonth.value);
 const unitCalculation = computed(() => realUsage.value * costPerUnit.value);
 const totalBill = computed(() => unitCalculation.value + waterCost.value + rentCost.value);
-
 
 const fetchData = async () => {
   try {
@@ -166,7 +167,6 @@ const fetchData = async () => {
     if (response.data && response.data.Unit) {
       lastMonth.value = response.data.Unit.numberOfUnits || lastMonth.value;
       thisMonth.value = response.data.Unit.extractionStatus || thisMonth.value;
-      costPerUnit.value = response.data.Unit.costPerUnit || costPerUnit.value;
       waterCost.value = response.data.Unit.waterCost || waterCost.value;
       rentCost.value = response.data.Unit.rentCost || rentCost.value;
       status.value = response.data.Unit.approveStatus || status.value; // Corrected status fetching
@@ -207,7 +207,6 @@ const cancel = () => {
   router.push('/unit-management');
 };
 
-
 const submit = async () => {
   try {
     console.debug('Submit function called');
@@ -219,7 +218,6 @@ const submit = async () => {
       rentCost: rentCost.value,
       approveStatus: status.value,
       res_room: roomNumber.value,
-      // totalBill: totalBill.value, // Ensure totalBill is included in the updated data
       date: new Date().toISOString().split('T')[0] // Add the date field
     };
 
@@ -242,12 +240,9 @@ const submit = async () => {
     } else {
       console.log("There's no record exists!")
       // Display the error message from the server
-
     }
   }
 };
-
-
 
 const showImageModal = ref(false);
 const currentImage = ref('');
