@@ -25,16 +25,41 @@
             </div>
             <!-- end home-->
 
+               <!-- start Unit Management Dropdown -->
 
-            <!-- start unit management -->
-            <router-link to="/unit-management" @click="handleNavClick" class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800 transition duration-400 ease-in-out" exact-active-class="active-link">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-              </svg>
-
-              Unit Management
-            </router-link>
-
+              <div :class="{'active-link': isUnitManagementActive}" class="relative rounded-md" @mouseover="showUnitManagementDropdown = true" @mouseleave="showUnitManagementDropdown = false">
+                <div class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800 transition duration-400 ease-in-out cursor-pointer">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+                  </svg>
+                  Unit Management
+                  <svg v-if="showUnitManagementDropdown" class="w-4 h-4 ml-auto transition-transform transform rotate-180 rounded-md" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 011.414 1.414l-4 4a1 1 01-1.414 0l-4-4a1 1 010-1.414z" clip-rule="evenodd"></path>
+                  </svg>
+                  <svg v-else class="w-4 h-4 ml-auto transition-transform transform rotate-0 rounded-md" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 011.414 1.414l-4 4a1 1 01-1.414 0l-4-4a1 1 010-1.414z" clip-rule="evenodd"></path>
+                  </svg>
+                </div>
+                <transition name="fade">
+                  <div v-show="showUnitManagementDropdown" class="absolute left-0 z-10 w-full mt-2 bg-white border border-gray-200 rounded-md shadow-lg">
+                    <router-link to="/unit-management" @click="handleNavClick" class="flex items-center block px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100" exact-active-class="active-link">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+                  </svg>
+                      <span>Unit Management</span>
+                    </router-link>
+                    <router-link to="/unit-history" @click="handleNavClick" class="flex items-center block px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100" exact-active-class="active-link">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="flex-shrink-0 w-6 h-6 mr-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>Unit History</span>
+                    </router-link>
+                  </div>                
+                </transition>
+              </div>
+            <!-- end Unit Management Dropdown -->
+         
+              
             <!-- start Resident List -->
             <router-link to="/resident-list" @click="handleNavClick" class="inline-flex relative items-center py-[10px] px-[10px] w-full text-sm font-medium rounded-md border-gray-200 hover:bg-gray-200 hover:text-gray-800 transition duration-400 ease-in-out" exact-active-class="active-link">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-[25px] h-[25px] fill-current mr-2">
@@ -155,6 +180,14 @@ const showUserManagementDropdown = ref(false);
 const showLogoutConfirm = ref(false)
 // breadcrumbs
 const breadcrumb = ref(["Home"]);
+const showUnitManagementDropdown = ref(false);
+
+
+
+
+const isUnitManagementActive = computed(() => {
+  return route.path === '/unit-management' || route.path === '/unit-history';
+});
 
 // hide show side bar
 const toggleSideBar = () => {
@@ -205,6 +238,8 @@ watch(route, (newRoute) => {
     breadcrumb.value = ["Home", "Unit Management"];
   } else if (newRoute.name === 'SendBill') {
     breadcrumb.value = ["Home", "Send Bill"];
+  }else if (newRoute.name === 'UnitHistory') {
+    breadcrumb.value = ["Home", "Unit History"];
   }
 // add more
 });
@@ -230,6 +265,11 @@ const toggleUserManagementDropdown = () => {
 // Determine if the current route is either "User" or "Role"
 const isUserManagementActive = computed(() => {
   return route.path === '/user-list' || route.path === '/role-list';
+});
+
+// Determine if the current route is "UnitHistory"
+const isUnitHistoryActive = computed(() => {
+  return route.path === '/unit-history';
 });
 
 const handleNavClick = () => {

@@ -53,22 +53,7 @@
       <!-- Add the button for sending units -->
       <div class="flex items-center space-x-2">
 
-        <DatePicker v-model="startDate" @update:modelValue="handleStartDateChange" :format="dateFormat" class="w-10">
-          <template #default="{ inputValue, togglePopover }">
-            <div @click="togglePopover">
-              <span>Start: </span>
-              <span>{{ inputValue }}</span>
-            </div>
-          </template>
-        </DatePicker>
-        <DatePicker v-model="endDate" @update:modelValue="handleEndDateChange" :format="dateFormat" class="w-10">
-          <template #default="{ inputValue, togglePopover }">
-            <div @click="togglePopover">
-              <span>End: </span>
-              <span>{{ inputValue }}</span>
-            </div>
-          </template>
-        </DatePicker>
+       
       </div>
       
       </div>
@@ -188,7 +173,6 @@ import apiClient from '@/services/AxiosClient.js';
 import router from '@/router';
 import { usePagination } from '@/composables/usePagination';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
-import DatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 
 const units = ref([]);
@@ -196,8 +180,6 @@ const showDeleteConfirm = ref(false);
 const unitsToDelete = ref(null);
 const showImageModal = ref(false);
 const currentImage = ref('');
-const startDate = ref(null);
-const endDate = ref(null);
 const selectAll = ref(false);
 const searchQuery = ref('');
 const statusFilter = ref('all');
@@ -228,8 +210,6 @@ const fetchData = async () => {
     const response = await apiClient.get('/unit/list', {
       params: {
         page: currentPage.value,
-        startDate: startDate.value,
-        endDate: endDate.value,
       },
     });
     const data = response.data.Unit;
@@ -295,16 +275,6 @@ const closeImageModal = () => {
   currentImage.value = '';
 };
 
-const handleStartDateChange = (date) => {
-  startDate.value = date;
-  fetchData();
-};
-
-const handleEndDateChange = (date) => {
-  endDate.value = date;
-  fetchData();
-};
-
 const filteredUnits = computed(() => {
   let filtered = units.value;
 
@@ -313,15 +283,6 @@ const filteredUnits = computed(() => {
       (statusFilter.value === 'approved' && unit.approveStatus) ||
       (statusFilter.value === 'disapproved' && !unit.approveStatus)
     );
-  }
-
-  if (startDate.value && endDate.value) {
-    const start = new Date(startDate.value);
-    const end = new Date(endDate.value);
-    filtered = filtered.filter(unit => {
-      const unitDate = new Date(unit.date);
-      return unitDate >= start && unitDate <= end;
-    });
   }
 
   return filtered;
@@ -381,9 +342,6 @@ const clearSearch = () => {
   fetchData();
 };
 
-// Date format for the date picker
-const dateFormat = 'MM/dd/yyyy';
-
 const sendUnits = () => {
   const selectedUnits = filteredUnits.value.filter(unit => unit.selected).map(unit => ({
     id: unit.id,
@@ -413,7 +371,6 @@ const sendUnits = () => {
   }
 };
 </script>
-
 
 
 
