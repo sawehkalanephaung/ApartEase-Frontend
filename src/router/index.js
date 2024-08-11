@@ -121,8 +121,14 @@ const router = createRouter({
           path: '/send-bill',
           name: 'SendBill',
           component: SendBill,
-          props: route => ({ units: route.query.units }) 
+          props: route => ({
+            selectedUnits: route.query.selectedUnits,
+            totalUnit: route.query.totalUnit,
+            totalBill: route.query.totalBill
+          })
         },
+        
+        
         {
           path: '/unit-history',
           name: 'UnitHistory',

@@ -27,7 +27,7 @@
           <tr>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Unit Image</th>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Room No</th>
-            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Units Used</th>
+            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Units Uints Used</th>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Total Bill</th>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Status</th>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Date</th>
@@ -42,7 +42,7 @@
               <img :src="record.unitImage" alt="Unit Image" class="object-cover w-14 h-14" />
             </td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ record.res_room }}</td>
-            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ record.unitsUsed }}</td>
+            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ record.totalUnit }}</td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ record.totalBill }}</td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
               <span class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-200 rounded-full">
@@ -56,6 +56,7 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import apiClient from '@/services/AxiosClient.js';
@@ -67,36 +68,17 @@ const startDate = ref(null);
 const endDate = ref(null);
 
 const fetchData = async () => {
-  const historyUnits = JSON.parse(localStorage.getItem('unitHistory') || '[]');
-  unitHistory.value = await Promise.all(historyUnits.map(async (unit) => {
-    try {
-      const unitResponse = await apiClient.get(`/unit/list/${unit.id}`);
-      const unitData = unitResponse.data.Unit;
-
-      const extractionStatus = Number(unitData.extractionStatus) || 0;
-      const numberOfUnits = Number(unitData.numberOfUnits) || 0;
-      const costPerUnit = Number(unitData.costPerUnit) || 3;
-      const waterCost = Number(unitData.waterCost) || 100;
-      const rentCost = Number(unitData.rentCost) || 3500;
-
-      const unitsUsed = extractionStatus - numberOfUnits;
-      const totalBill = unitsUsed * costPerUnit + waterCost + rentCost;
-
-      return {
-        ...unit,
-        unitsUsed,
-        totalBill,
-        status: 'done',
-        unitImage: unitData.unitImage || 'https://via.placeholder.com/600',
-        res_room: unitData.res_room,
-        date: unitData.date,
-        approveStatus: unitData.approveStatus
-      };
-    } catch (error) {
-      console.error('Error fetching unit data:', error);
-      return unit;
-    }
-  }));
+  try {
+    const response = await apiClient.get('/unit/history/list');
+    unitHistory.value = response.data.UnitHistory.map(unit => ({
+      ...unit,
+      unitImage: unit.unitImage || 'https://via.placeholder.com/600',
+      totalUnit: Number(unit.extractionStatus) - Number(unit.numberOfUnits), 
+      totalBill: (Number(unit.extractionStatus) - Number(unit.numberOfUnits)) * Number(unit.costPerUnit) + Number(unit.waterCost) + Number(unit.rentCost)
+    }));
+  } catch (error) {
+    console.error('Error fetching unit history:', error);
+  }
 };
 
 const handleStartDateChange = (date) => {
@@ -128,3 +110,4 @@ onMounted(() => {
   fetchData();
 });
 </script>
+

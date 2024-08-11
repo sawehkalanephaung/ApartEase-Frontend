@@ -1,6 +1,6 @@
 <template>
-    <div class="flex flex-col">
-      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+  <div class="flex flex-col">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center">
       <h3 class="ml-0 text-2xl font-medium text-gray-700">Unit Management</h3>
       <div class="flex items-center space-x-4">
         <div class="flex items-center">
@@ -25,125 +25,120 @@
           <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
           </svg>
+        </div>
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Search by Room Number..."
+          class="w-full px-4 py-2 pl-8 pr-10 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          @keyup.enter="searchUnit"
+        />
+        <div v-if="searchQuery" class="absolute inset-y-0 right-0 flex items-center pr-3">
+          <button @click="clearSearch" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
       </div>
-  <input
-  
-    type="text"
-    v-model="searchQuery"
-    placeholder="Search by Room Number..."
-    class="w-full px-4 py-2 pl-8 pr-10 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-    @keyup.enter="searchUnit"
-  />
-  <div v-if="searchQuery" class="absolute inset-y-0 right-0 flex items-center pr-3">
-    <button @click="clearSearch" class="text-gray-400 hover:text-gray-600">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-      </svg>
-    </button>
-  </div>
-</div>
       <!--filter by status-->
       <div class="flex-grow sm:flex-grow-0">
-    <select id="statusFilter" v-model="statusFilter" @change="filterUnits" class="px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-      <option value="all">Status</option>
-      <option value="approved">Approved</option>
-      <option value="disapproved">Disapproved</option>
-    </select>
-  </div>
+        <select id="statusFilter" v-model="statusFilter" @change="filterUnits" class="px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+          <option value="all">Status</option>
+          <option value="approved">Approved</option>
+          <option value="disapproved">Disapproved</option>
+        </select>
+      </div>
       <!-- Add the button for sending units -->
       <div class="flex items-center space-x-2">
-
-       
       </div>
-      
-      </div>
-  
     </div>
-    <div class="mt-4 overflow-x-auto">
-      <table class="min-w-full leading-normal text-md">
-        <thead>
-          <tr>
-            <!-- Add checkbox here -->
-            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
-          <input type="checkbox" @change="toggleSelectAll" v-model="selectAll" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" />
-        </th>
-            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Unit Image </th>
-            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Room No </th>
-            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Status </th>
-            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Date </th>
-            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-center text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Action</th>
-          </tr>
-        </thead>
-        <tbody>
-    <tr v-for="u in filteredUnits" :key="u.id">
-      <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-          <input type="checkbox" v-model="u.selected" :value="u.id" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" />
-        </td>
-      <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-        <img :src="u.unitImage || 'https://via.placeholder.com/600'" alt="Unit Image" class="object-cover cursor-pointer w-14 h-14" @click="openImageModal(u.unitImage)" />
-      </td>
-      <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ u.res_room }}</td>
-      <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-        <div class="flex items-center">
-          <div :class="{'bg-emerald-500': u.approveStatus, 'bg-red-500': !u.approveStatus}" class="flex items-center justify-center w-4 h-4 mr-1 rounded-full">
-            <svg v-if="u.approveStatus" xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a 1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/>
-            </svg>
-            <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-11.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z" clip-rule="evenodd"/>
-            </svg>
-          </div>
-          <span>{{ u.approveStatus ? 'Approved' : 'Disapproved' }}</span>
-        </div>
-      </td>
-      <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ formatDate(u.date) }}</td>
-      <td class="flex-row px-5 py-5 text-sm text-center bg-white border-b border-gray-200">
-        <button @click="() => onEdit(u.id)" class="mr-1 text-emerald-600 hover:text-emerald-900">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
-            <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
-          </svg>
-        </button>
-        <button @click="() => onDelete(u.id)" class="ml-1 text-red-500 hover:text-red-700">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
-          </svg>
-        </button>
-      </td>
-    </tr>
-  </tbody>
-      </table>
+  </div>
+  <div class="mt-4 overflow-x-auto">
+    <table class="min-w-full leading-normal text-md">
+      <thead>
+        <tr>
+          <!-- Add checkbox here -->
+          <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+            <input type="checkbox" @change="toggleSelectAll" v-model="selectAll" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" />
+          </th>
+          <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Unit Image </th>
+          <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Room No </th>
+          <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Status </th>
+          <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Date </th>
+          <th class="px-5 py-3 text-xs font-semibold tracking-wider text-center text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="u in filteredUnits" :key="u.id">
+          <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+            <input type="checkbox" v-model="u.selected" :value="u.id" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" />
+          </td>
+          <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+            <img :src="u.unitImage || 'https://via.placeholder.com/600'" alt="Unit Image" class="object-cover cursor-pointer w-14 h-14" @click="openImageModal(u.unitImage)" />
+          </td>
+          <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ u.res_room }}</td>
+          <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+            <div class="flex items-center">
+              <div :class="{'bg-emerald-500': u.approveStatus, 'bg-red-500': !u.approveStatus}" class="flex items-center justify-center w-4 h-4 mr-1 rounded-full">
+                <svg v-if="u.approveStatus" xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a 1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/>
+                </svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-11.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z" clip-rule="evenodd"/>
+                </svg>
+              </div>
+              <span>{{ u.approveStatus ? 'Approved' : 'Disapproved' }}</span>
+            </div>
+          </td>
+          <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ formatDate(u.date) }}</td>
+          <td class="flex-row px-5 py-5 text-sm text-center bg-white border-b border-gray-200">
+            <button @click="() => onEdit(u.id)" class="mr-1 text-emerald-600 hover:text-emerald-900">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
+                <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+            <button @click="() => onDelete(u.id)" class="ml-1 text-red-500 hover:text-red-700">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
-      <!-- Pagination controls -->
-      <div class="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
-        <div class="flex justify-between flex-1 sm:hidden">
-          <a @click="prevPage" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Previous</a>
-          <a @click="nextPage" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Next</a>
+    <!-- Pagination controls -->
+    <div class="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
+      <div class="flex justify-between flex-1 sm:hidden">
+        <a @click="prevPage" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Previous</a>
+        <a @click="nextPage" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Next</a>
+      </div>
+      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-gray-700">
+            Showing {{ ' ' }} <span class="font-medium">{{ start + 1 }}</span> {{ ' ' }} to {{ ' ' }} <span class="font-medium">{{ end }}</span> {{ ' ' }} of {{ ' ' }} <span class="font-medium">{{ totalItems }}</span> {{ ' ' }} results
+          </p>
         </div>
-        <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-          <div>
-            <p class="text-sm text-gray-700">
-              Showing {{ ' ' }} <span class="font-medium">{{ start + 1 }}</span> {{ ' ' }} to {{ ' ' }} <span class="font-medium">{{ end }}</span> {{ ' ' }} of {{ ' ' }} <span class="font-medium">{{ totalItems }}</span> {{ ' ' }} results
-            </p>
-          </div>
-          <div>
-            <nav class="inline-flex -space-x-px rounded-md shadow-sm isolate" aria-label="Pagination">
-              <a @click="prevPage" class="relative inline-flex items-center px-2 py-2 text-gray-400 cursor-pointer rounded-l-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                </svg>
-              </a>
-              <span v-for="page in totalPages" :key="page" @click="goToPage(page)" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 cursor-pointer ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0" :class="{ 'bg-emerald-600 text-white': page === currentPage }">{{ page }}</span>
-              <a @click="nextPage" class="relative inline-flex items-center px-2 py-2 text-gray-400 cursor-pointer rounded-r-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                </svg>
-              </a>
-            </nav>
-          </div>
+        <div>
+          <nav class="inline-flex -space-x-px rounded-md shadow-sm isolate" aria-label="Pagination">
+            <a @click="prevPage" class="relative inline-flex items-center px-2 py-2 text-gray-400 cursor-pointer rounded-l-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+            </a>
+            <span v-for="page in totalPages" :key="page" @click="goToPage(page)" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 cursor-pointer ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0" :class="{ 'bg-emerald-600 text-white': page === currentPage }">{{ page }}</span>
+            <a @click="nextPage" class="relative inline-flex items-center px-2 py-2 text-gray-400 cursor-pointer rounded-r-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+              </svg>
+            </a>
+          </nav>
         </div>
       </div>
     </div>
+  </div>
   <!-- Delete Confirmation Modal -->
   <DeleteConfirmationModal
       :show="showDeleteConfirm"
@@ -166,6 +161,9 @@
 
   <router-view />
 </template>
+
+
+
 <script setup>
 import { ref, computed, onMounted, watchEffect, watch } from 'vue';
 import { useStore } from 'vuex';
@@ -190,6 +188,9 @@ const costPerUnit = computed({
   set: (value) => store.dispatch('updateCostPerUnit', value),
 });
 
+const totalUnitsUsage = computed(() => store.getters.getTotalUnitUsage);
+const totalBill = computed(() => store.getters.getTotalBill);
+
 const updateCostPerUnit = async () => {
   try {
     console.log('Updating cost per unit:', costPerUnit.value);
@@ -206,6 +207,7 @@ const updateCostPerUnit = async () => {
 
 const fetchData = async () => {
   try {
+    console.log('Fetching unit data...');
     await store.dispatch('fetchUnitData');
     const response = await apiClient.get('/unit/list', {
       params: {
@@ -213,7 +215,7 @@ const fetchData = async () => {
       },
     });
     const data = response.data.Unit;
-    statusFilter.value = 'all'; // Reset status filter when fetching all data
+    statusFilter.value = 'all';
 
     if (Array.isArray(data) && data.length > 0) {
       const pageData = data[data.length - 1];
@@ -226,6 +228,7 @@ const fetchData = async () => {
       totalPages.value = 0;
       totalItems.value = 0;
     }
+    console.log('Unit data fetched successfully');
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -290,6 +293,7 @@ const filteredUnits = computed(() => {
 
 const searchUnit = async () => {
   try {
+    console.log('Searching unit with query:', searchQuery.value);
     const response = await apiClient.get(`/unit/list/room?query=${searchQuery.value}&page=1`);
     const data = response.data.Unit;
 
@@ -304,6 +308,7 @@ const searchUnit = async () => {
       totalPages.value = 0;
       totalItems.value = 0;
     }
+    console.log('Unit search completed successfully');
   } catch (error) {
     console.error('Error searching unit:', error);
     units.value = [];
@@ -331,7 +336,6 @@ watchEffect(() => {
   fetchData();
 });
 
-// Watch for changes in searchQuery and fetch data if it's cleared
 watch(searchQuery, (newQuery) => {
   if (newQuery === '') {
     fetchData();
@@ -342,35 +346,76 @@ const clearSearch = () => {
   fetchData();
 };
 
-const sendUnits = () => {
-  const selectedUnits = filteredUnits.value.filter(unit => unit.selected).map(unit => ({
-    id: unit.id,
-    roomNumber: unit.res_room,
-    unitsUsed: unit.extractionStatus - unit.numberOfUnits,
-    totalBill: (unit.extractionStatus - unit.numberOfUnits) * unit.costPerUnit + unit.waterCost + unit.rentCost
-  }));
+
+
+const sendUnits = async () => {
+  const selectedUnits = filteredUnits.value.filter(unit => unit.selected);
 
   if (selectedUnits.length > 0) {
-    const existingUnits = JSON.parse(localStorage.getItem('selectedUnits')) || [];
-    const existingRoomNumbers = existingUnits.map(unit => unit.roomNumber);
+    try {
+      console.log('Sending selected units:', selectedUnits);
+      await Promise.all(selectedUnits.map(async (unit) => {
+        // Calculate totalUnit and totalBill
+        const totalUnit = Number(unit.extractionStatus) - Number(unit.numberOfUnits);
+        const totalBill = totalUnit * Number(unit.costPerUnit) + Number(unit.waterCost) + Number(unit.rentCost);
 
-    // Filter out units that already exist in the selectedUnits
-    const newUnits = selectedUnits.filter(unit => !existingRoomNumbers.includes(unit.roomNumber));
+        // Ensure all necessary properties are defined
+        if (totalBill === undefined || totalUnit === undefined) {
+          console.error('Unit data is missing required properties:', unit);
+          alert('Unit data is missing required properties. Please check the unit data.');
+          return;
+        }
 
-    if (newUnits.length > 0) {
-      const updatedUnits = [...existingUnits, ...newUnits];
-      localStorage.setItem('selectedUnits', JSON.stringify(updatedUnits)); // Append units to local storage
-      router.push({ 
-        name: 'SendBill'
+        // Add unit to history
+        await apiClient.post('/unit/history/add', {
+          ...unit,
+          totalUnit,
+          totalBill
+        });
+
+        // Add unit to bill
+        const billData = {
+          amount: totalBill, // Ensure this matches the backend expectation
+          date: new Date().toISOString().split('T')[0],
+          status: unit.approveStatus ? 'approved' : 'disapproved',
+          res_room: unit.res_room,
+          totalUnit,
+          totalBill
+        };
+        console.log('Sending bill data:', billData);
+        await apiClient.post('/bill/add', billData);
+
+        // Delete unit from the unit list
+        await apiClient.delete(`/unit/del/${unit.id}`);
+      }));
+
+      await fetchData();
+      selectAll.value = false;
+
+      const totalUnit = selectedUnits.reduce((total, unit) => total + (Number(unit.extractionStatus) - Number(unit.numberOfUnits)), 0);
+      const totalBill = selectedUnits.reduce((total, unit) => total + ((Number(unit.extractionStatus) - Number(unit.numberOfUnits)) * Number(unit.costPerUnit) + Number(unit.waterCost) + Number(unit.rentCost)), 0);
+
+      router.push({
+        name: 'SendBill',
+        query: {
+          selectedUnits: JSON.stringify(selectedUnits),
+          totalUnit,
+          totalBill
+        }
       });
-    } else {
-      alert('All selected units are already in the bill list.');
+      console.log('Units sent successfully');
+    } catch (error) {
+      console.error('Error sending units:', error);
+      alert('Failed to send units. Please try again.');
     }
   } else {
     alert('Please select at least one unit to send.');
   }
 };
 </script>
+
+
+
 
 
 

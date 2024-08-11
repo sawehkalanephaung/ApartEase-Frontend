@@ -49,13 +49,13 @@
           <tbody class="divide-y divide-gray-200">
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Units Usage</td>
-              <td class="px-6 py-2 text-gray-500 whitespace-nowrap">{{ thisMonth }} - {{ lastMonth }} = {{ realUsage }} kw</td>
+              <td class="px-6 py-2 text-gray-500 whitespace-nowrap">{{ thisMonth }} - {{ lastMonth }} = {{ totalUnit }} kw</td>
             </tr>
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Unit Calculation</td>
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
                 <input v-model="costPerUnit" type="number" class="w-32 px-2 py-1 mb-1 border border-gray-300 rounded-md" disabled /> baht/unit
-                <p>{{ realUsage }} * {{ costPerUnit }} = {{ unitCalculation }} baht</p>
+                <p>{{ totalUnit }} * {{ costPerUnit }} = {{ unitCalculation }} baht</p>
               </td>
             </tr>
             <tr class="text-sm">
@@ -138,34 +138,25 @@ const lastMonth = ref('');
 const thisMonth = ref('');
 const waterCostInput = ref(100);
 const rentCostInput = ref(3500);
-const status = ref(false); // default is disapprove
+const status = ref(false);
 const roomNumber = ref('');
 const message = ref('');
 
-// New reactive properties for resident information
 const residentName = ref('');
 const residentEmail = ref('');
 
-// Reactive property for selected tab
-const selectedTab = ref('unitInfo'); // Default to "Detail Units Information"
+const selectedTab = ref('unitInfo');
 
-// Get cost per unit from Vuex store
 const costPerUnit = computed(() => store.getters.getCostPerUnit);
-const totalUnitUsage = computed(() => store.getters.getTotalUnitUsage);
-const rentCost = computed(() => store.getters.getRentCost);
-const waterCost = computed(() => store.getters.getWaterCost);
-const totalBillComputed = computed(() => store.getters.getTotalBill);
 
-const realUsage = computed(() => thisMonth.value - lastMonth.value);
-const unitCalculation = computed(() => realUsage.value * costPerUnit.value);
+const totalUnit = computed(() => thisMonth.value - lastMonth.value);
+const unitCalculation = computed(() => totalUnit.value * costPerUnit.value);
 const totalBill = computed(() => unitCalculation.value + waterCostInput.value + rentCostInput.value);
 
 const fetchData = async () => {
   try {
-    // Log the update unit ID
     console.log('Fetching data for unit ID:', route.params.id);
     const response = await apiClient.get(`/unit/list/${route.params.id}`);
-    // API Response:
     console.log('API Response:', response.data);
 
     if (response.data && response.data.Unit) {
@@ -173,10 +164,9 @@ const fetchData = async () => {
       thisMonth.value = response.data.Unit.extractionStatus || thisMonth.value;
       waterCostInput.value = response.data.Unit.waterCost || waterCostInput.value;
       rentCostInput.value = response.data.Unit.rentCost || rentCostInput.value;
-      status.value = response.data.Unit.approveStatus || status.value; // Corrected status fetching
+      status.value = response.data.Unit.approveStatus || status.value;
       roomNumber.value = response.data.Unit.res_room || roomNumber.value;
 
-      // Fetch resident information
       await fetchResidentInfo(response.data.Unit.res_room);
     } else {
       console.warn('No unit data found in response:', response.data);
@@ -186,11 +176,10 @@ const fetchData = async () => {
   }
 };
 
-// New method to fetch resident information
 const fetchResidentInfo = async (roomNumber) => {
   try {
     const response = await apiClient.get(`/resident/list/room?query=${roomNumber}`);
-    const resident = response.data.Resident[0]; // Assuming the first result is the correct one
+    const resident = response.data.Resident[0];
 
     if (resident) {
       residentName.value = resident.name;
@@ -222,7 +211,9 @@ const submit = async () => {
       rentCost: rentCostInput.value,
       approveStatus: status.value,
       res_room: roomNumber.value,
-      date: new Date().toISOString().split('T')[0] // Add the date field
+      date: new Date().toISOString().split('T')[0],
+      totalUnit: totalUnit.value,
+      totalBill: totalBill.value
     };
 
     console.debug('Updated data:', updatedData);
@@ -239,11 +230,9 @@ const submit = async () => {
     console.error('Error during submission:', error);
 
     if (error.response && error.response.data && error.response.data.message) {
-      // Display the error message from the server
       message.value = error.response.data.message;
     } else {
       console.log("There's no record exists!")
-      // Display the error message from the server
     }
   }
 };
