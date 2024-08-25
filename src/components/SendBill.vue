@@ -21,7 +21,7 @@
           </tr>
           <tr v-else v-for="unit in validUnits" :key="unit.id">
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-              <input type="checkbox" v-model="unit.selected" :value="unit.id" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" role="checkbox" :aria-checked="unit.selected" />
+              <input type="checkbox" v-model="unit.selected" :value="unit.id" class="lg:w-4 lg:h-4 md:w-4 sm:w-4 sm:h-4" role="checkbox" :aria-checked="unit.selected" />
             </td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ unit.res_room }}</td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ unit.totalUnit }}</td>
@@ -33,40 +33,62 @@
         </tbody>
       </table>
     </div>
-    <div class="mt-4 text-right">
-      <span class="font-semibold text-md">Total No Bills: {{ validUnits.length }}</span>
-      <span class="ml-4 font-semibold text-md">Selected bills: {{ selectedBillsCount }}</span>
+
+ <!-- Pagination controls -->
+ <div class="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
+      <div class="flex justify-between flex-1 sm:hidden">
+        <a @click="prevPage" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Previous</a>
+        <a @click="nextPage" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Next</a>
+      </div>
+      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-gray-700">
+            Showing {{ ' ' }} <span class="font-medium">{{ start + 1 }}</span> {{ ' ' }} to {{ ' ' }} <span class="font-medium">{{ end }}</span> {{ ' ' }} of {{ ' ' }} <span class="font-medium">{{ totalItems }}</span> {{ ' ' }} results
+          </p>
+        </div>
+        <div>
+          <nav class="inline-flex -space-x-px rounded-md shadow-sm isolate" aria-label="Pagination">
+            <a @click="prevPage" class="relative inline-flex items-center px-2 py-2 text-gray-400 cursor-pointer rounded-l-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 01-1.414 1.414l-4-4a1 1 010-1.414l4-4a1 1 011.414 0z" clip-rule="evenodd" />
+              </svg>
+            </a>
+            <span v-for="page in totalPages" :key="page" @click="goToPage(page)" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 cursor-pointer ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0" :class="{ 'bg-emerald-600 text-white': page === currentPage }">{{ page }}</span>
+            <a @click="nextPage" class="relative inline-flex items-center px-2 py-2 text-gray-400 cursor-pointer rounded-r-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 010-1.414L10.586 10 7.293 6.707a1 1 011.414-1.414l4 4a1 1 010 1.414l-4 4a1 1 01-1.414 0z" clip-rule="evenodd" />
+              </svg>
+            </a>
+          </nav>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import apiClient from '@/services/AxiosClient.js';
+import { usePagination } from '@/composables/usePagination';
 
 const router = useRouter();
 const route = useRoute();
 const unitList = ref([]);
 const selectAll = ref(false);
 
-onMounted(async () => {
-  const storedUnits = route.query.selectedUnits ? JSON.parse(route.query.selectedUnits) : [];
-  unitList.value = storedUnits.map(unit => ({...unit, selected: false}));
-
-  await fetchData();
-});
-
 const fetchData = async () => {
   try {
     console.log('Fetching bill data...');
-    const [billResponse, residentResponse] = await Promise.all([
-      apiClient.get('/bill/list'),
-      apiClient.get('/resident/list')
-    ]);
+    const response = await apiClient.get('/bill/list', {
+      params: {
+        page: currentPage.value,
+        per_page: 5, // Add this line to set items per page
+      },
+    });
 
-    const bills = billResponse.data.Bills;
-    const residents = residentResponse.data.Resident;
+    const bills = response.data.Bills || [];
+    const residents = response.data.Resident || [];
 
     const residentEmailMap = residents.reduce((map, resident) => {
       map[resident.roomNumber] = resident.lineId;
@@ -79,18 +101,33 @@ const fetchData = async () => {
       lineId: residentEmailMap[bill.res_room] || ''
     }));
 
-    console.log('Bill data fetched successfully');
+    // Update pagination data
+    const paginationData = response.data.pagination || response.data.meta || {};
+    totalPages.value = paginationData.total_pages || 1;
+    currentPage.value = paginationData.page || 1;
+    totalItems.value = paginationData.total_bills || bills.length;
+
+    console.log('Bill data fetched successfully', unitList.value);
   } catch (error) {
     console.error('Error fetching bills:', error);
+    alert('Failed to fetch bills. Please check your network connection and try again.');
   }
 };
+
+const { currentPage, totalPages, totalItems, start, end, prevPage, nextPage, goToPage } = usePagination(fetchData);
+
+onMounted(async () => {
+  await fetchData();
+});
+
+watch(currentPage, fetchData);
 
 const toggleSelectAll = () => {
   unitList.value.forEach(unit => unit.selected = selectAll.value);
 };
 
 const editUnit = (id) => {
-  router.push({ name: 'UnitManagementUpdate', params: { id } });
+  router.push({ name: 'UnitHistoryUpdate', params: { id } });
 };
 
 const sendBills = async () => {
@@ -117,8 +154,7 @@ const sendBills = async () => {
       }
     }
     alert('Bills sent and deleted successfully!');
-    localStorage.removeItem('selectedUnits');
-    unitList.value = unitList.value.filter(unit => !unit.selected);
+    await fetchData(); // Refresh the data after sending bills
     console.log('Bills sent, deleted, and UI updated successfully');
   } catch (error) {
     console.error('Error sending or deleting bills:', error);
@@ -140,13 +176,14 @@ const validUnits = computed(() => {
 });
 </script>
 
+
 <style scoped>
 .overflow-auto {
   overflow: auto;
 }
 
-.max-h-[600px] {
-  max-height: 600px;
+.max-h-[700px] {
+  max-height: 700px;
 }
 
 .sticky-header {

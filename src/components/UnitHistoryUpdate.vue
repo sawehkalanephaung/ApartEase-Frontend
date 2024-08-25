@@ -1,4 +1,3 @@
-
 <template>
   <h2 class="mt-0 mb-2 text-xl font-bold">Update Unit History</h2>
   <div class="max-w-sm min-w-full bg-gray-100 rounded-lg drop-shadow-md dark:border-gray-700">
@@ -117,6 +116,7 @@
   </div>
 </template>
 
+
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -201,16 +201,16 @@ const submit = async () => {
     alert(result.message);
     router.push('/unit-history');
     if (result.status === 'ok') {
-      router.push('/unit-history');
+      router.push('/send-history');
     }
   } catch (error) {
-    console.log("The room that record refer does not exists!")
+    console.log("The room that record refer does not exists!");
     console.error('Error during submission:', error);
 
     if (error.response && error.response.data && error.response.data.message) {
       message.value = error.response.data.message;
     } else {
-      console.log("There's no record exists!")
+      message.value = 'An unexpected error occurred. Please try again later.';
     }
   }
 };

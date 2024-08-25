@@ -124,6 +124,7 @@
   </div>
 </template>
 
+
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -138,7 +139,7 @@ const lastMonth = ref('');
 const thisMonth = ref('');
 const waterCostInput = ref(100);
 const rentCostInput = ref(3500);
-const status = ref(false);
+const status = ref('disapprove'); // Default to 'disapprove'
 const roomNumber = ref('');
 const message = ref('');
 
@@ -164,7 +165,7 @@ const fetchData = async () => {
       thisMonth.value = response.data.Unit.extractionStatus || thisMonth.value;
       waterCostInput.value = response.data.Unit.waterCost || waterCostInput.value;
       rentCostInput.value = response.data.Unit.rentCost || rentCostInput.value;
-      status.value = response.data.Unit.approveStatus || status.value;
+      status.value = response.data.Unit.approveStatus ? 'approve' : 'disapprove';
       roomNumber.value = response.data.Unit.res_room || roomNumber.value;
 
       await fetchResidentInfo(response.data.Unit.res_room);
@@ -209,7 +210,7 @@ const submit = async () => {
       costPerUnit: costPerUnit.value,
       waterCost: waterCostInput.value,
       rentCost: rentCostInput.value,
-      approveStatus: status.value,
+      approveStatus: status.value === 'approve',
       res_room: roomNumber.value,
       date: new Date().toISOString().split('T')[0],
       totalUnit: totalUnit.value,

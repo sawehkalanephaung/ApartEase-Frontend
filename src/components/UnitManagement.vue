@@ -44,7 +44,7 @@
       <!--filter by status-->
       <div class="flex-grow sm:flex-grow-0">
         <select id="statusFilter" v-model="statusFilter" @change="filterUnits" class="px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-          <option value="all">Status</option>
+          <option value="all">All</option>
           <option value="approved">Approved</option>
           <option value="disapproved">Disapproved</option>
         </select>
@@ -70,6 +70,11 @@
         </tr>
       </thead>
       <tbody>
+        <tr v-if="filteredUnits.length === 0">
+          <td colspan="6" class="px-5 py-5 text-sm text-center bg-white border-b border-gray-200">
+            No result found
+          </td>
+        </tr>
         <tr v-for="u in filteredUnits" :key="u.id">
           <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
             <input type="checkbox" v-model="u.selected" :value="u.id" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" />
@@ -80,7 +85,7 @@
           <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ u.res_room }}</td>
           <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
             <div class="flex items-center">
-              <div :class="{'bg-emerald-500': u.approveStatus, 'bg-red-500': !u.approveStatus}" class="flex items-center justify-center w-4 h-4 mr-1 rounded-full">
+              <div :class="{'bg-emerald-500': u.approveStatus, 'bg-yellow-500': !u.approveStatus}" class="flex items-center justify-center w-4 h-4 mr-1 rounded-full">
                 <svg v-if="u.approveStatus" xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a 1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/>
                 </svg>
@@ -317,20 +322,25 @@ const searchUnit = async () => {
   }
 };
 
-const filterUnits = () => {
-  if (statusFilter.value === 'all') {
-    fetchData();
-  } else {
-    const filteredUnits = units.value.filter(unit => 
+const filterUnits = computed(() => {
+  let filtered = units.value;
+
+  if (statusFilter.value !== 'all') {
+    filtered = filtered.filter(unit => 
       (statusFilter.value === 'approved' && unit.approveStatus) ||
       (statusFilter.value === 'disapproved' && !unit.approveStatus)
     );
-    units.value = filteredUnits;
-    totalItems.value = filteredUnits.length;
-    totalPages.value = Math.ceil(totalItems.value / itemsPerPage);
-    currentPage.value = 1;
   }
-};
+
+  totalItems.value = filtered.length;
+  totalPages.value = Math.ceil(totalItems.value / itemsPerPage);
+  currentPage.value = 1;
+
+  return filtered;
+});
+
+// ...
+
 
 watchEffect(() => {
   fetchData();
@@ -346,72 +356,79 @@ const clearSearch = () => {
   fetchData();
 };
 
+  const sendUnits = async () => {
+    const selectedUnits = filteredUnits.value.filter(unit => unit.selected);
 
-
-const sendUnits = async () => {
-  const selectedUnits = filteredUnits.value.filter(unit => unit.selected);
-
-  if (selectedUnits.length > 0) {
-    try {
-      console.log('Sending selected units:', selectedUnits);
-      await Promise.all(selectedUnits.map(async (unit) => {
-        // Calculate totalUnit and totalBill
-        const totalUnit = Number(unit.extractionStatus) - Number(unit.numberOfUnits);
-        const totalBill = totalUnit * Number(unit.costPerUnit) + Number(unit.waterCost) + Number(unit.rentCost);
-
-        // Ensure all necessary properties are defined
-        if (totalBill === undefined || totalUnit === undefined) {
-          console.error('Unit data is missing required properties:', unit);
-          alert('Unit data is missing required properties. Please check the unit data.');
-          return;
-        }
-
-        // Add unit to history
-        await apiClient.post('/unit/history/add', {
-          ...unit,
-          totalUnit,
-          totalBill
-        });
-
-        // Add unit to bill
-        const billData = {
-          amount: totalBill, // Ensure this matches the backend expectation
-          date: new Date().toISOString().split('T')[0],
-          status: unit.approveStatus ? 'approved' : 'disapproved',
-          res_room: unit.res_room,
-          totalUnit,
-          totalBill
-        };
-        console.log('Sending bill data:', billData);
-        await apiClient.post('/bill/add', billData);
-
-        // Delete unit from the unit list
-        await apiClient.delete(`/unit/del/${unit.id}`);
-      }));
-
-      await fetchData();
-      selectAll.value = false;
-
-      const totalUnit = selectedUnits.reduce((total, unit) => total + (Number(unit.extractionStatus) - Number(unit.numberOfUnits)), 0);
-      const totalBill = selectedUnits.reduce((total, unit) => total + ((Number(unit.extractionStatus) - Number(unit.numberOfUnits)) * Number(unit.costPerUnit) + Number(unit.waterCost) + Number(unit.rentCost)), 0);
-
-      router.push({
-        name: 'SendBill',
-        query: {
-          selectedUnits: JSON.stringify(selectedUnits),
-          totalUnit,
-          totalBill
-        }
-      });
-      console.log('Units sent successfully');
-    } catch (error) {
-      console.error('Error sending units:', error);
-      alert('Failed to send units. Please try again.');
+    if (selectedUnits.length === 0) {
+      alert('Please select at least one unit.');
+      return;
     }
-  } else {
-    alert('Please select at least one unit to send.');
-  }
-};
+
+    const disapprovedUnits = selectedUnits.filter(unit => !unit.approveStatus);
+    if (disapprovedUnits.length > 0) {
+      alert('Disapproved Unit please double check');
+      return;
+    }
+
+    if (selectedUnits.length > 0) {
+      try {
+        console.log('Sending selected units:', selectedUnits);
+        await Promise.all(selectedUnits.map(async (unit) => {
+          // Calculate totalUnit and totalBill
+          const totalUnit = Number(unit.extractionStatus) - Number(unit.numberOfUnits);
+          const totalBill = totalUnit * Number(unit.costPerUnit) + Number(unit.waterCost) + Number(unit.rentCost);
+
+          // Ensure all necessary properties are defined
+          if (totalBill === undefined || totalUnit === undefined) {
+            console.error('Unit data is missing required properties:', unit);
+            alert('Unit data is missing required properties. Please check the unit data.');
+            return;
+          }
+
+          // Add unit to history
+          await apiClient.post('/unit/history/add', {
+            ...unit,
+            totalUnit,
+            totalBill
+          });
+
+          // Add unit to bill
+          const billData = {
+            amount: totalBill,
+            date: new Date().toISOString().split('T')[0],
+            status: 'approved',
+            res_room: unit.res_room,
+            totalUnit,
+            totalBill
+          };
+          console.log('Sending bill data:', billData);
+          await apiClient.post('/bill/add', billData);
+
+          // Delete unit from the unit list
+          await apiClient.delete(`/unit/del/${unit.id}`);
+        }));
+
+        await fetchData();
+        selectAll.value = false;
+
+        const totalUnit = selectedUnits.reduce((total, unit) => total + (Number(unit.extractionStatus) - Number(unit.numberOfUnits)), 0);
+        const totalBill = selectedUnits.reduce((total, unit) => total + ((Number(unit.extractionStatus) - Number(unit.numberOfUnits)) * Number(unit.costPerUnit) + Number(unit.waterCost) + Number(unit.rentCost)), 0);
+
+        router.push({
+          name: 'SendBill',
+          query: {
+            selectedUnits: JSON.stringify(selectedUnits),
+            totalUnit,
+            totalBill
+          }
+        });
+        console.log('Units sent successfully');
+      } catch (error) {
+        console.error('Error sending units:', error);
+        alert('Failed to send units. Please try again.');
+      }
+    }
+  };
 </script>
 
 

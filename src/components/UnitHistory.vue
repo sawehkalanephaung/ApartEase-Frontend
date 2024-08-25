@@ -1,4 +1,3 @@
-
 <template>
   <div class="relative">
     <div class="flex items-center justify-between">
@@ -36,10 +35,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-if="filteredUnitHistory.length === 0">
+          <tr v-if="paginatedUnitHistory.length === 0">
             <td colspan="7" class="px-5 py-5 text-sm text-center bg-white border-b border-gray-200">No Unit History Data</td>
           </tr>
-          <tr v-else v-for="record in filteredUnitHistory" :key="record.id">
+          <tr v-else v-for="record in paginatedUnitHistory" :key="record.id">
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
               <img :src="record.unitImage" alt="Unit Image" class="object-cover cursor-pointer w-14 h-14" @click="openImageModal(record.unitImage)" />
             </td>
@@ -50,7 +49,7 @@
               <div class="flex items-center">
                 <div :class="{'bg-emerald-500': record.status === 'done', 'bg-red-500': record.status !== 'done'}" class="flex items-center justify-center w-4 h-4 mr-1 rounded-full">
                   <svg v-if="record.status === 'done'" xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a 1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/>
+                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a 1 1 0 001.414 0l8-8a 1 1 0 000-1.414z" clip-rule="evenodd"/>
                   </svg>
                   <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-11.707a1 1 0 00-1.414-1.414L10 8.586 7.707 6.293a1 1 0 00-1.414 1.414L8.586 10l-2.293 2.293a1 1 0 001.414 1.414L10 11.414l2.293 2.293a1 1 0 001.414-1.414L11.414 10l2.293-2.293z" clip-rule="evenodd"/>
@@ -77,6 +76,36 @@
         </tbody>
       </table>
     </div>
+   <!-- Pagination controls -->
+   <div class="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
+    <div class="flex justify-between flex-1 sm:hidden">
+      <a @click="prevPage" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Previous</a>
+      <a @click="nextPage" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Next</a>
+    </div>
+    <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+      <div>
+        <p class="text-sm text-gray-700">
+          Showing {{ ' ' }} <span class="font-medium">{{ start + 1 }}</span> {{ ' ' }} to {{ ' ' }} <span class="font-medium">{{ end }}</span> {{ ' ' }} of {{ ' ' }} <span class="font-medium">{{ totalItems }}</span> {{ ' ' }} results
+        </p>
+      </div>
+      <div>
+        <nav class="inline-flex -space-x-px rounded-md shadow-sm isolate" aria-label="Pagination">
+          <a @click="prevPage" class="relative inline-flex items-center px-2 py-2 text-gray-400 cursor-pointer rounded-l-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a 1 1 0 010-1.414l4-4a 1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+          </a>
+          <span v-for="page in totalPages" :key="page" @click="goToPage(page)" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 cursor-pointer ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0" :class="{ 'bg-emerald-600 text-white': page === currentPage }">{{ page }}</span>
+          <a @click="nextPage" class="relative inline-flex items-center px-2 py-2 text-gray-400 cursor-pointer rounded-r-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a 1 1 0 010 1.414l-4 4a 1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </div>
+
     <!-- Image Modal -->
     <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal">
       <div class="relative max-w-full max-h-full p-4 bg-white rounded-lg shadow-lg" @click.stop>
@@ -99,23 +128,40 @@ import { useRouter } from 'vue-router';
 import apiClient from '@/services/AxiosClient.js';
 import DatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
+import { usePagination } from '@/composables/usePagination';
 
 const unitHistory = ref([]);
 const startDate = ref(null);
 const endDate = ref(null);
 const showImageModal = ref(false);
 const currentImage = ref('');
+const itemsPerPage = 10; // Define itemsPerPage
 const router = useRouter();
 
 const fetchData = async () => {
   try {
-    const response = await apiClient.get('/unit/history/list');
-    unitHistory.value = response.data.UnitHistory.map(unit => ({
-      ...unit,
-      unitImage: unit.unitImage || 'https://via.placeholder.com/600',
-      totalUnit: Number(unit.extractionStatus) - Number(unit.numberOfUnits), 
-      totalBill: (Number(unit.extractionStatus) - Number(unit.numberOfUnits)) * Number(unit.costPerUnit) + Number(unit.waterCost) + Number(unit.rentCost)
-    }));
+    const response = await apiClient.get('/unit/history/list', {
+      params: {
+        page: currentPage.value,
+      },
+    });
+    const data = response.data.UnitHistory;
+    if (Array.isArray(data) && data.length > 0) {
+      const pageData = data[data.length - 1];
+      totalPages.value = pageData.total_pages;
+      currentPage.value = pageData.page;
+      totalItems.value = pageData.total_record;
+      unitHistory.value = data.slice(0, -1).map(unit => ({
+        ...unit,
+        unitImage: unit.unitImage || 'https://via.placeholder.com/600',
+        totalUnit: Number(unit.extractionStatus) - Number(unit.numberOfUnits), 
+        totalBill: (Number(unit.extractionStatus) - Number(unit.numberOfUnits)) * Number(unit.costPerUnit) + Number(unit.waterCost) + Number(unit.rentCost)
+      }));
+    } else {
+      unitHistory.value = [];
+      totalPages.value = 0;
+      totalItems.value = 0;
+    }
   } catch (error) {
     console.error('Error fetching unit history:', error);
   }
@@ -181,7 +227,14 @@ const filteredUnitHistory = computed(() => {
   return filtered;
 });
 
+const { currentPage, totalPages, totalItems, start, end, prevPage, nextPage, goToPage } = usePagination(fetchData);
+
+const paginatedUnitHistory = computed(() => {
+  return filteredUnitHistory.value;
+});
+
 onMounted(() => {
   fetchData();
 });
 </script>
+
