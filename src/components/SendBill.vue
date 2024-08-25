@@ -16,10 +16,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-if="unitList.length === 0">
+          <tr v-if="validUnits.length === 0">
             <td colspan="6" class="px-5 py-5 text-sm text-center bg-white border-b border-gray-200">No Bill Data</td>
           </tr>
-          <tr v-else v-for="unit in unitList" :key="unit.id">
+          <tr v-else v-for="unit in validUnits" :key="unit.id">
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
               <input type="checkbox" v-model="unit.selected" :value="unit.id" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" role="checkbox" :aria-checked="unit.selected" />
             </td>
@@ -34,7 +34,7 @@
       </table>
     </div>
     <div class="mt-4 text-right">
-      <span class="font-semibold text-md">Total bills: {{ totalBills }}</span>
+      <span class="font-semibold text-md">Total No Bills: {{ validUnits.length }}</span>
       <span class="ml-4 font-semibold text-md">Selected bills: {{ selectedBillsCount }}</span>
     </div>
   </div>
@@ -107,7 +107,11 @@ const sendBills = async () => {
     } else {
       for (const unit of selectedUnits) {
         console.log(`Sending bill for unit ID: ${unit.id}`);
-        await apiClient.post(`/bill/send/${unit.id}`);
+        await apiClient.post(`/bill/send/${unit.id}`, {
+          costPerUnit: unit.costPerUnit,
+          waterCost: unit.waterCost,
+          rentCost: unit.rentCost
+        });
         console.log(`Deleting bill for unit ID: ${unit.id}`);
         await apiClient.delete(`/bill/del/${unit.id}`);
       }
@@ -128,6 +132,11 @@ const totalBills = computed(() => {
 
 const selectedBillsCount = computed(() => {
   return unitList.value.filter(unit => unit.selected).length;
+});
+
+// Computed property to filter valid units
+const validUnits = computed(() => {
+  return unitList.value.filter(unit => unit.id && unit.res_room && unit.totalUnit && unit.totalBill);
 });
 </script>
 
