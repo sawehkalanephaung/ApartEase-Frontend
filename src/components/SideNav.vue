@@ -48,7 +48,7 @@
                   </svg>
                       <span>Unit Management</span>
                     </router-link>
-                    <router-link to="/unit-history" @click="handleNavClick" class="flex items-center block px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100" exact-active-class="active-link">
+                    <router-link to="/bill-history" @click="handleNavClick" class="flex items-center block px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-gray-100" exact-active-class="active-link">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="flex-shrink-0 w-6 h-6 mr-2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
@@ -186,7 +186,7 @@ const showUnitManagementDropdown = ref(false);
 
 
 const isUnitManagementActive = computed(() => {
-  return route.path === '/unit-management' || route.path === '/unit-history';
+  return route.path === '/unit-management' || route.path === '/bill-history';
 });
 
 // hide show side bar
@@ -238,7 +238,7 @@ watch(route, (newRoute) => {
     breadcrumb.value = ["Home", "Unit Management"];
   } else if (newRoute.name === 'SendBill') {
     breadcrumb.value = ["Home", "Send Bill"];
-  }else if (newRoute.name === 'UnitHistory') {
+  }else if (newRoute.name === 'BillHistory') {
     breadcrumb.value = ["Home", "Unit History"];
   }
 // add more
@@ -267,9 +267,9 @@ const isUserManagementActive = computed(() => {
   return route.path === '/user-list' || route.path === '/role-list';
 });
 
-// Determine if the current route is "UnitHistory"
-const isUnitHistoryActive = computed(() => {
-  return route.path === '/unit-history';
+// Determine if the current route is "BillHistory"
+const isBillHistoryActive = computed(() => {
+  return route.path === '/bill-history';
 });
 
 const handleNavClick = () => {

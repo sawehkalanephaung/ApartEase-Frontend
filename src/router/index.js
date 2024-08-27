@@ -19,8 +19,8 @@ import UnitManagementCreate from "@/components/UnitManagementCreate.vue";
 import UnitManagementUpdate from "@/components/UnitManagementUpdate.vue";
 import { checkLoginStatus } from '@/utils/checkLoginStatus';
 import SendBill from '@/components/SendBill.vue';
-import UnitHistory from '@/components/UnitHistory.vue';
-import UnitHistoryUpdate from '@/components/UnitHistoryUpdate.vue';
+import BillHistory from '@/components/BillHistory.vue';
+import BillHistoryUpdate from '@/components/BillHistoryUpdate.vue';
 
 
 
@@ -131,15 +131,15 @@ const router = createRouter({
         
         
         {
-          path: '/unit-history',
-          name: 'UnitHistory',
-          component: UnitHistory,
+          path: '/bill-history',
+          name: 'BillHistory',
+          component: BillHistory,
           meta: { requiresAuth: true },
         },
         {
-          path: "/unit-history-update/:id",
-          name: "UnitHistoryUpdate",
-          component: UnitHistoryUpdate,
+          path: "/bill-history-update/:id",
+          name: "BillHistoryUpdate",
+          component: BillHistoryUpdate,
           meta: { requiresAuth: true },
         },
    

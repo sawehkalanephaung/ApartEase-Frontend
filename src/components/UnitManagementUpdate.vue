@@ -8,17 +8,17 @@
       <div class="flex justify-around mb-4 space-x-4">
         <div class="flex flex-col items-center w-full p-4 text-center rounded-lg">
           <img src="https://via.placeholder.com/600" alt="Last month" style="width: 100px; height: 100px;" @click="openImageModal('https://via.placeholder.com/600')">
-          <label for="lastMonth" class="block mt-2 text-sm font-medium text-gray-700">Last month</label>
+          <label for="prevNumberOfUnits" class="block mt-2 text-sm font-medium text-gray-700">Last month</label>
           <div class="flex items-center mt-1">
-            <input v-model="lastMonth" type="number" id="lastMonth" class="block px-3 py-2 border border-gray-300 rounded-md shadow-sm w-28 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            <input v-model="prevNumberOfUnits" type="number" id="prevNumberOfUnits" class="block px-3 py-2 border border-gray-300 rounded-md shadow-sm w-28 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
             <span class="ml-2">kw</span>
           </div>
         </div>
         <div class="flex flex-col items-center w-full p-4 text-center rounded-lg">
           <img src="https://via.placeholder.com/600" alt="This month" style="width: 100px; height: 100px;" @click="openImageModal('https://via.placeholder.com/600')">
-          <label for="thisMonth" class="block mt-2 text-sm font-medium text-gray-700">This month</label>
+          <label for="numberOfUnits" class="block mt-2 text-sm font-medium text-gray-700">This month</label>
           <div class="flex items-center mt-1">
-            <input v-model="thisMonth" type="number" id="thisMonth" class="block px-3 py-2 border border-gray-300 rounded-md shadow-sm w-28 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            <input v-model="numberOfUnits" type="number" id="numberOfUnits" class="block px-3 py-2 border border-gray-300 rounded-md shadow-sm w-28 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
             <span class="ml-2">kw</span>
           </div>
         </div>
@@ -49,25 +49,25 @@
           <tbody class="divide-y divide-gray-200">
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Units Usage</td>
-              <td class="px-6 py-2 text-gray-500 whitespace-nowrap">{{ thisMonth }} - {{ lastMonth }} = {{ totalUnit }} kw</td>
+              <td class="px-6 py-2 text-gray-500 whitespace-nowrap">{{ numberOfUnits }} - {{ prevNumberOfUnits }} = {{ totalUnit }} kw</td>
             </tr>
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Unit Calculation</td>
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-                <input v-model="costPerUnit" type="number" class="w-32 px-2 py-1 mb-1 border border-gray-300 rounded-md" disabled /> baht/unit
+                <input v-model="costPerUnit" @change="updateCostPerUnit" type="number" class="w-32 px-2 py-1 mb-1 border border-gray-300 rounded-md" /> baht/unit
                 <p>{{ totalUnit }} * {{ costPerUnit }} = {{ unitCalculation }} baht</p>
               </td>
             </tr>
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Water cost</td>
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-                <input v-model="waterCostInput" type="number" class="w-32 px-2 py-1 border border-gray-300 rounded-md" /> baht
+                <input v-model="waterCostInput" @change="updateWaterCost" type="number" class="w-32 px-2 py-1 border border-gray-300 rounded-md" /> baht
               </td>
             </tr>
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Rent cost</td>
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-                <input v-model="rentCostInput" type="number" class="w-32 px-2 py-1 border border-gray-300 rounded-md" /> baht
+                <input v-model="rentCostInput" @change="updateRentCost" type="number" class="w-32 px-2 py-1 border border-gray-300 rounded-md" /> baht
               </td>
             </tr>
             <tr class="text-sm">
@@ -77,7 +77,7 @@
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Status</td>
               <td class="px-6 py-2 font-bold text-gray-500 whitespace-nowrap ">
-                <select v-model="status" class="px-2 py-1 mb-4 border border-gray-300 rounded-md">
+                <select v-model="approveStatus" class="px-2 py-1 mb-4 border border-gray-300 rounded-md">
                   <option value="approve">Approve</option>
                   <option value="disapprove">Disapprove</option>
                 </select>
@@ -124,7 +124,6 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -135,11 +134,15 @@ const router = useRouter();
 const route = useRoute();
 const store = useStore();
 
-const lastMonth = ref('');
-const thisMonth = ref('');
-const waterCostInput = ref(100);
-const rentCostInput = ref(3500);
-const status = ref('disapprove'); // Default to 'disapprove'
+const prevNumberOfUnits = ref('');
+const numberOfUnits = ref('');
+const initialPrevNumberOfUnits = ref(''); // To store the initial value
+const initialNumberOfUnits = ref(''); // To store the initial value
+const waterCostInput = ref(store.getters.getWaterCost);
+const rentCostInput = ref(getRentCostForUnit(route.params.id));
+const initialWaterCost = ref(store.getters.getWaterCost); // Store initial value
+const initialRentCost = ref(getRentCostForUnit(route.params.id)); // Store initial value
+const approveStatus = ref('disapprove'); // Default to 'disapprove'
 const roomNumber = ref('');
 const message = ref('');
 
@@ -150,7 +153,7 @@ const selectedTab = ref('unitInfo');
 
 const costPerUnit = computed(() => store.getters.getCostPerUnit);
 
-const totalUnit = computed(() => thisMonth.value - lastMonth.value);
+const totalUnit = computed(() => numberOfUnits.value - prevNumberOfUnits.value);
 const unitCalculation = computed(() => totalUnit.value * costPerUnit.value);
 const totalBill = computed(() => unitCalculation.value + waterCostInput.value + rentCostInput.value);
 
@@ -161,11 +164,11 @@ const fetchData = async () => {
     console.log('API Response:', response.data);
 
     if (response.data && response.data.Unit) {
-      lastMonth.value = response.data.Unit.numberOfUnits || lastMonth.value;
-      thisMonth.value = response.data.Unit.extractionStatus || thisMonth.value;
-      waterCostInput.value = response.data.Unit.waterCost || waterCostInput.value;
-      rentCostInput.value = response.data.Unit.rentCost || rentCostInput.value;
-      status.value = response.data.Unit.approveStatus ? 'approve' : 'disapprove';
+      prevNumberOfUnits.value = response.data.Unit.prevNumberOfUnits || prevNumberOfUnits.value;
+      numberOfUnits.value = response.data.Unit.numberOfUnits || numberOfUnits.value;
+      initialPrevNumberOfUnits.value = prevNumberOfUnits.value; // Store initial value
+      initialNumberOfUnits.value = numberOfUnits.value; // Store initial value
+      approveStatus.value = response.data.Unit.approveStatus ? 'approve' : 'disapprove';
       roomNumber.value = response.data.Unit.res_room || roomNumber.value;
 
       await fetchResidentInfo(response.data.Unit.res_room);
@@ -204,30 +207,41 @@ const cancel = () => {
 const submit = async () => {
   try {
     console.debug('Submit function called');
-    const updatedData = {
-      numberOfUnits: lastMonth.value,
-      extractionStatus: thisMonth.value,
-      costPerUnit: costPerUnit.value,
-      waterCost: waterCostInput.value,
-      rentCost: rentCostInput.value,
-      approveStatus: status.value === 'approve',
+
+    // Check if values have changed
+    const hasChanges = (
+      numberOfUnits.value !== initialNumberOfUnits.value ||
+      prevNumberOfUnits.value !== initialPrevNumberOfUnits.value ||
+      approveStatus.value !== (initialApproveStatus ? 'approve' : 'disapprove') ||
+      waterCostInput.value !== initialWaterCost.value ||
+      rentCostInput.value !== initialRentCost.value
+    );
+
+    if (!hasChanges) {
+      console.debug('No changes detected');
+      router.push('/unit-management');
+      return;
+    }
+
+    const updatedUnitData = {
+      numberOfUnits: numberOfUnits.value,
+      prevNumberOfUnits: prevNumberOfUnits.value,
+      approveStatus: approveStatus.value === 'approve',
       res_room: roomNumber.value,
-      date: new Date().toISOString().split('T')[0],
-      totalUnit: totalUnit.value,
-      totalBill: totalBill.value
     };
 
-    console.debug('Updated data:', updatedData);
+    console.debug('Updated unit data:', updatedUnitData);
 
-    const response = await apiClient.put(`/unit/edit/${route.params.id}`, updatedData);
-    const result = response.data;
-    alert(result.message);
+    // Update unit data
+    await apiClient.post(`/unit/add`, updatedUnitData);
+
+    // Update frontend-only fields
+    store.dispatch('updateWaterCost', waterCostInput.value);
+    setRentCostForUnit(route.params.id, rentCostInput.value);
+
+    alert('Unit updated successfully!');
     router.push('/unit-management');
-    if (result.status === 'ok') {
-      router.push('/unit-management');
-    }
   } catch (error) {
-    console.log("The room that record refer does not exists!")
     console.error('Error during submission:', error);
 
     if (error.response && error.response.data && error.response.data.message) {
@@ -250,4 +264,26 @@ const closeImageModal = () => {
   showImageModal.value = false;
   currentImage.value = '';
 };
+
+const updateCostPerUnit = () => {
+  store.dispatch('updateCostPerUnit', costPerUnit.value);
+};
+
+const updateWaterCost = () => {
+  store.dispatch('updateWaterCost', waterCostInput.value);
+};
+
+const updateRentCost = () => {
+  setRentCostForUnit(route.params.id, rentCostInput.value);
+};
+
+// Helper functions to manage rent cost locally
+function getRentCostForUnit(unitId) {
+  const rentCost = localStorage.getItem(`rentCost_${unitId}`);
+  return rentCost ? parseFloat(rentCost) : 3500; // default rent cost
+}
+
+function setRentCostForUnit(unitId, rentCost) {
+  localStorage.setItem(`rentCost_${unitId}`, rentCost);
+}
 </script>

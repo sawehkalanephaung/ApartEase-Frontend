@@ -10,8 +10,8 @@
               <input type="checkbox" @change="toggleSelectAll" v-model="selectAll" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" />
             </th>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Room No</th>
-            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Units Used</th>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Total Bill</th>
+            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Date Created</th>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Action</th>
           </tr>
         </thead>
@@ -24,10 +24,20 @@
               <input type="checkbox" v-model="unit.selected" :value="unit.id" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" role="checkbox" :aria-checked="unit.selected" />
             </td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ unit.res_room }}</td>
-            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ unit.totalUnit }}</td>
-            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ unit.totalBill }}</td>
+            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ unit.amount }}</td>
+            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ unit.date_created }}</td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-              <button @click="editUnit(unit.id)" class="text-emerald-600 hover:text-emerald-900">Edit</button>
+              <button @click="editUnit(unit.unit_id)" class="text-emerald-600 hover:text-emerald-900">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
+                <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
+              </svg>
+              </button>
+              <button @click="onDelete(unit.id)" class="ml-2 text-red-500 hover:text-red-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+              </svg>
+              </button>
             </td>
           </tr>
         </tbody>
@@ -37,19 +47,29 @@
       <span class="font-semibold text-md">Total No Bills: {{ validUnits.length }}</span>
       <span class="ml-4 font-semibold text-md">Selected bills: {{ selectedBillsCount }}</span>
     </div>
+    <DeleteConfirmationModal
+      :show="showDeleteConfirm"
+      @confirm-delete="confirmDelete"
+      @close="showDeleteConfirm = false"
+    />
   </div>
 </template>
 
+
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { useStore } from 'vuex'; // Import Vuex store
 import apiClient from '@/services/AxiosClient.js';
-import { usePagination } from '@/composables/usePagination';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue'; // Import the modal component
 
 const router = useRouter();
 const route = useRoute();
+const store = useStore(); // Initialize Vuex store
 const unitList = ref([]);
 const selectAll = ref(false);
+const showDeleteConfirm = ref(false); // State for showing delete confirmation modal
+const unitToDelete = ref(null); // State for the unit to be deleted
 
 const fetchData = async () => {
   try {
@@ -58,7 +78,7 @@ const fetchData = async () => {
       apiClient.get('/bill/list'),
       apiClient.get('/resident/list')
     ]);
- 
+
     const bills = billResponse.data.Bills;
     const residents = residentResponse.data.Resident;
 
@@ -67,11 +87,14 @@ const fetchData = async () => {
       return map;
     }, {});
 
-    unitList.value = bills.map(bill => ({
-      ...bill,
-      selected: false,
-      lineId: residentEmailMap[bill.res_room] || ''
-    }));
+    unitList.value = bills
+      .filter(bill => bill.id && bill.res_room && bill.date_created && bill.amount) // Filter out invalid bills
+      .map(bill => ({
+        ...bill,
+        selected: false,
+        res_room: bill.res_room, // Use res_room for room number
+        lineId: residentEmailMap[bill.res_room] || ''
+      }));
     console.log('Bill data fetched successfully');
 
   } catch (error) {
@@ -90,10 +113,9 @@ const toggleSelectAll = () => {
   unitList.value.forEach(unit => unit.selected = selectAll.value);
 };
 
-const editUnit = (id) => {
-  router.push({ name: 'UnitHistoryUpdate', params: { id } });
+const editUnit = (unitId) => {
+  router.push({ name: 'UnitManagementUpdate', params: { id: unitId } });
 };
-
 const sendBills = async () => {
   const selectedUnits = unitList.value.filter(unit => unit.selected);
   if (selectedUnits.length === 0) {
@@ -105,28 +127,54 @@ const sendBills = async () => {
     if (selectedUnits.length === unitList.value.length) {
       console.log('Sending all bills...');
       await apiClient.post('/bill/send_all');
+      await apiClient.delete('/bill/del_all');
     } else {
       for (const unit of selectedUnits) {
         console.log(`Sending bill for unit ID: ${unit.id}`);
         
-        await apiClient.post(`/bill/send/${unit.id}`, {
-          costPerUnit: unit.costPerUnit,
-          waterCost: unit.waterCost,
-          rentCost: unit.rentCost
-        });
-        console.log(`Deleting bill for unit ID: ${unit.id}`);
-        await apiClient.delete(`/bill/del/${unit.id}`);
+        try {
+          const response = await apiClient.post(`/bill/send/${unit.id}`);
+
+          const billId = response.data.bill_id; // Ensure the response contains the bill_id
+          if (!billId) {
+            throw new Error('Bill ID is missing in the response');
+          }
+
+          // Prepare the payload for bill history
+          const billHistoryPayload = {
+            unit_id: unit.id,
+            amount: unit.amount,
+            date_sent: new Date().toISOString()
+          };
+
+          // Validate the payload
+          if (!billHistoryPayload.amount || !billHistoryPayload.date_sent) {
+            throw new Error('Invalid payload for bill history');
+          }
+
+          // Add the bill record to bill history
+          console.log(`Adding bill history for bill ID: ${billId}`);
+          await apiClient.post('/bill/history/add', billHistoryPayload);
+
+          // Delete the bill record
+          console.log(`Deleting bill for unit ID: ${unit.id}`);
+          await apiClient.delete(`/bill/del/${unit.id}`);
+        } catch (error) {
+          console.error(`Error processing bill for unit ID ${unit.id}:`, error);
+          continue; // Skip to the next unit
+        }
       }
     }
-    alert('Bills sent and deleted successfully!');
+    alert('Bills sent successfully !');
     localStorage.removeItem('selectedUnits');
     unitList.value = unitList.value.filter(unit => !unit.selected);
-    console.log('Bills sent, deleted, and UI updated successfully');
+    console.log('Bills sent successfully');
   } catch (error) {
-    console.error('Error sending or deleting bills:', error);
-    alert('Failed to send or delete bills. Please try again.');
+    console.error('Error sending bills:', error);
+    alert('Failed to send bills. Please try again.');
   }
 };
+
 
 const totalBills = computed(() => {
   return unitList.value.length;
@@ -138,9 +186,28 @@ const selectedBillsCount = computed(() => {
 
 // Computed property to filter valid units
 const validUnits = computed(() => {
-  return unitList.value.filter(unit => unit.id && unit.res_room && unit.totalUnit && unit.totalBill);
+  return unitList.value.filter(unit => unit.id && unit.res_room && unit.date_created && unit.amount);
 });
+
+const onDelete = (unitId) => {
+  unitToDelete.value = unitId;
+  showDeleteConfirm.value = true;
+};
+
+const confirmDelete = async () => {
+  try {
+    await apiClient.delete(`/bill/del/${unitToDelete.value}`);
+    unitList.value = unitList.value.filter(unit => unit.id !== unitToDelete.value);
+    showDeleteConfirm.value = false;
+    console.log('Bill deleted successfully');
+  } catch (error) {
+    console.error('Error deleting bill:', error);
+    alert('Failed to delete bill. Please try again.');
+  }
+};
 </script>
+
+
 
 <style scoped>
 .overflow-auto {

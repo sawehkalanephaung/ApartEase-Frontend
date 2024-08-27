@@ -187,6 +187,7 @@ const selectAll = ref(false);
 const searchQuery = ref('');
 const statusFilter = ref('all');
 
+
 const store = useStore();
 const costPerUnit = computed({
   get: () => store.getters.getCostPerUnit,
@@ -356,79 +357,83 @@ const clearSearch = () => {
   fetchData();
 };
 
-  const sendUnits = async () => {
-    const selectedUnits = filteredUnits.value.filter(unit => unit.selected);
 
-    if (selectedUnits.length === 0) {
-      alert('Please select at least one unit.');
-      return;
+const sendUnits = async () => {
+  const selectedUnits = units.value.filter(unit => unit.selected);
+
+  if (selectedUnits.length === 0) {
+    alert('Please select at least one unit.');
+    return;
+  }
+
+  const disapprovedUnits = selectedUnits.filter(unit => !unit.approveStatus);
+  if (disapprovedUnits.length > 0) {
+    alert('Disapproved Unit please double check');
+    return;
+  }
+
+  if (selectedUnits.length > 0) {
+    try {
+      console.log('Sending selected units:', selectedUnits);
+      await Promise.all(selectedUnits.map(async (unit) => {
+        // Ensure all necessary properties are defined and properly converted to numbers
+        const numberOfUnits = Number(unit.numberOfUnits);
+        const prevNumberOfUnits = Number(unit.prevNumberOfUnits);
+        const costPerUnit = store.getters.getCostPerUnit;
+        const waterCost = store.getters.getWaterCost;
+        const rentCost = getRentCostForUnit(unit.id);
+
+        if (isNaN(numberOfUnits) || isNaN(prevNumberOfUnits) || isNaN(costPerUnit) || isNaN(waterCost) || isNaN(rentCost)) {
+          console.error('Unit data is missing required properties or contains invalid values:', unit);
+          alert('Unit data is missing required properties or contains invalid values. Please check the unit data.');
+          return;
+        }
+
+        // Calculate totalUnit and totalBill
+        const totalUnit = numberOfUnits - prevNumberOfUnits;
+        const totalBill = totalUnit * costPerUnit + waterCost + rentCost;
+
+        // Add unit to bill
+        const billData = {
+          date_created: new Date().toISOString().split('T')[0],
+          unit_id: unit.id,
+          amount: totalBill
+        };
+        console.log('Sending bill data:', billData);
+        await apiClient.post(`/bill/add/${unit.id}`, billData);
+      }));
+
+      selectAll.value = false;
+
+      const totalUnit = selectedUnits.reduce((total, unit) => total + (Number(unit.numberOfUnits) - Number(unit.prevNumberOfUnits)), 0);
+      const totalBill = selectedUnits.reduce((total, unit) => total + ((Number(unit.numberOfUnits) - Number(unit.prevNumberOfUnits)) * store.getters.getCostPerUnit + store.getters.getWaterCost + getRentCostForUnit(unit.id)), 0);
+
+      router.push({
+        name: 'SendBill',
+        query: {
+          selectedUnits: JSON.stringify(selectedUnits),
+          totalUnit,
+          totalBill
+        }
+      });
+      console.log('Units sent successfully');
+    } catch (error) {
+      console.error('Error sending units:', error);
+      alert('Failed to send units. Please try again.');
     }
+  }
+};
 
-    const disapprovedUnits = selectedUnits.filter(unit => !unit.approveStatus);
-    if (disapprovedUnits.length > 0) {
-      alert('Disapproved Unit please double check');
-      return;
-    }
+// Helper functions to manage rent cost locally
+function getRentCostForUnit(unitId) {
+  const rentCost = localStorage.getItem(`rentCost_${unitId}`);
+  return rentCost ? parseFloat(rentCost) : 3500; // default rent cost
+}
 
-    if (selectedUnits.length > 0) {
-      try {
-        console.log('Sending selected units:', selectedUnits);
-        await Promise.all(selectedUnits.map(async (unit) => {
-          // Calculate totalUnit and totalBill
-          const totalUnit = Number(unit.extractionStatus) - Number(unit.numberOfUnits);
-          const totalBill = totalUnit * Number(unit.costPerUnit) + Number(unit.waterCost) + Number(unit.rentCost);
 
-          // Ensure all necessary properties are defined
-          if (totalBill === undefined || totalUnit === undefined) {
-            console.error('Unit data is missing required properties:', unit);
-            alert('Unit data is missing required properties. Please check the unit data.');
-            return;
-          }
-
-          // Add unit to history
-          await apiClient.post('/unit/history/add', {
-            ...unit,
-            totalUnit,
-            totalBill
-          });
-
-          // Add unit to bill
-          const billData = {
-            amount: totalBill,
-            date: new Date().toISOString().split('T')[0],
-            status: 'approved',
-            res_room: unit.res_room,
-            totalUnit,
-            totalBill
-          };
-          console.log('Sending bill data:', billData);
-          await apiClient.post('/bill/add', billData);
-
-          // Delete unit from the unit list
-          await apiClient.delete(`/unit/del/${unit.id}`);
-        }));
-
-        await fetchData();
-        selectAll.value = false;
-
-        const totalUnit = selectedUnits.reduce((total, unit) => total + (Number(unit.extractionStatus) - Number(unit.numberOfUnits)), 0);
-        const totalBill = selectedUnits.reduce((total, unit) => total + ((Number(unit.extractionStatus) - Number(unit.numberOfUnits)) * Number(unit.costPerUnit) + Number(unit.waterCost) + Number(unit.rentCost)), 0);
-
-        router.push({
-          name: 'SendBill',
-          query: {
-            selectedUnits: JSON.stringify(selectedUnits),
-            totalUnit,
-            totalBill
-          }
-        });
-        console.log('Units sent successfully');
-      } catch (error) {
-        console.error('Error sending units:', error);
-        alert('Failed to send units. Please try again.');
-      }
-    }
-  };
+onMounted(() => {
+  fetchData();
+});
 </script>
 
 

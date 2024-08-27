@@ -152,8 +152,8 @@ const fetchData = async () => {
     const response = await apiClient.get(`/unit/history/detail/${route.params.id}`);
     console.log('API Response:', response.data);
 
-    if (response.data && response.data.UnitHistoryDetail) {
-      const unitData = response.data.UnitHistoryDetail;
+    if (response.data && response.data.BillHistoryDetail) {
+      const unitData = response.data.BillHistoryDetail;
       lastMonth.value = unitData.numberOfUnits || lastMonth.value;
       thisMonth.value = unitData.extractionStatus || thisMonth.value;
       waterCostInput.value = unitData.waterCost || waterCostInput.value;
@@ -175,7 +175,7 @@ onMounted(() => {
 });
 
 const cancel = () => {
-  router.push('/unit-history');
+  router.push('/bill-history');
 };
 
 const submit = async () => {
@@ -199,7 +199,7 @@ const submit = async () => {
     const response = await apiClient.put(`/unit/history/edit/${route.params.id}`, updatedData);
     const result = response.data;
     alert(result.message);
-    router.push('/unit-history');
+    router.push('/bill-history');
     if (result.status === 'ok') {
       router.push('/send-history');
     }
