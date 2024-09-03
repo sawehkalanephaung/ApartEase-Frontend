@@ -8,57 +8,60 @@
     <!-- Login Form Section  -->
     <div class="w-full p-6 bg-white rounded-md md:w-1/2 lg:w-2/5">
 
-      <Form @submit="login" :validation-schema="schema" class="mt-10">
+      <Form @submit="login" :validation-schema="schema" class="mt-10"  >
         <div class="flex justify-center">
           <img src="@/assets/imgs/avatar.svg" alt="Avatar" class="h-24" />
          </div>
          <div class="flex items-center justify-center mt-6">
         <span class="mb-4 text-2xl font-semibold text-gray-700">Login Account</span>
       </div>
+      <!-- Username -->
         <div class="mb-4">
-          <label class="block text-sm font-medium text-slate-700">Username</label>
+          <label class="block font-medium lg:text-lg text-slate-700">Username</label>
           <Field
             v-model="user.username"
             type="text"
             name="username"
-            class="block w-full px-3 py-2 mt-1 text-sm bg-white border rounded-md shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none"
+            class="block w-full px-3 py-3 mt-1 bg-white border rounded-md shadow-sm lg:text-lg border-slate-300 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none"
+           
             placeholder="Username"
           />
-          <ErrorMessage name="username" class="mt-1 text-xs italic text-red-500" />
+          <ErrorMessage name="username" class="mt-1 text-sm italic text-red-500" />
         </div>
 
+        <!-- Password -->
         <div class="relative mb-4">
-          <label class="block mb-2 text-sm font-medium text-gray-700">Password</label>
-          <Field
-            v-model="user.password"
-            :type="passwordVisible ? 'text' : 'password'"
-            name="password"
-            class="block w-full px-3 py-2 mt-1 text-sm bg-white border rounded-md shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none"
-            placeholder="Password"
-            
-          />
-          
-          <button
-            type="button"
-            @click="togglePasswordVisibility"
-            class="absolute inset-y-0 right-0 flex items-center pr-3 text-sm leading-5"
-          >
-            <svg v-if="passwordVisible" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mt-6 size-5">
-              <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
-              <path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" />
-            </svg>
-            <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mt-6 size-5">
-              <path fill-rule="evenodd" d="M3.28 2.22a.75.75 0 0 0-1.06 1.06l14.5 14.5a.75.75 0 1 0 1.06-1.06l-1.745-1.745a10.029 10.029 0 0 0 3.3-4.38 1.651 1.651 0 0 0 0-1.185A10.004 10.004 0 0 0 9.999 3a9.956 9.956 0 0 0-4.744 1.194L3.28 2.22ZM7.752 6.69l1.092 1.092a2.5 2.5 0 0 1 3.374 3.373l1.091 1.092a4 4 0 0 0-5.557-5.557Z" clip-rule="evenodd" />
-              <path d="m10.748 13.93 2.523 2.523a9.987 9.987 0 0 1-3.27.547c-4.258 0-7.894-2.66-9.337-6.41a1.651 1.651 0 0 1 0-1.186A10.007 10.007 0 0 1 2.839 6.02L6.07 9.252a4 4 0 0 0 4.678 4.678Z" />
-            </svg>
-          </button>
-          <ErrorMessage name="password" class="text-xs italic text-red-500" />
+          <label class="block mb-2 font-medium text-gray-700 lg:text-lg">Password</label>
+          <div class="relative">
+            <Field
+              v-model="user.password"
+              :type="passwordVisible ? 'text' : 'password'"
+              name="password"
+              class="block w-full px-3 py-3 pr-10 mt-1 bg-white border rounded-md shadow-sm lg:text-lg border-slate-300 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none"
+              placeholder="Password"
+            />
+            <button
+              type="button"
+              @click="togglePasswordVisibility"
+              class="absolute inset-y-0 right-0 flex items-center pr-3 text-sm leading-5"
+            >
+              <svg v-if="passwordVisible" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                <path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" />
+              </svg>
+              <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                <path fill-rule="evenodd" d="M3.28 2.22a.75.75 0 0 0-1.06 1.06l14.5 14.5a.75.75 0 1 0 1.06-1.06l-1.745-1.745a10.029 10.029 0 0 0 3.3-4.38 1.651 1.651 0 0 0 0-1.185A10.004 10.004 0 0 0 9.999 3a9.956 9.956 0 0 0-4.744 1.194L3.28 2.22ZM7.752 6.69l1.092 1.092a2.5 2.5 0 0 1 3.374 3.373l1.091 1.092a4 4 0 0 0-5.557-5.557Z" clip-rule="evenodd" />
+                <path d="m10.748 13.93 2.523 2.523a9.987 9.987 0 0 1-3.27.547c-4.258 0-7.894-2.66-9.337-6.41a1.651 1.651 0 0 1 0-1.186A10.007 10.007 0 0 1 2.839 6.02L6.07 9.252a4 4 0 0 0 4.678 4.678Z" />
+              </svg>
+            </button>
+          </div>
+          <ErrorMessage name="password" class="text-sm italic text-red-500" />
         </div>
 
         <div class="mt-16">
           <button
             type="submit"
-            class="w-full px-3 py-2 text-sm text-center text-white rounded-md bg-primary focus:outline-none hover:bg-emerald-500"
+            class="w-full px-3 py-3 text-white rounded-md tex2t-center lg:text-lg bg-primary focus:outline-none hover:bg-emerald-500"
             :disabled="isSubmitting"
           >
             {{ isSubmitting ? "Submitting..." : "Login" }}

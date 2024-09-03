@@ -1,14 +1,18 @@
 <template>
   <div class="relative">
-    <h3 class="text-2xl font-medium text-gray-700">Send Bill</h3>
-    <button @click="sendBills" class="absolute top-0 right-0 px-4 py-2 text-white rounded-md bg-emerald-600 hover:bg-emerald-700">Send Bills</button>
+    <h3 class="text-2xl font-medium text-gray-700">Bill</h3>
+    <button @click="sendBills" class="absolute top-0 right-0 px-4 py-2 text-white rounded-md bg-emerald-600 hover:bg-emerald-700">Bills</button>
     <div class="mt-4 overflow-auto max-h-[700px] custom-scrollbar">
       <table class="min-w-full leading-normal text-md">
         <thead class="sticky-header">
           <tr>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+            <div class="flex items-center">
               <input type="checkbox" @change="toggleSelectAll" v-model="selectAll" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" />
-            </th>
+              <span class="ml-2">All</span>
+            </div>
+          </th>
+            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Image</th>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Room No</th>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Total Bill</th>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Date Created</th>
@@ -17,15 +21,23 @@
         </thead>
         <tbody>
           <tr v-if="validUnits.length === 0">
-            <td colspan="6" class="px-5 py-5 text-sm text-center bg-white border-b border-gray-200">No Bill Data</td>
+            <td colspan="6" class="px-5 py-5 text-sm text-center bg-white border-b border-gray-200">No data found!</td>
           </tr>
-          <tr v-else v-for="unit in validUnits" :key="unit.id">
+          <tr v-else v-for="unit in validUnits" :key="unit.id"
+    class="transition-all duration-200 cursor-pointer"
+    :class="[
+      unit.selected ? 'bg-emerald-100 hover:bg-emerald-200!important border-l-4 border-emerald-500' : 'hover:bg-gray-100'
+    ]">
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
               <input type="checkbox" v-model="unit.selected" :value="unit.id" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" role="checkbox" :aria-checked="unit.selected" />
+            </td>
+            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+              <img :src="unit.unitImage || 'https://via.placeholder.com/600'" alt="Unit Image" class="object-cover cursor-pointer w-14 h-14" @click="openImageModal(unit.unitImage)" />
             </td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ unit.res_room }}</td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ unit.amount }}</td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ unit.date_created }}</td>
+           
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
               <button @click="editUnit(unit.unit_id)" class="text-emerald-600 hover:text-emerald-900">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
@@ -52,9 +64,21 @@
       @confirm-delete="confirmDelete"
       @close="showDeleteConfirm = false"
     />
+    <!-- Image Modal -->
+    <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal">
+      <div class="relative max-w-full max-h-full p-4 bg-white rounded-lg shadow-lg" @click.stop>
+        <button @click="closeImageModal" class="absolute text-gray-700 top-2 right-2 hover:text-gray-900">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <div class="mt-8">
+          <img :src="currentImage || 'https://via.placeholder.com/700'" alt="Unit Image" class="object-contain w-full h-full" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
-
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
@@ -70,6 +94,8 @@ const unitList = ref([]);
 const selectAll = ref(false);
 const showDeleteConfirm = ref(false); // State for showing delete confirmation modal
 const unitToDelete = ref(null); // State for the unit to be deleted
+const showImageModal = ref(false); // State for showing image modal
+const currentImage = ref(''); // State for the current image URL
 
 const fetchData = async () => {
   try {
@@ -93,7 +119,8 @@ const fetchData = async () => {
         ...bill,
         selected: false,
         res_room: bill.res_room, // Use res_room for room number
-        lineId: residentEmailMap[bill.res_room] || ''
+        lineId: residentEmailMap[bill.res_room] || '',
+        unitImage: bill.unitImage || 'https://via.placeholder.com/600' // Add unitImage property
       }));
     console.log('Bill data fetched successfully');
 
@@ -116,6 +143,7 @@ const toggleSelectAll = () => {
 const editUnit = (unitId) => {
   router.push({ name: 'UnitManagementUpdate', params: { id: unitId } });
 };
+
 const sendBills = async () => {
   const selectedUnits = unitList.value.filter(unit => unit.selected);
   if (selectedUnits.length === 0) {
@@ -165,7 +193,7 @@ const sendBills = async () => {
         }
       }
     }
-    alert('Bills sent successfully !');
+    alert('Bills sent successfully!');
     localStorage.removeItem('selectedUnits');
     unitList.value = unitList.value.filter(unit => !unit.selected);
     console.log('Bills sent successfully');
@@ -174,7 +202,6 @@ const sendBills = async () => {
     alert('Failed to send bills. Please try again.');
   }
 };
-
 
 const totalBills = computed(() => {
   return unitList.value.length;
@@ -205,9 +232,17 @@ const confirmDelete = async () => {
     alert('Failed to delete bill. Please try again.');
   }
 };
+
+const openImageModal = (imageUrl) => {
+  currentImage.value = imageUrl;
+  showImageModal.value = true;
+};
+
+const closeImageModal = () => {
+  showImageModal.value = false;
+  currentImage.value = '';
+};
 </script>
-
-
 
 <style scoped>
 .overflow-auto {
@@ -247,4 +282,5 @@ const confirmDelete = async () => {
   scrollbar-width: thin; 
   scrollbar-color: gray #f1f1f1; 
 }
+
 </style>

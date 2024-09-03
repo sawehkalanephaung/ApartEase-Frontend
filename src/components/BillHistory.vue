@@ -1,7 +1,7 @@
 <template>
   <div class="relative">
     <div class="flex items-center justify-between">
-      <h3 class="text-2xl font-medium text-gray-700">Unit History</h3>
+      <h3 class="text-2xl font-medium text-gray-700">Bill History</h3>
       <div class="flex items-center space-x-2">
         <DatePicker v-model="startDate" @update:modelValue="handleStartDateChange" :format="dateFormat" class="w-10">
           <template #default="{ inputValue, togglePopover }">
@@ -25,6 +25,13 @@
       <table class="min-w-full leading-normal text-md">
         <thead class="sticky-header">
           <tr>
+            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+            <div class="flex items-center">
+              <input type="checkbox" @change="toggleSelectAll" v-model="selectAll" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" />
+              <span class="ml-2">All</span>
+            </div>
+          </th>
+            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Image</th>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Room Number</th>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Amount</th>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Date Sent</th>
@@ -33,9 +40,21 @@
         </thead>
         <tbody>
           <tr v-if="paginatedBillHistory.length === 0">
-            <td colspan="4" class="px-5 py-5 text-sm text-center bg-white border-b border-gray-200">No Unit History Data</td>
-          </tr>
-          <tr v-else v-for="record in paginatedBillHistory" :key="record.id">
+          <td colspan="6" class="px-5 py-5 text-sm text-center bg-white border-b border-gray-200">
+            No data found!
+          </td>
+        </tr>
+          <tr v-else v-for="record in paginatedBillHistory" :key="record.id"
+              class="transition-all duration-200 cursor-pointer"
+              :class="[
+                record.selected ? 'bg-emerald-100 hover:bg-emerald-200!important border-l-4 border-emerald-500' : 'hover:bg-gray-100'
+              ]">
+              <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+              <input type="checkbox" v-model="record.selected" :value="record.id" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" />
+            </td>
+            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+              <img :src="record.unitImage || 'https://via.placeholder.com/600'" alt="Unit Image" class="object-cover cursor-pointer w-14 h-14" @click="openImageModal(record.unitImage)" />
+            </td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ record.res_room || 'Unknown' }}</td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ record.amount }}</td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ formatDate(record.date_sent) }}</td>
@@ -85,6 +104,19 @@
         </div>
       </div>
     </div>
+     <!-- Image Modal -->
+     <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal">
+      <div class="relative max-w-full max-h-full p-4 bg-white rounded-lg shadow-lg" @click.stop>
+        <button @click="closeImageModal" class="absolute text-gray-700 top-2 right-2 hover:text-gray-900">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <div class="mt-8">
+          <img :src="currentImage || 'https://via.placeholder.com/700'" alt="Unit Image" class="object-contain w-full h-full" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -102,6 +134,9 @@ const endDate = ref(null);
 const itemsPerPage = 10; // Define itemsPerPage
 const router = useRouter();
 const dateFormat = "yyyy-MM-dd"; 
+const showImageModal = ref(false);
+const currentImage = ref('');
+const selectAll = ref(false);
 
 const fetchData = async () => {
   try {
@@ -118,7 +153,10 @@ const fetchData = async () => {
       totalItems.value = pageData.total_records;
       billHistory.value = data.slice(0, -1).map(record => ({
         ...record,
-        res_room: record.res_room || 'Unknown' // Ensure res_room is set
+        res_room: record.res_room || 'Unknown', // Ensure res_room is set
+        selected: false,
+        unitImage: record.unitImage || 'https://via.placeholder.com/600'
+
       }));
     } else {
       billHistory.value = [];
@@ -224,5 +262,23 @@ const paginatedBillHistory = computed(() => {
   return filteredBillHistory.value;
 });
 
+const toggleSelectAll = () => {
+  paginatedBillHistory.value.forEach(record => record.selected = selectAll.value);
+};
+
+const openImageModal = (imageUrl) => {
+  currentImage.value = imageUrl || 'https://via.placeholder.com/700';
+  showImageModal.value = true;
+};
+
+const closeImageModal = () => {
+  showImageModal.value = false;
+  currentImage.value = '';
+};
+
 
 </script>
+
+<style scoped>
+
+</style>

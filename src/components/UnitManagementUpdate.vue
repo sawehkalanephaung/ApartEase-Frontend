@@ -124,6 +124,7 @@
   </div>
 </template>
 
+
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -143,6 +144,7 @@ const rentCostInput = ref(getRentCostForUnit(route.params.id));
 const initialWaterCost = ref(store.getters.getWaterCost); // Store initial value
 const initialRentCost = ref(getRentCostForUnit(route.params.id)); // Store initial value
 const approveStatus = ref('disapprove'); // Default to 'disapprove'
+const initialApproveStatus = ref('disapprove'); // Store initial value
 const roomNumber = ref('');
 const message = ref('');
 
@@ -169,6 +171,7 @@ const fetchData = async () => {
       initialPrevNumberOfUnits.value = prevNumberOfUnits.value; // Store initial value
       initialNumberOfUnits.value = numberOfUnits.value; // Store initial value
       approveStatus.value = response.data.Unit.approveStatus ? 'approve' : 'disapprove';
+      initialApproveStatus.value = approveStatus.value; // Store initial value
       roomNumber.value = response.data.Unit.res_room || roomNumber.value;
 
       await fetchResidentInfo(response.data.Unit.res_room);
@@ -212,7 +215,7 @@ const submit = async () => {
     const hasChanges = (
       numberOfUnits.value !== initialNumberOfUnits.value ||
       prevNumberOfUnits.value !== initialPrevNumberOfUnits.value ||
-      approveStatus.value !== (initialApproveStatus ? 'approve' : 'disapprove') ||
+      approveStatus.value !== initialApproveStatus.value ||
       waterCostInput.value !== initialWaterCost.value ||
       rentCostInput.value !== initialRentCost.value
     );

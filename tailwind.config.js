@@ -12,6 +12,12 @@ export default {
         'laptop': '1024px', // Existing laptop size
         'desktop': '1280px', // Existing desktop size
       },
+      gridAutoRows: {
+        '2fr': 'minmax(0, 2fr)',
+      },
+      zIndex: {
+        '100': '100',
+      }
     },
   },
   daisyui: {
