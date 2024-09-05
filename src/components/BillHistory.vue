@@ -1,25 +1,39 @@
 <template>
   <div class="relative">
-    <div class="flex items-center justify-between">
-      <h3 class="text-2xl font-medium text-gray-700">Bill History</h3>
-      <div class="flex items-center space-x-2">
-        <DatePicker v-model="startDate" @update:modelValue="handleStartDateChange" :format="dateFormat" class="w-10">
-          <template #default="{ inputValue, togglePopover }">
-            <div @click="togglePopover">
-              <span>Start: </span>
-              <span>{{ inputValue }}</span>
-            </div>
-          </template>
-        </DatePicker>
-        <DatePicker v-model="endDate" @update:modelValue="handleEndDateChange" :format="dateFormat" class="w-10">
-          <template #default="{ inputValue, togglePopover }">
-            <div @click="togglePopover">
-              <span>End: </span>
-              <span>{{ inputValue }}</span>
-            </div>
-          </template>
-        </DatePicker>
-      </div>
+    <div class="flex flex-col items-start justify-between sm:flex-row sm:items-center">
+      <h3 class="mb-4 text-2xl font-medium text-gray-700 sm:mb-0">Bill History</h3>
+      <div class="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+            <DatePicker 
+              v-model="startDate" 
+              @update:modelValue="handleStartDateChange" 
+              :format="dateFormat" 
+              :enable-time-picker="false"
+              placeholder="Start Date"
+              class="w-full sm:w-auto"
+            >
+              <template #default="{ inputValue, togglePopover }">
+                <div @click="togglePopover" class="w-full cursor-pointer sm:w-auto">
+                  <span>Start: </span>
+                  <span>{{ inputValue || 'Select date' }}</span>
+                </div>
+              </template>
+            </DatePicker>
+            <DatePicker 
+              v-model="endDate" 
+              @update:modelValue="handleEndDateChange" 
+              :format="dateFormat" 
+              :enable-time-picker="false"
+              placeholder="End Date"
+              class="w-full sm:w-auto"
+            >
+              <template #default="{ inputValue, togglePopover }">
+                <div @click="togglePopover" class="w-full cursor-pointer sm:w-auto">
+                  <span>End: </span>
+                  <span>{{ inputValue || 'Select date' }}</span>
+                </div>
+              </template>
+            </DatePicker>
+          </div>
     </div>
     <div class="mt-4 overflow-auto max-h-[700px] custom-scrollbar">
       <table class="min-w-full leading-normal text-md">
@@ -59,17 +73,28 @@
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ record.amount }}</td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ formatDate(record.date_sent) }}</td>
             <td class="flex-row px-5 py-5 text-sm text-center bg-white border-b border-gray-200">
-              <button @click="editUnit(record.id)" class="mr-1 text-emerald-600 hover:text-emerald-900">
+              <Popper hover placement="left">
+              <button @click="viewUnit(record.id)" class="mr-4 text-emerald-600 hover:text-emerald-900">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
-                  <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
+                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                  <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
                 </svg>
               </button>
-              <button @click="deleteUnit(record.id)" class="ml-1 text-red-500 hover:text-red-700">
+              <template #content>
+                <div>View details</div>
+              </template>
+             
+            </Popper>
+            <Popper hover placement="right"> 
+              <button @click="deleteUnit(record.id)" class="ml-4 text-red-500 hover:text-red-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
                 </svg>
               </button>
+              <template #content>
+                <div> Delete</div>
+              </template>
+            </Popper>
             </td>
           </tr>
         </tbody>
@@ -221,7 +246,7 @@ const formatDate = (dateString) => {
   return date.toLocaleDateString();
 };
 
-const editUnit = (id) => {
+const viewUnit = (id) => {
   router.push({ name: 'BillHistoryUpdate', params: { id } });
 };
 
@@ -280,5 +305,40 @@ const closeImageModal = () => {
 </script>
 
 <style scoped>
+::v-deep .dp__active {
+  background-color: #10b981 !important;
+}
+
+::v-deep .dp__active_date {
+  background-color: #10b981 !important;
+}
+
+::v-deep .dp__range_start, ::v-deep .dp__range_end {
+  background-color: #10b981 !important;
+}
+
+::v-deep .dp__range_between {
+  background-color: #a7f3d0 !important;
+}
+
+
+::v-deep .dp__action_button{
+ height: 30px;
+ width: auto;
+ margin-right: 0.5rem;
+}
+
+::v-deep .dp__action_select {
+  background-color: #10b981 !important;
+  color: white !important;
+  border-color: #10b981 !important;
+  
+}
+
+::v-deep .dp__action_select:hover {
+  background-color: #059669 !important;
+  border-color: #059669 !important;
+}
+
 
 </style>

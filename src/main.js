@@ -7,6 +7,7 @@ import GStore from "./stores";
 import "@/services/AxiosInterceptorSetup.js";
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
+import Popper from "vue3-popper";
 
 // import login expireation
 import { checkLoginStatus } from './utils/checkLoginStatus';
@@ -18,6 +19,7 @@ app.use(router);
 app.use(GStore);
 app.mount("#app");
 app.component('VueDatePicker', VueDatePicker);
+app.component("Popper", Popper);
 
 // Add event listener for when the page is loaded or becomes visible
 document.addEventListener('visibilitychange', () => {

@@ -1,7 +1,14 @@
 <template>
   <div class="relative">
-    <h3 class="text-2xl font-medium text-gray-700">Bill</h3>
-    <button @click="sendBills" class="absolute top-0 right-0 px-4 py-2 text-white rounded-md bg-emerald-600 hover:bg-emerald-700">Bills</button>
+    <h3 class="mb-10 text-2xl font-medium text-gray-700">Billing</h3>
+      <button @click="sendBills" class="absolute right-0 px-4 py-2 text-white rounded-md top-2 bg-emerald-600 hover:bg-emerald-700">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="inline-block w-5 h-5 mr-1" >
+          <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
+        </svg>
+          Send
+      </button>
+  
+    
     <div class="mt-4 overflow-auto max-h-[700px] custom-scrollbar">
       <table class="min-w-full leading-normal text-md">
         <thead class="sticky-header">
@@ -36,20 +43,30 @@
             </td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ unit.res_room }}</td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ unit.amount }}</td>
-            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ unit.date_created }}</td>
+            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ formatDate(unit.date_created) }}</td>
            
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-              <button @click="editUnit(unit.unit_id)" class="text-emerald-600 hover:text-emerald-900">
+              <Popper hover placement="left">
+              <button @click="editUnit(unit.unit_id)" class="mr-4 text-emerald-600 hover:text-emerald-900">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
                 <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
               </svg>
               </button>
-              <button @click="onDelete(unit.id)" class="ml-2 text-red-500 hover:text-red-700">
+              <template #content>
+                <div>Update</div>
+              </template>
+            </Popper>
+            <Popper hover placement="right"> 
+              <button @click="onDelete(unit.id)" class="ml-4 text-red-500 hover:text-red-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
               </svg>
-              </button>
+            </button>
+              <template #content>
+                <div class="text-red-600">Delete</div>
+              </template>
+            </Popper>
             </td>
           </tr>
         </tbody>
@@ -85,7 +102,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex'; // Import Vuex store
 import apiClient from '@/services/AxiosClient.js';
-import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue'; // Import the modal component
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -96,6 +113,7 @@ const showDeleteConfirm = ref(false); // State for showing delete confirmation m
 const unitToDelete = ref(null); // State for the unit to be deleted
 const showImageModal = ref(false); // State for showing image modal
 const currentImage = ref(''); // State for the current image URL
+
 
 const fetchData = async () => {
   try {
@@ -242,6 +260,11 @@ const closeImageModal = () => {
   showImageModal.value = false;
   currentImage.value = '';
 };
+const formatDate = (date) => {
+  const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
+  return new Date(date).toLocaleDateString(undefined, options);
+};
+
 </script>
 
 <style scoped>

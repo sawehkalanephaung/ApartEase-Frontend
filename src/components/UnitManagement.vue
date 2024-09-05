@@ -13,9 +13,14 @@
             @change="updateCostPerUnit"
           />
         </div>
-        <button @click="sendUnits" class="px-4 py-2 text-white rounded bg-primary hover:bg-emerald-400">
-          Send Units
+        <popper hover placement="top">
+        <button @click="sendUnits" class="px-4 py-2 ml-4 text-white rounded bg-primary hover:bg-emerald-700">
+            Send
         </button>
+        <template #content>
+      <div>Send units</div>
+    </template>
+      </popper>
       </div>
     </div>
     <div class="mt-6 space-y-4 sm:space-y-0 sm:flex sm:items-center sm:space-x-4">
@@ -106,18 +111,29 @@
           </td>
           <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ formatDate(u.date) }}</td>
           <td class="flex-row px-5 py-5 text-sm text-center bg-white border-b border-gray-200">
-            <button @click="() => onEdit(u.id)" class="mr-1 text-emerald-600 hover:text-emerald-900">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
-                <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
-              </svg>
-            </button>
-            <button @click="() => onDelete(u.id)" class="ml-1 text-red-500 hover:text-red-700">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
-              </svg>
-            </button>
-          </td>
+            <Popper hover placement="left">
+              <button @click="() => onEdit(u.id)" class="mr-6 text-emerald-600 hover:text-emerald-900">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
+                  <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+              <template #content>
+                <div >Update</div>
+              </template>
+            </Popper>
+            <Popper hover placement="right">
+              <button @click="() => onDelete(u.id)" class="ml-6 text-red-500 hover:text-red-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+              <template #content>
+                <div class="text-red-600 t ">Delete</div>
+              </template>
+            </Popper>
+      </td>
+
         </tr>
       </tbody>
     </table>
@@ -186,6 +202,7 @@ import router from '@/router';
 import { usePagination } from '@/composables/usePagination';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
 import '@vuepic/vue-datepicker/dist/main.css';
+import Popper from 'vue3-popper';
 
 const units = ref([]);
 const showDeleteConfirm = ref(false);
@@ -464,19 +481,7 @@ onMounted(() => {
   --dp-primary-active-color: #047857; /* Change primary active color to an even darker green */
 }
 
-/* Custom styles for the button */
-button {
-  --tw-ring-color: #10b981; /* Change focus ring color to green */
-}
 
-button:hover {
-  background-color: #d1fae5; /* Change hover background color to a light green */
-}
-
-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5); /* Change focus box shadow color to a semi-transparent green */
-}
 tr:hover{
   background-color: red;
 }
