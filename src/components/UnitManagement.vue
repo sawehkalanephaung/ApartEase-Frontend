@@ -93,7 +93,7 @@
             <input type="checkbox" v-model="u.selected" :value="u.id" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" />
           </td>
           <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-            <img :src="u.unitImage || 'https://via.placeholder.com/600'" alt="Unit Image" class="object-cover cursor-pointer w-14 h-14" @click="openImageModal(u.unitImage)" />
+            <img :src="u.imgUrl || 'https://via.placeholder.com/600'" alt="Unit Image" class="object-cover cursor-pointer w-14 h-14" @click="openImageModal(u.imgUrl)" />
           </td>
           <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ u.res_room }}</td>
           <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
@@ -176,7 +176,7 @@
       @close="showDeleteConfirm = false"
   />
   <!-- Image Modal -->
-  <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal">
+  <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal(u.imgUrl)">
     <div class="relative max-w-full max-h-full p-4 bg-white rounded-lg shadow-lg" @click.stop>
       <button @click="closeImageModal" class="absolute text-gray-700 top-2 right-2 hover:text-gray-900">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -212,6 +212,8 @@ const currentImage = ref('');
 const selectAll = ref(false);
 const searchQuery = ref('');
 const statusFilter = ref('all');
+const imgUrl = ref('');
+
 
 
 const store = useStore();
@@ -239,32 +241,28 @@ const updateCostPerUnit = async () => {
 
 const fetchData = async () => {
   try {
-    console.log('Fetching unit data...');
-    await store.dispatch('fetchUnitData');
     const response = await apiClient.get('/unit/list', {
       params: {
         page: currentPage.value,
       },
     });
     const data = response.data.Unit;
-    statusFilter.value = 'all';
-
     if (Array.isArray(data) && data.length > 0) {
       const pageData = data[data.length - 1];
       totalPages.value = pageData.total_pages;
       currentPage.value = pageData.page;
       totalItems.value = pageData.total_record;
-      units.value = data.slice(0, -1);
-    } else {
-      units.value = [];
-      totalPages.value = 0;
-      totalItems.value = 0;
+
+      units.value = data.slice(0, -1).map(unit => ({
+        ...unit,
+        imgUrl: unit.imgUrl || 'https://via.placeholder.com/600'
+      }));
     }
-    console.log('Unit data fetched successfully');
   } catch (error) {
-    console.error('Error fetching data:', error);
+    console.error('Error fetching units:', error);
   }
 };
+
 
 const { currentPage, totalPages, totalItems, start, end, prevPage, nextPage, goToPage } = usePagination(fetchData);
 
@@ -300,10 +298,11 @@ const formatDate = (dateString) => {
   return date.toLocaleDateString();
 };
 
-const openImageModal = (imageUrl) => {
-  currentImage.value = imageUrl;
+const openImageModal = (imgUrl) => {
+  currentImage.value = imgUrl;
   showImageModal.value = true;
 };
+
 
 const closeImageModal = () => {
   showImageModal.value = false;

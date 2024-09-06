@@ -1,13 +1,39 @@
 <template>
   <h2 class="mt-0 mb-2 text-xl font-bold">Update Unit</h2>
   <div class="max-w-sm min-w-full bg-gray-100 rounded-lg drop-shadow-md dark:border-gray-700">
+      <!-- Success Alert -->
+      <div v-if="showSuccessAlert" class="space-y-5">
+      <div class="p-4 bg-white border-t-2 rounded-lg border-primary dark:bg-white" role="alert" tabindex="-1" aria-labelledby="hs-bordered-success-style-label">
+        <div class="flex">
+          <div class="shrink-0">
+            <!-- Icon -->
+            <span class="inline-flex items-center justify-center border-4 rounded-full border-emerald-200 text-emerald-800 bg-emerald-200 size-8 dark:text-teal-400">
+              <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                <path d="m9 12 2 2 4-4"></path>
+              </svg>
+            </span>
+            <!-- End Icon -->
+          </div>
+          <div class="ms-3">
+            <h3 id="hs-bordered-success-style-label" class="font-semibold text-gray-800 dark:text-black">
+              Successfully updated.
+            </h3>
+            <p class="text-sm text-gray-700 dark:text-neutral-400">
+              You have successfully updated the unit information.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <div class="flex flex-col items-center">
       <h1 class="mt-4 text-xl font-bold underline">{{ roomNumber }}</h1>
     </div>
     <div class="h-full mt-1">
       <div class="flex justify-around mb-4 space-x-4">
         <div class="flex flex-col items-center w-full p-4 text-center rounded-lg">
-          <img src="https://via.placeholder.com/600" alt="Last month" style="width: 100px; height: 100px;" @click="openImageModal('https://via.placeholder.com/600')">
+          <img :src="imgUrl" alt="Last month" style="width: 100px; height: 100px;" @click="openImageModal(imgUrl)">
           <label for="prevNumberOfUnits" class="block mt-2 text-sm font-medium text-gray-700">Last month</label>
           <div class="flex items-center mt-1">
             <input v-model="prevNumberOfUnits" type="number" id="prevNumberOfUnits" class="block px-3 py-2 border border-gray-300 rounded-md shadow-sm w-28 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
@@ -15,7 +41,7 @@
           </div>
         </div>
         <div class="flex flex-col items-center w-full p-4 text-center rounded-lg">
-          <img src="https://via.placeholder.com/600" alt="This month" style="width: 100px; height: 100px;" @click="openImageModal('https://via.placeholder.com/600')">
+          <img :src="imgUrl" alt="This month" style="width: 100px; height: 100px;" @click="openImageModal(imgUrl)">
           <label for="numberOfUnits" class="block mt-2 text-sm font-medium text-gray-700">This month</label>
           <div class="flex items-center mt-1">
             <input v-model="numberOfUnits" type="number" id="numberOfUnits" class="block px-3 py-2 border border-gray-300 rounded-md shadow-sm w-28 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
@@ -23,6 +49,7 @@
           </div>
         </div>
       </div>
+     
 
       <!-- Navigation Menu taps -->
       <div class="mx-6 mt-10 border-b-2 border-gray-300 mb- ml-b-2 mflex">
@@ -110,7 +137,7 @@
     <button @click="cancel" class="px-4 py-2 text-white bg-gray-600 rounded-md">Cancel</button>
   </div>
   <!-- Image Modal -->
-  <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal">
+  <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal(imgUrl)">
     <div class="relative max-w-full max-h-full p-4 bg-white rounded-lg shadow-lg" @click.stop>
       <button @click="closeImageModal" class="absolute text-gray-700 top-2 right-2 hover:text-gray-900">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -159,6 +186,8 @@ const totalUnit = computed(() => numberOfUnits.value - prevNumberOfUnits.value);
 const unitCalculation = computed(() => totalUnit.value * costPerUnit.value);
 const totalBill = computed(() => unitCalculation.value + waterCostInput.value + rentCostInput.value);
 
+const showSuccessAlert = ref(false); // Reactive variable for success alert
+
 const fetchData = async () => {
   try {
     console.log('Fetching data for unit ID:', route.params.id);
@@ -173,6 +202,7 @@ const fetchData = async () => {
       approveStatus.value = response.data.Unit.approveStatus ? 'approve' : 'disapprove';
       initialApproveStatus.value = approveStatus.value; // Store initial value
       roomNumber.value = response.data.Unit.res_room || roomNumber.value;
+      imgUrl.value = response.data.Unit.imgUrl || imgUrl.value;
 
       await fetchResidentInfo(response.data.Unit.res_room);
     } else {
@@ -242,8 +272,13 @@ const submit = async () => {
     store.dispatch('updateWaterCost', waterCostInput.value);
     setRentCostForUnit(route.params.id, rentCostInput.value);
 
-    alert('Unit updated successfully!');
-    router.push('/unit-management');
+    // Show success alert
+    showSuccessAlert.value = true;
+    setTimeout(() => {
+      showSuccessAlert.value = false;
+      router.push('/unit-management');
+    }, 2000); // Hide alert after 3 seconds
+
   } catch (error) {
     console.error('Error during submission:', error);
 

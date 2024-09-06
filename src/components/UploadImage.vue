@@ -1,0 +1,146 @@
+<template>
+    <div class="relative flex flex-col items-center p-4">
+      <div class="flex gap-4 mb-0">
+        <input type="file" ref="fileInput" @change="handleFileUpload" multiple accept="image/*" class="hidden" />
+      </div>
+   
+      <div class="flex flex-col items-center justify-center w-full h-40 mb-4 border-2 border-gray-300 border-dashed rounded-md" @dragover.prevent @drop.prevent="handleDrop">
+          <Popper hover placement="top">
+          <button @click.prevent="triggerFileInput" >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 mb-6 hover:text-primary">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+              </svg>
+          </button>
+          <template #content>
+              <div>Upload Image</div>
+          </template>
+          </Popper>
+        <p class="mb-4 text-lg">Drag & Drop Images or <a href="#" @click.prevent="triggerFileInput" class="text-lg text-emerald-500 hover:text-emerald-700 focus:outline-none focus:underline">browse</a></p>
+      </div>
+      <div class="flex flex-col w-full gap-4 overflow-y-auto max-h-96 custom-scrollbar"  style="max-height: 32rem;">
+        <div v-for="(image, index) in images" :key="index" class="flex items-center gap-4 p-2 border rounded">
+          <img :src="image.url" alt="Uploaded Image" class="object-cover w-24 h-24" />
+          <div class="flex-1">
+            <span>{{ image.name }}</span>
+            <span class="block text-sm text-gray-500">{{ formatFileSize(image.size) }}</span>
+          </div>
+          <button @click="removeImage(index)" class="p-2 rounded focus:outline-none focus:shadow-outline hover:text-red-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v3M4 7h16" />
+            </svg>
+            </button>
+        </div>
+      </div>
+  <hr class="w-full mb-8 border-t border-gray-300">
+  <div class="relative bottom-0 flex justify-between w-full">
+    <span class="text-gray-700 text-medium">Total Images: {{ images.length }}</span>
+    <button @click="uploadImages" class="px-4 py-2 text-white rounded bg-emerald-500 hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+      Upload
+    </button>
+  </div>
+    </div>
+  </template>
+  
+  <script setup>
+  import { ref } from 'vue';
+  import Popper from 'vue3-popper';
+  import apiClient from '@/services/AxiosClient.js'; // Use the configured Axios client
+  
+  const images = ref([]);
+  
+  const triggerFileInput = () => {
+    document.querySelector('input[type="file"]').click();
+  };
+  
+  const handleFileUpload = (event) => {
+    const files = event.target.files;
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          images.value.push({ url: e.target.result, name: files[i].name, size: files[i].size, file: files[i] });
+        };
+        reader.readAsDataURL(files[i]);
+      } else {
+        alert('Only image files are allowed!');
+      }
+    }
+  };
+  
+  const handleDrop = (event) => {
+    const files = event.dataTransfer.files;
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          images.value.push({ url: e.target.result, name: files[i].name, size: files[i].size, file: files[i] });
+        };
+        reader.readAsDataURL(files[i]);
+      } else {
+        alert('Only image files are allowed!');
+      }
+    }
+  };
+  
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+  
+  const removeImage = (index) => {
+    images.value.splice(index, 1);
+  };
+  
+  const uploadImages = async () => {
+    const formData = new FormData();
+    images.value.forEach((image) => {
+      formData.append('files[]', image.file);
+    });
+  
+    try {
+      const response = await apiClient.post('/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      if (response.status === 200) {
+        alert('Images uploaded successfully!');
+        console.log('Uploaded file URLs:', response.data.uploaded_file_urls);
+      } else {
+        alert('Failed to upload images.');
+      }
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      alert('An error occurred while uploading images.');
+    }
+  };
+  </script>
+  
+  <style scoped>
+  .hidden {
+    display: none;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+    border: 3px solid #f1f1f1;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  </style>
+  

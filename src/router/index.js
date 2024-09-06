@@ -21,6 +21,7 @@ import { checkLoginStatus } from '@/utils/checkLoginStatus';
 import SendBill from '@/components/SendBill.vue';
 import BillHistory from '@/components/BillHistory.vue';
 import BillHistoryUpdate from '@/components/BillHistoryUpdate.vue';
+import UploadImage from '@/components/UploadImage.vue';
 
 
 
@@ -142,9 +143,12 @@ const router = createRouter({
           component: BillHistoryUpdate,
           meta: { requiresAuth: true },
         },
-   
-
-
+        {
+          path: "/upload-image",
+          name: "UploadImage",
+          component: UploadImage,
+          meta: { requiresAuth: true },
+        },
       ],
     },
   ],
