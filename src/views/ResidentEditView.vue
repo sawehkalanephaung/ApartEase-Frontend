@@ -52,9 +52,9 @@
           <button
             type="button"
             @click="cancel"
-            class="px-4 py-2 font-bold text-white rounded bg-slate-700 hover:bg-slate-800"
+            class="px-4 py-2 font-bold bg-white border-2 rounded text-slate-700 border-slate-700 hover:bg-slate-700 hover:text-white"
           >
-            Back
+            Cancel
           </button>
         </div>
       </Form>

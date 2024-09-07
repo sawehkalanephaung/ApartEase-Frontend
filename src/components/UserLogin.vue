@@ -61,7 +61,7 @@
         <div class="mt-16">
           <button
             type="submit"
-            class="w-full px-3 py-3 text-white rounded-md tex2t-center lg:text-lg bg-primary focus:outline-none hover:bg-emerald-500"
+            class="px-3 py-3 text-white rounded-md w-ful tex2t-center lg:text-lg bg-primary focus:outline-none hover:bg-emerald-500"
             :disabled="isSubmitting"
           >
             {{ isSubmitting ? "Submitting..." : "Login" }}
@@ -83,7 +83,7 @@
           </div>
         </div>
         <h3 class="my-4 text-3xl font-semibold text-center text-gray-700">Login Successfully!</h3>
-        <button @click="redirectToHome" class="block px-6 py-3 mx-auto mt-10 text-white bg-emerald-400 hover:bg-emerald-500 rounded-xl">OK</button>
+        <button @click="redirectToHome" class="block px-6 py-3 mx-auto mt-10 text-white w-28 bg-emerald-400 hover:bg-emerald-500 rounded-xl">OK</button>
       </div>
     </div>
     <!-- Success Modal End -->

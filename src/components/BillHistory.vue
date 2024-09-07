@@ -45,11 +45,10 @@
               <span class="ml-2">All</span>
             </div>
           </th>
-            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Image</th>
-            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Room Number</th>
-            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Amount</th>
-            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Date Sent</th>
-            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Actions</th>
+            <th class="px-2 py-5 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Room Number</th>
+            <th class="px-2 py-5 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Amount</th>
+            <th class= "hidden px-2 py-5 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200 md:table-cell">Date Sent</th>
+            <th class="px-2 py-5 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -63,38 +62,37 @@
               :class="[
                 record.selected ? 'bg-emerald-100 hover:bg-emerald-200!important border-l-4 border-emerald-500' : 'hover:bg-gray-100'
               ]">
-              <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+              <td class="px-2 py-5 text-sm bg-white border-b border-gray-200">
               <input type="checkbox" v-model="record.selected" :value="record.id" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" />
             </td>
-            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
-              <img :src="record.unitImage || 'https://via.placeholder.com/600'" alt="Unit Image" class="object-cover cursor-pointer w-14 h-14" @click="openImageModal(record.unitImage)" />
-            </td>
-            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ record.res_room || 'Unknown' }}</td>
-            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ record.amount }}</td>
-            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ formatDate(record.date_sent) }}</td>
-            <td class="flex-row px-5 py-5 text-sm text-center bg-white border-b border-gray-200">
-              <Popper hover placement="left">
-              <button @click="viewUnit(record.id)" class="mr-4 text-emerald-600 hover:text-emerald-900">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                  <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-                </svg>
-              </button>
-              <template #content>
-                <div>View details</div>
-              </template>
-             
-            </Popper>
-            <Popper hover placement="right"> 
-              <button @click="deleteUnit(record.id)" class="ml-4 text-red-500 hover:text-red-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                </svg>
-              </button>
-              <template #content>
-                <div> Delete</div>
-              </template>
-            </Popper>
+           
+            <td class="px-2 py-5 text-sm bg-white border-b border-gray-200">{{ record.res_room || 'Unknown' }}</td>
+            <td class="px-2 py-5 text-sm bg-white border-b border-gray-200">{{ record.amount }}</td>
+            <td class="hidden px-2 py-5 text-sm bg-white border-b border-gray-200 md:table-cell" >{{ formatDate(record.date_sent) }}</td>
+            <td class="px-2 py-5 text-sm bg-white border-b border-gray-200">
+              <div class="flex justify-center space-x-4">
+                <Popper hover placement="left">
+                  <button @click="viewUnit(record.id)" class="mr-2 text-emerald-600 hover:text-emerald-900">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                      <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                  <template #content>
+                    <div>View details</div>
+                  </template>
+                </Popper>
+                <Popper hover placement="right"> 
+                  <button @click="deleteUnit(record.id)" class="ml-2 text-red-500 hover:text-red-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                  </button>
+                  <template #content>
+                    <div>Delete</div>
+                  </template>
+                </Popper>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -102,9 +100,9 @@
     </div>
     <!-- Pagination controls -->
     <div class="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
-      <div class="flex justify-between flex-1 sm:hidden">
-        <a @click="prevPage" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Previous</a>
-        <a @click="nextPage" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Next</a>
+      <div class="flex justify-between flex-1 mb-10 sm:hidden">
+        <a @click="prevPage" class="absolute inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Previous</a>
+        <a @click="nextPage" class="absolute inline-flex items-center px-4 py-2 mr-6 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer right-4 hover:bg-gray-50">Next</a>
       </div>
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
@@ -129,6 +127,13 @@
         </div>
       </div>
     </div>
+ 
+  <!-- Delete Confirmation Modal -->
+  <DeleteConfirmationModal
+      :show="showDeleteConfirm"
+      @confirm-delete="confirmDelete"
+      @close="showDeleteConfirm = false"
+    />
      <!-- Image Modal -->
      <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal">
       <div class="relative max-w-full max-h-full p-4 bg-white rounded-lg shadow-lg" @click.stop>
@@ -152,6 +157,7 @@ import apiClient from '@/services/AxiosClient.js';
 import DatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { usePagination } from '@/composables/usePagination';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue'; 
 
 const billHistory = ref([]);
 const startDate = ref(null);
@@ -162,6 +168,8 @@ const dateFormat = "yyyy-MM-dd";
 const showImageModal = ref(false);
 const currentImage = ref('');
 const selectAll = ref(false);
+const showDeleteConfirm = ref(false); // State variable for delete confirmation modal
+const recordToDelete = ref(null); // State variable to store the record to be deleted
 
 const fetchData = async () => {
   try {
@@ -247,19 +255,26 @@ const formatDate = (dateString) => {
 };
 
 const viewUnit = (id) => {
-  router.push({ name: 'BillHistoryUpdate', params: { id } });
+  router.push({ name: 'BillHistoryView', params: { id } });
 };
 
-const deleteUnit = async (id) => {
+const deleteUnit = (id) => {
+  recordToDelete.value = id;
+  showDeleteConfirm.value = true;
+};
+
+const confirmDelete = async () => {
   try {
-    await apiClient.delete(`/bill/history/del/${id}`);
-    billHistory.value = billHistory.value.filter(unit => unit.id !== id);
+    await apiClient.delete(`/bill/history/del/${recordToDelete.value}`);
+    billHistory.value = billHistory.value.filter(unit => unit.id !== recordToDelete.value);
+    showDeleteConfirm.value = false;
     alert('Unit history record deleted successfully!');
   } catch (error) {
     console.error('Error deleting unit history record:', error);
     alert('Failed to delete unit history record. Please try again.');
   }
 };
+
 
 // Computed property to filter valid unit history entries
 const validBillHistory = computed(() => {

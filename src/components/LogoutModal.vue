@@ -39,13 +39,13 @@
       <div class="flex justify-center mt-6 space-x-4 sm:mt-8 md:mt-10">
         <button
           @click="confirmLogout"
-          class="px-4 py-2 text-sm font-medium text-center text-red-100 bg-red-400 border-4 border-transparent rounded-xl hover:bg-red-500 sm:px-6 sm:py-3 sm:text-base"
+          class="px-3 py-2 text-sm font-medium text-center text-red-100 bg-red-400 border-4 border-transparent w-28 rounded-xl hover:bg-red-500 sm:px-6 sm:py-3 sm:text-base"
         >
           Yes
         </button>
         <button
           @click="closeModal"
-          class="px-4 py-4 text-sm font-medium text-center text-black bg-transparent border-2 border-gray-600 rounded-xl hover:bg-gray-200 sm:px-6 sm:py-3 sm:text-base"
+          class="px-3 py-2 text-sm font-medium text-center text-black bg-transparent border-2 border-gray-600 w-28 rounded-xl hover:bg-black hover:text-white sm:px-6 sm:py-3 sm:text-base"
         >
           No
         </button>

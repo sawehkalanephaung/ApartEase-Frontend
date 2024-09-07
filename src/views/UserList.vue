@@ -1,12 +1,11 @@
 <template>
   <h3 class="text-3xl font-medium text-gray-700">User Management</h3>
-  <div class="mt-8">
-    <h2 class="text-xl font-semibold leading-tight text-gray-700">User List</h2>
-    <div class="mt-6 flex justify-between items-center">
+  <div class="mt-4">
+    <div class="flex items-center justify-between mt-4">
       <div class="relative w-full max-w-md"></div>
       <button
         @click="onCreate"
-        class="ml-3 bg-primary hover:bg-emerald-400 text-white px-4 py-2 rounded"
+        class="px-4 py-2 ml-3 text-white rounded bg-primary hover:bg-emerald-400"
       >
         <router-link to="/create-user" class="flex items-center">
           <svg
@@ -15,7 +14,7 @@
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="h-6 w-6"
+            class="w-6 h-6"
           >
             <path
               stroke-linecap="round"
@@ -33,17 +32,17 @@
         <thead>
           <tr>
             <th
-              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider pl-10"
+              class="px-5 py-3 pl-10 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"
             >
               Username
             </th>
             <th
-              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+              class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"
             >
               Role
             </th>
             <th
-              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider"
+              class="px-5 py-3 text-xs font-semibold tracking-wider text-center text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"
             >
               Action
             </th>
@@ -54,21 +53,21 @@
           <tr v-if="!users || users.length === 0">
             <td
               colspan="4"
-              class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center"
+              class="px-5 py-5 text-sm text-center bg-white border-b border-gray-200"
             >
               No users found.
             </td>
           </tr>
           <!-- Render user rows with pagination -->
           <tr v-else v-for="(user, index) in users" :key="index">
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm pl-10">
+            <td class="px-5 py-5 pl-10 text-sm bg-white border-b border-gray-200">
               {{ user.username }}
             </td>
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
               {{ user.role }}
             </td>
             <td
-              class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center flex-row"
+              class="flex-row px-5 py-5 text-sm text-center bg-white border-b border-gray-200"
             >
               <button
                 @click="() => onEdit(user.id)"
@@ -76,7 +75,7 @@
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
+                  class="w-4 h-4"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -92,11 +91,11 @@
               </button>
               <button
                 @click="() => onDelete(user.id)"
-                class="text-red-500 hover:text-red-700 ml-4"
+                class="ml-4 text-red-500 hover:text-red-700"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
+                  class="w-4 h-4"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -112,11 +111,12 @@
         </tbody>
       </table>
       <!-- Pagination controls -->
-      <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-        <div class="flex flex-1 justify-between sm:hidden">
-          <a @click="prevPage" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">Previous</a>
-          <a @click="nextPage" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">Next</a>
-        </div>
+      <div class="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
+        <div class="flex justify-between flex-1 mb-10 sm:hidden">
+          <a @click="prevPage" class="absolute inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Previous</a>
+          <a @click="nextPage" class="absolute inline-flex items-center px-4 py-2 mr-6 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer right-4 hover:bg-gray-50">Next</a>
+          </div>
+
         <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
           <div>
             <p class="text-sm text-gray-700">
@@ -124,13 +124,13 @@
             </p>
           </div>
           <div>
-            <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-              <a @click="prevPage" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer">
-                <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
+            <nav class="inline-flex -space-x-px rounded-md shadow-sm isolate" aria-label="Pagination">
+              <a @click="prevPage" class="relative inline-flex items-center px-2 py-2 text-gray-400 cursor-pointer rounded-l-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                <ChevronLeftIcon class="w-5 h-5" aria-hidden="true" />
               </a>
-              <span v-for="page in totalPages" :key="page" @click="goToPage(page)" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer" :class="{ 'bg-emerald-600 text-white': page === currentPage }">{{ page }}</span>
-              <a @click="nextPage" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer">
-                <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
+              <span v-for="page in totalPages" :key="page" @click="goToPage(page)" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 cursor-pointer ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0" :class="{ 'bg-emerald-600 text-white': page === currentPage }">{{ page }}</span>
+              <a @click="nextPage" class="relative inline-flex items-center px-2 py-2 text-gray-400 cursor-pointer rounded-r-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                <ChevronRightIcon class="w-5 h-5" aria-hidden="true" />
               </a>
             </nav>
           </div>

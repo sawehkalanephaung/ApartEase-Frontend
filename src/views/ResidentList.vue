@@ -75,7 +75,7 @@
                 {{ sortOrder === 'asc' ? '↑' : '↓' }}
               </span>
             </th>
-            <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Email</th>
+            <th class="hidden px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200 md:table-cell">Email</th>
             <th class="px-5 py-3 text-xs font-semibold tracking-wider text-center text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Action</th>
           </tr>
         </thead>
@@ -86,7 +86,7 @@
           <tr v-for="(u, index) in residents" :key="index">
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ u.roomNumber }}</td>
             <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ capitalizeName(u.name) }}</td>
-            <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ u.lineId }}</td>
+            <td class="hidden px-5 py-5 text-sm bg-white border-b border-gray-200 md:table-cell">{{ u.lineId }}</td>
             <td class="flex-row px-5 py-5 text-sm text-center bg-white border-b border-gray-200">
               <Popper hover placement="left"> 
               <button @click="() => onEdit(u.id)" class="mr-4 text-emerald-600 hover:text-emerald-900">

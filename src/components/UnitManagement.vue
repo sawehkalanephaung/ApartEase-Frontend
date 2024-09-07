@@ -14,7 +14,7 @@
           />
         </div>
         <popper hover placement="top">
-        <button @click="sendUnits" class="px-4 py-2 ml-4 text-white rounded bg-primary hover:bg-emerald-700">
+        <button @click="sendUnits" class="w-32 px-4 py-2 ml-4 mr-4 text-white rounded bg-primary hover:bg-emerald-700">
             Send
         </button>
         <template #content>
@@ -47,12 +47,17 @@
         </div>
       </div>
       <!--filter by status-->
-      <div class="flex-grow sm:flex-grow-0">
-        <select id="statusFilter" v-model="statusFilter" @change="filterUnits" class="px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+      <div class="relative flex-grow w-32 sm:flex-grow-0">
+        <select id="statusFilter" v-model="statusFilter" @change="filterUnits" class="w-full px-4 py-2 mr-1 text-sm border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-primary">
           <option value="all">All</option>
           <option value="approved">Approved</option>
           <option value="disapproved">Disapproved</option>
         </select>
+        <div class="absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 pointer-events-none">
+          <svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+          </svg>
+        </div>
       </div>
       <!-- Add the button for sending units -->
       <div class="flex items-center space-x-2">
@@ -71,10 +76,11 @@
               <span class="ml-2">All</span>
             </div>
           </th>
+
           <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Unit Image </th>
           <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Room No </th>
           <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Status </th>
-          <th class="px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Date </th>
+          <th class="hidden px-5 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200 md:table-cell"> Date </th>
           <th class="px-5 py-3 text-xs font-semibold tracking-wider text-center text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"> Action</th>
         </tr>
       </thead>
@@ -109,10 +115,10 @@
               <span>{{ u.approveStatus ? 'Approved' : 'Disapproved' }}</span>
             </div>
           </td>
-          <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ formatDate(u.date) }}</td>
+          <td class="hidden px-5 py-5 text-sm bg-white border-b border-gray-200 md:table-cell">{{ formatDate(u.date) }}</td>
           <td class="flex-row px-5 py-5 text-sm text-center bg-white border-b border-gray-200">
-            <Popper hover placement="left">
-              <button @click="() => onEdit(u.id)" class="mr-6 text-emerald-600 hover:text-emerald-900">
+            <Popper hover placement="top">
+              <button @click="() => onEdit(u.id)" class="mr-2 text-emerald-600 hover:text-emerald-900">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
                   <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
@@ -122,8 +128,8 @@
                 <div >Update</div>
               </template>
             </Popper>
-            <Popper hover placement="right">
-              <button @click="() => onDelete(u.id)" class="ml-6 text-red-500 hover:text-red-700">
+            <Popper hover placement="top">
+              <button @click="() => onDelete(u.id)" class="ml-2 text-red-500 hover:text-red-700">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
                 </svg>
@@ -141,16 +147,23 @@
 
     <!-- Pagination controls -->
     <div class="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
-      <div class="flex justify-between flex-1 sm:hidden">
-        <a @click="prevPage" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Previous</a>
-        <a @click="nextPage" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Next</a>
+      <div class="flex justify-between flex-1 mb-10 sm:hidden">
+        <a @click="prevPage" class="absolute inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Previous</a>
+        <a @click="nextPage" class="absolute inline-flex items-center px-4 py-2 mr-6 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer right-4 hover:bg-gray-50">Next</a>
       </div>
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
-          <p class="text-sm text-gray-700">
-            Showing {{ ' ' }} <span class="font-medium">{{ start + 1 }}</span> {{ ' ' }} to {{ ' ' }} <span class="font-medium">{{ end }}</span> {{ ' ' }} of {{ ' ' }} <span class="font-medium">{{ totalItems }}</span> {{ ' ' }} results
-          </p>
-        </div>
+  <p class="text-sm text-gray-700">
+    Showing {{ ' ' }}
+    <span class="font-medium">{{ start + 1 }}</span>
+    {{ ' ' }} to {{ ' ' }}
+    <span class="font-medium">{{ end || 0 }}</span>
+    {{ ' ' }} of {{ ' ' }}
+    <span class="font-medium">{{ totalItems || 0 }}</span>
+    {{ ' ' }} results
+  </p>
+</div>
+
         <div>
           <nav class="inline-flex -space-x-px rounded-md shadow-sm isolate" aria-label="Pagination">
             <a @click="prevPage" class="relative inline-flex items-center px-2 py-2 text-gray-400 cursor-pointer rounded-l-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
@@ -243,7 +256,7 @@ const fetchData = async () => {
   try {
     const response = await apiClient.get('/unit/list', {
       params: {
-        page: currentPage.value,
+        page: currentPage.value === 'all' ? 'all' : currentPage.value,
       },
     });
     const data = response.data.Unit;
@@ -255,7 +268,8 @@ const fetchData = async () => {
 
       units.value = data.slice(0, -1).map(unit => ({
         ...unit,
-        imgUrl: unit.imgUrl || 'https://via.placeholder.com/600'
+        imgUrl: unit.imgUrl || 'https://via.placeholder.com/600',
+        selected: selectAll.value
       }));
     }
   } catch (error) {
@@ -270,9 +284,20 @@ onMounted(() => {
   fetchData();
 });
 
-const toggleSelectAll = () => {
-  filteredUnits.value.forEach(unit => unit.selected = selectAll.value);
+const toggleSelectAll = async () => {
+  if (selectAll.value) {
+    // Select all units across all pages
+    const response = await apiClient.get('/unit/list', { params: { page: 'all' } });
+    const allUnits = response.data.Unit.slice(0, -1);
+    units.value = allUnits.map(unit => ({ ...unit, selected: true }));
+  } else {
+    // Deselect all units
+    units.value = units.value.map(unit => ({ ...unit, selected: false }));
+  }
 };
+
+
+
 
 const onEdit = (id) => {
   router.push({ name: 'UnitManagementUpdate', params: { id } });
@@ -391,70 +416,88 @@ const clearSearch = () => {
 
 
 const sendUnits = async () => {
-  const selectedUnits = units.value.filter(unit => unit.selected);
+  let selectedUnits = units.value.filter(unit => unit.selected);
+
+  if (selectAll.value) {
+    // Fetch all units if "Select All" is checked
+    const response = await apiClient.get('/unit/list', { params: { page: 'all' } });
+    selectedUnits = response.data.Unit;
+  }
 
   if (selectedUnits.length === 0) {
     alert('Please select at least one unit.');
     return;
   }
 
-  const disapprovedUnits = selectedUnits.filter(unit => !unit.approveStatus);
+  // Filter out any non-unit objects (e.g., pagination info)
+  selectedUnits = selectedUnits.filter(unit => unit.id !== undefined);
+
+  // Debug: Log selected units and their approveStatus
+  console.log('Selected units:', selectedUnits);
+  selectedUnits.forEach(unit => {
+    console.log(`Unit ID: ${unit.id}, Approve Status: ${unit.approveStatus}`);
+  });
+
+  // Ensure approveStatus is correctly interpreted as a boolean
+  const disapprovedUnits = selectedUnits.filter(unit => !Boolean(unit.approveStatus));
   if (disapprovedUnits.length > 0) {
-    alert('Disapproved Unit please double check');
+    alert('Disapproved Unit! Please check it');
     return;
   }
 
-  if (selectedUnits.length > 0) {
-    try {
-      console.log('Sending selected units:', selectedUnits);
-      await Promise.all(selectedUnits.map(async (unit) => {
-        // Ensure all necessary properties are defined and properly converted to numbers
-        const numberOfUnits = Number(unit.numberOfUnits);
-        const prevNumberOfUnits = Number(unit.prevNumberOfUnits);
-        const costPerUnit = store.getters.getCostPerUnit;
-        const waterCost = store.getters.getWaterCost;
-        const rentCost = getRentCostForUnit(unit.id);
+  try {
+    console.log('Sending selected units:', selectedUnits);
+    await Promise.all(selectedUnits.map(async (unit) => {
+      // Ensure all necessary properties are defined and properly converted to numbers
+      const numberOfUnits = Number(unit.numberOfUnits);
+      const prevNumberOfUnits = Number(unit.prevNumberOfUnits);
+      const costPerUnit = store.getters.getCostPerUnit;
+      const waterCost = store.getters.getWaterCost;
+      const rentCost = getRentCostForUnit(unit.id);
 
-        if (isNaN(numberOfUnits) || isNaN(prevNumberOfUnits) || isNaN(costPerUnit) || isNaN(waterCost) || isNaN(rentCost)) {
-          console.error('Unit data is missing required properties or contains invalid values:', unit);
-          alert('Unit data is missing required properties or contains invalid values. Please check the unit data.');
-          return;
-        }
+      if (isNaN(numberOfUnits) || isNaN(prevNumberOfUnits) || isNaN(costPerUnit) || isNaN(waterCost) || isNaN(rentCost)) {
+        console.error('Unit data is missing required properties or contains invalid values:', unit);
+        alert('Unit data is missing required properties or contains invalid values. Please check the unit data.');
+        return;
+      }
 
-        // Calculate totalUnit and totalBill
-        const totalUnit = numberOfUnits - prevNumberOfUnits;
-        const totalBill = totalUnit * costPerUnit + waterCost + rentCost;
+      // Calculate totalUnit and totalBill
+      const totalUnit = numberOfUnits - prevNumberOfUnits;
+      const totalBill = totalUnit * costPerUnit + waterCost + rentCost;
 
-        // Add unit to bill
-        const billData = {
-          date_created: new Date().toISOString().split('T')[0],
-          unit_id: unit.id,
-          amount: totalBill
-        };
-        console.log('Sending bill data:', billData);
-        await apiClient.post(`/bill/add/${unit.id}`, billData);
-      }));
+      // Add unit to bill
+      const billData = {
+        date_created: new Date().toISOString().split('T')[0],
+        unit_id: unit.id,
+        amount: totalBill
+      };
+      console.log('Sending bill data:', billData);
+      await apiClient.post(`/bill/add/${unit.id}`, billData);
+    }));
 
-      selectAll.value = false;
+    selectAll.value = false;
 
-      const totalUnit = selectedUnits.reduce((total, unit) => total + (Number(unit.numberOfUnits) - Number(unit.prevNumberOfUnits)), 0);
-      const totalBill = selectedUnits.reduce((total, unit) => total + ((Number(unit.numberOfUnits) - Number(unit.prevNumberOfUnits)) * store.getters.getCostPerUnit + store.getters.getWaterCost + getRentCostForUnit(unit.id)), 0);
+    const totalUnit = selectedUnits.reduce((total, unit) => total + (Number(unit.numberOfUnits) - Number(unit.prevNumberOfUnits)), 0);
+    const totalBill = selectedUnits.reduce((total, unit) => total + ((Number(unit.numberOfUnits) - Number(unit.prevNumberOfUnits)) * store.getters.getCostPerUnit + store.getters.getWaterCost + getRentCostForUnit(unit.id)), 0);
 
-      router.push({
-        name: 'SendBill',
-        query: {
-          selectedUnits: JSON.stringify(selectedUnits),
-          totalUnit,
-          totalBill
-        }
-      });
-      console.log('Units sent successfully');
-    } catch (error) {
-      console.error('Error sending units:', error);
-      alert('Failed to send units. Please try again.');
-    }
+    router.push({
+      name: 'SendBill',
+      query: {
+        selectedUnits: JSON.stringify(selectedUnits),
+        totalUnit,
+        totalBill
+      }
+    });
+    console.log('Units sent successfully');
+  } catch (error) {
+    console.error('Error sending units:', error);
+    alert('Failed to send units. Please try again.');
   }
 };
+
+
+
+
 
 // Helper functions to manage rent cost locally
 function getRentCostForUnit(unitId) {
@@ -467,11 +510,6 @@ onMounted(() => {
   fetchData();
 });
 </script>
-
-
-
-
-
 
 
 <style scoped>
@@ -487,8 +525,4 @@ onMounted(() => {
   --dp-primary-active-color: #047857; /* Change primary active color to an even darker green */
 }
 
-
-tr:hover{
-  background-color: red;
-}
 </style>

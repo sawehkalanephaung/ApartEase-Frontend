@@ -1,14 +1,14 @@
 <template>
   <div class="relative">
     <h3 class="mb-10 text-2xl font-medium text-gray-700">Billing</h3>
-      <button @click="sendBills" class="absolute right-0 px-4 py-2 text-white rounded-md top-2 bg-emerald-600 hover:bg-emerald-700">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="inline-block w-5 h-5 mr-1" >
-          <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
-        </svg>
-          Send
-      </button>
+    <button @click="sendBills" class="absolute right-0 px-4 py-2 text-white rounded-md top-2 bg-emerald-600 hover:bg-emerald-700">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="inline-block w-5 h-5 mr-1">
+        <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
+      </svg>
+      Send
+    </button>
 
-      <div class="mt-4 overflow-auto max-h-[700px] custom-scrollbar relative">
+    <div class="mt-4 overflow-auto max-h-[700px] custom-scrollbar relative">
       <table class="w-full min-w-full text-sm leading-normal text-left text-md">
         <thead class="sticky-header">
           <tr>
@@ -19,18 +19,16 @@
               </div>
             </th>
             <th class="px-2 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Room No</th>
-            <th class="px-2 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200 ">Total Bill</th>
+            <th class="px-2 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Total Bill</th>
             <th class="hidden px-2 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200 md:table-cell">Date Created</th>
-            <th class="px-2 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200 ">Action</th>
+            <th class="px-2 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Action</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-if="validUnits.length === 0">
+          <tr v-if="paginatedUnits.length === 0">
             <td colspan="5" class="px-2 py-5 text-sm text-center bg-white border-b border-gray-200">No data found!</td>
           </tr>
-          <tr v-else v-for="unit in validUnits" :key="unit.id"
-              class="transition-all duration-200 cursor-pointer"
-              :class="[
+          <tr v-else v-for="unit in paginatedUnits" :key="unit.id" class="transition-all duration-200 cursor-pointer" :class="[
                 unit.selected ? 'bg-emerald-100 hover:bg-emerald-200!important border-l-4 border-emerald-500' : 'hover:bg-gray-100'
               ]">
             <td class="px-2 py-5 text-sm bg-white border-b border-gray-200">
@@ -43,8 +41,8 @@
               <Popper hover placement="left">
                 <button @click="editUnit(unit.unit_id)" class="mr-4 text-emerald-600 hover:text-emerald-900">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"/>
-                    <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"/>
+                    <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
+                    <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
                   </svg>
                 </button>
                 <template #content>
@@ -54,7 +52,7 @@
               <Popper hover placement="right">
                 <button @click="onDelete(unit.id)" class="ml-4 text-red-500 hover:text-red-700">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                   </svg>
                 </button>
                 <template #content>
@@ -67,10 +65,36 @@
       </table>
     </div>
 
-    <div class="mt-4 text-right">
-      <span class="font-semibold text-md">Total No Bills: {{ validUnits.length }}</span>
-      <span class="ml-4 font-semibold text-md">Selected bills: {{ selectedBillsCount }}</span>
+        <!-- Pagination controls -->
+        <div class="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
+      <div class="flex justify-between flex-1 mb-10 sm:hidden">
+        <a @click="prevPage" class="absolute inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Previous</a>
+        <a @click="nextPage" class="absolute inline-flex items-center px-4 py-2 mr-6 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer right-4 hover:bg-gray-50">Next</a>
+      </div>
+      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-gray-700">
+      Showing {{ start + 1 }} to {{ end }} of {{ totalItems }} results
+    </p>
+        </div>
+        <div>
+          <nav class="inline-flex -space-x-px rounded-md shadow-sm isolate" aria-label="Pagination">
+            <a @click="prevPage" class="relative inline-flex items-center px-2 py-2 text-gray-400 cursor-pointer rounded-l-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+            </a>
+            <span v-for="page in totalPages" :key="page" @click="goToPage(page)" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 cursor-pointer ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0" :class="{ 'bg-emerald-600 text-white': page === currentPage }">{{ page }}</span>
+            <a @click="nextPage" class="relative inline-flex items-center px-2 py-2 text-gray-400 cursor-pointer rounded-r-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+              </svg>
+            </a>
+          </nav>
+        </div>
+      </div>
     </div>
+
     <DeleteConfirmationModal
       :show="showDeleteConfirm"
       @confirm-delete="confirmDelete"
@@ -98,6 +122,8 @@ import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex'; // Import Vuex store
 import apiClient from '@/services/AxiosClient.js';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
+import { usePagination } from '@/composables/usePagination';
+
 
 const router = useRouter();
 const route = useRoute();
@@ -109,48 +135,51 @@ const unitToDelete = ref(null); // State for the unit to be deleted
 const showImageModal = ref(false); // State for showing image modal
 const currentImage = ref(''); // State for the current image URL
 
-
 const fetchData = async () => {
   try {
     console.log('Fetching bill data...');
-    const [billResponse, residentResponse] = await Promise.all([
-      apiClient.get('/bill/list'),
-      apiClient.get('/resident/list')
-    ]);
+    const response = await apiClient.get('/bill/list', {
+      params: {
+        page: currentPage.value,
+      },
+    });
 
-    const bills = billResponse.data.Bills;
-    const residents = residentResponse.data.Resident;
-
-    const residentEmailMap = residents.reduce((map, resident) => {
-      map[resident.roomNumber] = resident.lineId;
-      return map;
-    }, {});
-
-    unitList.value = bills
-      .filter(bill => bill.id && bill.res_room && bill.date_created && bill.amount) // Filter out invalid bills
-      .map(bill => ({
+    const data = response.data.Bills;
+    if (Array.isArray(data) && data.length > 0) {
+      const pageData = data[data.length - 1];
+      totalPages.value = pageData.total_pages;
+      currentPage.value = pageData.page;
+      totalItems.value = pageData.total_records;
+      unitList.value = data.slice(0, -1).map(bill => ({
         ...bill,
         selected: false,
         res_room: bill.res_room, // Use res_room for room number
-        lineId: residentEmailMap[bill.res_room] || '',
         unitImage: bill.unitImage || 'https://via.placeholder.com/600' // Add unitImage property
       }));
+       // Add debug lines here
+       console.log('start:', start.value);
+      console.log('end:', end.value);
+      console.log('totalItems:', totalItems.value);
+    } else {
+      unitList.value = [];
+      totalPages.value = 0;
+      totalItems.value = 0;
+    }
     console.log('Bill data fetched successfully');
-
   } catch (error) {
     console.error('Error fetching bills:', error);
   }
 };
 
-onMounted(async () => {
-  const storedUnits = route.query.selectedUnits ? JSON.parse(route.query.selectedUnits) : [];
-  unitList.value = storedUnits.map(unit => ({...unit, selected: false}));
+const { currentPage, totalPages, totalItems, start, end, prevPage, nextPage, goToPage } = usePagination(fetchData);
 
-  await fetchData();
+
+onMounted(() => {
+  fetchData();
 });
 
 const toggleSelectAll = () => {
-  unitList.value.forEach(unit => unit.selected = selectAll.value);
+  paginatedUnits.value.forEach(unit => unit.selected = selectAll.value);
 };
 
 const editUnit = (unitId) => {
@@ -172,7 +201,7 @@ const sendBills = async () => {
     } else {
       for (const unit of selectedUnits) {
         console.log(`Sending bill for unit ID: ${unit.id}`);
-        
+
         try {
           const response = await apiClient.post(`/bill/send/${unit.id}`);
 
@@ -216,17 +245,13 @@ const sendBills = async () => {
   }
 };
 
-const totalBills = computed(() => {
-  return unitList.value.length;
-});
-
-const selectedBillsCount = computed(() => {
-  return unitList.value.filter(unit => unit.selected).length;
-});
-
 // Computed property to filter valid units
 const validUnits = computed(() => {
   return unitList.value.filter(unit => unit.id && unit.res_room && unit.date_created && unit.amount);
+});
+
+const paginatedUnits = computed(() => {
+  return validUnits.value;
 });
 
 const onDelete = (unitId) => {
@@ -255,11 +280,11 @@ const closeImageModal = () => {
   showImageModal.value = false;
   currentImage.value = '';
 };
+
 const formatDate = (date) => {
   const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
   return new Date(date).toLocaleDateString(undefined, options);
 };
-
 </script>
 
 <style scoped>
@@ -300,5 +325,4 @@ const formatDate = (date) => {
   scrollbar-width: thin; 
   scrollbar-color: gray #f1f1f1; 
 }
-
 </style>
