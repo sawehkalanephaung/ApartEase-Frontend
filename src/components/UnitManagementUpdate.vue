@@ -187,6 +187,7 @@ const unitCalculation = computed(() => totalUnit.value * costPerUnit.value);
 const totalBill = computed(() => unitCalculation.value + waterCostInput.value + rentCostInput.value);
 
 const showSuccessAlert = ref(false); // Reactive variable for success alert
+const imgUrl = ref('');
 
 const fetchData = async () => {
   try {
@@ -256,12 +257,17 @@ const submit = async () => {
       return;
     }
 
+    
     const updatedUnitData = {
       numberOfUnits: numberOfUnits.value,
       prevNumberOfUnits: prevNumberOfUnits.value,
       approveStatus: approveStatus.value === 'approve',
       res_room: roomNumber.value,
+      extractionStatus: approveStatus.value === 'approve' ? 'Fully successful' : 'Not fully successful',
+      imgUrl: imgUrl.value, // Include the imgUrl here
     };
+
+
 
     console.debug('Updated unit data:', updatedUnitData);
 

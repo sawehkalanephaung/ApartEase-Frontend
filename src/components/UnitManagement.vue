@@ -285,13 +285,20 @@ const onDelete = (id) => {
 
 const confirmDelete = async () => {
   try {
-    await apiClient.delete(`/unit/del/${unitsToDelete.value}`);
-    fetchData();
-    showDeleteConfirm.value = false;
+    const response = await apiClient.delete(`/unit/del/${unitsToDelete.value}`);
+    if (response.status === 200) {
+      await fetchData();
+      showDeleteConfirm.value = false;
+    } else {
+      throw new Error('Failed to delete unit');
+    }
   } catch (error) {
     console.error('Error deleting units:', error);
+    // Handle the error, e.g., show an error message to the user
+    // You can use a toast notification or an alert here
   }
 };
+
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);

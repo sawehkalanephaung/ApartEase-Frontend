@@ -83,7 +83,7 @@
           </div>
         </div>
         <h3 class="my-4 text-3xl font-semibold text-center text-gray-700">Login Successfully!</h3>
-        <button @click="redirectToHome" class="block px-6 py-3 mx-auto mt-10 text-base font-medium text-center border-4 border-transparent rounded-xl bg-emerald-400 text-emerald-100 outline-8 hover:outline hover:duration-100">OK</button>
+        <button @click="redirectToHome" class="block px-6 py-3 mx-auto mt-10 text-white bg-emerald-400 hover:bg-emerald-500 rounded-xl">OK</button>
       </div>
     </div>
     <!-- Success Modal End -->

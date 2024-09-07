@@ -45,7 +45,7 @@
         </button>
         <button
           @click="closeModal"
-          class="px-4 py-2 text-sm font-medium text-center text-gray-100 bg-gray-400 border-4 border-transparent rounded-xl hover:bg-gray-500 sm:px-6 sm:py-3 sm:text-base"
+          class="px-4 py-4 text-sm font-medium text-center text-black bg-transparent border-2 border-gray-600 rounded-xl hover:bg-gray-200 sm:px-6 sm:py-3 sm:text-base"
         >
           No
         </button>
