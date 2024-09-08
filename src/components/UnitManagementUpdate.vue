@@ -33,7 +33,7 @@
     <div class="h-full mt-1">
       <div class="flex justify-around mb-4 space-x-4">
         <div class="flex flex-col items-center w-full p-4 text-center rounded-lg">
-          <img :src="imgUrl" alt="Last month" style="width: 100px; height: 100px;" @click="openImageModal(imgUrl)">
+          <img :src="prevImgUrl" alt="Last month" style="width: 100px; height: 100px;" @click="openImageModal(prevImgUrl)">
           <label for="prevNumberOfUnits" class="block mt-2 text-sm font-medium text-gray-700">Last month</label>
           <div class="flex items-center mt-1">
             <input v-model="prevNumberOfUnits" type="number" id="prevNumberOfUnits" class="block px-3 py-2 border border-gray-300 rounded-md shadow-sm w-28 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600 sm:text-sm" />
@@ -163,6 +163,7 @@ const route = useRoute();
 const store = useStore();
 
 const prevNumberOfUnits = ref('');
+const prevImgUrl = ref('');
 const numberOfUnits = ref('');
 const initialPrevNumberOfUnits = ref(''); // To store the initial value
 const initialNumberOfUnits = ref(''); // To store the initial value
@@ -204,6 +205,7 @@ const fetchData = async () => {
       initialApproveStatus.value = approveStatus.value; // Store initial value
       roomNumber.value = response.data.Unit.res_room || roomNumber.value;
       imgUrl.value = response.data.Unit.imgUrl || imgUrl.value;
+      prevImgUrl.value = response.data.Unit.prevImgUrl || prevImgUrl.value;
 
       await fetchResidentInfo(response.data.Unit.res_room);
     } else {
