@@ -47,40 +47,49 @@
   import apiClient from '@/services/AxiosClient.js'; // Use the configured Axios client
   
   const images = ref([]);
+  const allowedExtensions = ['png', 'jpg', 'jpeg'];
+
+  const isAllowedFileType = (filename) => {
+  const extension = filename.split('.').pop().toLowerCase();
+  return allowedExtensions.includes(extension);
+};
+
+
   
   const triggerFileInput = () => {
     document.querySelector('input[type="file"]').click();
   };
   
   const handleFileUpload = (event) => {
-    const files = event.target.files;
-    for (let i = 0; i < files.length; i++) {
-      if (files[i].type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          images.value.push({ url: e.target.result, name: files[i].name, size: files[i].size, file: files[i] });
-        };
-        reader.readAsDataURL(files[i]);
-      } else {
-        alert('Only image files are allowed!');
-      }
+  const files = event.target.files;
+  for (let i = 0; i < files.length; i++) {
+    if (isAllowedFileType(files[i].name)) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        images.value.push({ url: e.target.result, name: files[i].name, size: files[i].size, file: files[i] });
+      };
+      reader.readAsDataURL(files[i]);
+    } else {
+      alert('Only PNG, JPG, JPEG files are allowed!');
     }
-  };
-  
-  const handleDrop = (event) => {
-    const files = event.dataTransfer.files;
-    for (let i = 0; i < files.length; i++) {
-      if (files[i].type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          images.value.push({ url: e.target.result, name: files[i].name, size: files[i].size, file: files[i] });
-        };
-        reader.readAsDataURL(files[i]);
-      } else {
-        alert('Only image files are allowed!');
-      }
+  }
+};
+
+const handleDrop = (event) => {
+  const files = event.dataTransfer.files;
+  for (let i = 0; i < files.length; i++) {
+    if (isAllowedFileType(files[i].name)) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        images.value.push({ url: e.target.result, name: files[i].name, size: files[i].size, file: files[i] });
+      };
+      reader.readAsDataURL(files[i]);
+    } else {
+      alert('Only PNG, JPG, JPEG files are allowed!');
     }
-  };
+  }
+};
+
   
   const formatFileSize = (bytes) => {
     if (bytes === 0) return '0 Bytes';

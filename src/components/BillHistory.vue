@@ -214,7 +214,6 @@ const handleEndDateChange = (date) => {
   endDate.value = date;
   fetchDataByDate();
 };
-
 const fetchDataByDate = async () => {
   if (startDate.value && endDate.value) {
     try {
@@ -255,7 +254,7 @@ const formatDate = (dateString) => {
 };
 
 const viewUnit = (id) => {
-  router.push({ name: 'BillHistoryView', params: { id } });
+  router.push({ name: 'BillHistoryDetail', params: { id } });
 };
 
 const deleteUnit = (id) => {

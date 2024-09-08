@@ -20,8 +20,8 @@ import UnitManagementUpdate from "@/components/UnitManagementUpdate.vue";
 import { checkLoginStatus } from '@/utils/checkLoginStatus';
 import SendBill from '@/components/SendBill.vue';
 import BillHistory from '@/components/BillHistory.vue';
-import BillHistoryView from '@/components/BillHistoryView.vue';
 import UploadImage from '@/components/UploadImage.vue';
+import BillHistoryDetail from '@/components/BillHistoryDetail.vue';
 
 
 
@@ -130,7 +130,6 @@ const router = createRouter({
           })
         },
         
-        
         {
           path: '/bill-history',
           name: 'BillHistory',
@@ -138,9 +137,9 @@ const router = createRouter({
           meta: { requiresAuth: true },
         },
         {
-          path: "/bill-history-view/:id",
-          name: "BillHistoryView",
-          component: BillHistoryView,
+          path: '/bill-history/:id',
+          name: 'BillHistoryDetail',
+          component: BillHistoryDetail,
           meta: { requiresAuth: true },
         },
         {
