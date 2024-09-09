@@ -61,9 +61,9 @@
         <div class="mt-16">
           <button
             type="submit"
-            class="px-3 py-3 text-white rounded-md w-ful tex2t-center lg:text-lg bg-primary focus:outline-none hover:bg-emerald-500"
+            class="w-full px-3 py-3 text-center text-white rounded-md lg:text-lg bg-primary focus:outline-none hover:bg-emerald-500"
             :disabled="isSubmitting"
-          >
+          > 
             {{ isSubmitting ? "Submitting..." : "Login" }}
           </button>
         </div>
