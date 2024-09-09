@@ -314,6 +314,7 @@ const confirmDelete = async () => {
     if (response.status === 200) {
       await fetchData();
       showDeleteConfirm.value = false;
+      window.location.reload(); // Refresh the page
     } else {
       throw new Error('Failed to delete unit');
     }
@@ -453,7 +454,7 @@ const sendUnits = async () => {
       const prevNumberOfUnits = Number(unit.prevNumberOfUnits);
       const costPerUnit = store.getters.getCostPerUnit;
       const waterCost = store.getters.getWaterCost;
-      const rentCost = getRentCostForUnit(unit.id);
+      const rentCost = store.getters.getRentCost;
 
       if (isNaN(numberOfUnits) || isNaN(prevNumberOfUnits) || isNaN(costPerUnit) || isNaN(waterCost) || isNaN(rentCost)) {
         console.error('Unit data is missing required properties or contains invalid values:', unit);
@@ -463,13 +464,16 @@ const sendUnits = async () => {
 
       // Calculate totalUnit and totalBill
       const totalUnit = numberOfUnits - prevNumberOfUnits;
-      const totalBill = totalUnit * costPerUnit + waterCost + rentCost;
+      const totalBill = (totalUnit * costPerUnit) + waterCost + rentCost;
 
       // Add unit to bill
       const billData = {
         date_created: new Date().toISOString().split('T')[0],
         unit_id: unit.id,
-        amount: totalBill
+        amount: totalBill,
+        rent_cost: rentCost,
+        water_cost: waterCost,
+        cost_per_unit: costPerUnit
       };
       console.log('Sending bill data:', billData);
       await apiClient.post(`/bill/add/${unit.id}`, billData);
@@ -478,7 +482,7 @@ const sendUnits = async () => {
     selectAll.value = false;
 
     const totalUnit = selectedUnits.reduce((total, unit) => total + (Number(unit.numberOfUnits) - Number(unit.prevNumberOfUnits)), 0);
-    const totalBill = selectedUnits.reduce((total, unit) => total + ((Number(unit.numberOfUnits) - Number(unit.prevNumberOfUnits)) * store.getters.getCostPerUnit + store.getters.getWaterCost + getRentCostForUnit(unit.id)), 0);
+    const totalBill = selectedUnits.reduce((total, unit) => total + ((Number(unit.numberOfUnits) - Number(unit.prevNumberOfUnits)) * store.getters.getCostPerUnit + store.getters.getWaterCost + store.getters.getRentCost), 0);
 
     router.push({
       name: 'SendBill',
@@ -495,20 +499,10 @@ const sendUnits = async () => {
   }
 };
 
-
-
-
-
-// Helper functions to manage rent cost locally
-function getRentCostForUnit(unitId) {
-  const rentCost = localStorage.getItem(`rentCost_${unitId}`);
-  return rentCost ? parseFloat(rentCost) : 3500; // default rent cost
-}
-
-
 onMounted(() => {
   fetchData();
 });
+
 </script>
 
 

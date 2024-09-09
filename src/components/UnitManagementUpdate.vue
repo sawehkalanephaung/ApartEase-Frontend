@@ -81,7 +81,7 @@
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Unit Calculation</td>
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-                <input v-model="costPerUnit" @change="updateCostPerUnit" type="number" class="w-32 px-3 py-2 mb-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600" /> baht/unit
+                <input v-model="costPerUnit" @change="updateCostPerUnit" type="number" class="w-32 px-3 py-2 mb-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600" readonly /> baht/unit
                 <p>{{ totalUnit }} * {{ costPerUnit }} = {{ unitCalculation }} baht</p>
               </td>
             </tr>
@@ -168,9 +168,9 @@ const numberOfUnits = ref('');
 const initialPrevNumberOfUnits = ref(''); // To store the initial value
 const initialNumberOfUnits = ref(''); // To store the initial value
 const waterCostInput = ref(store.getters.getWaterCost);
-const rentCostInput = ref(getRentCostForUnit(route.params.id));
+const rentCostInput = ref(store.getters.getRentCost);
 const initialWaterCost = ref(store.getters.getWaterCost); // Store initial value
-const initialRentCost = ref(getRentCostForUnit(route.params.id)); // Store initial value
+const initialRentCost = ref(store.getters.getRentCost); // Store initial value
 const approveStatus = ref('disapprove'); // Default to 'disapprove'
 const initialApproveStatus = ref('disapprove'); // Store initial value
 const roomNumber = ref('');
@@ -274,11 +274,12 @@ const submit = async () => {
     console.debug('Updated unit data:', updatedUnitData);
 
     // Update unit data
-    await apiClient.post(`/unit/add`, updatedUnitData);
+    await apiClient.put(`/unit/edit/${route.params.id}`, updatedUnitData);
 
     // Update frontend-only fields
     store.dispatch('updateWaterCost', waterCostInput.value);
-    setRentCostForUnit(route.params.id, rentCostInput.value);
+    store.dispatch('updateRentCost', rentCostInput.value);
+
 
     // Show success alert
     showSuccessAlert.value = true;
@@ -320,16 +321,16 @@ const updateWaterCost = () => {
 };
 
 const updateRentCost = () => {
-  setRentCostForUnit(route.params.id, rentCostInput.value);
+  store.dispatch('updateRentCost', rentCostInput.value);
 };
 
 // Helper functions to manage rent cost locally
-function getRentCostForUnit(unitId) {
-  const rentCost = localStorage.getItem(`rentCost_${unitId}`);
-  return rentCost ? parseFloat(rentCost) : 3500; // default rent cost
-}
+// function getRentCostForUnit(unitId) {
+//   const rentCost = localStorage.getItem(`rentCost_${unitId}`);
+//   return rentCost ? parseFloat(rentCost) : 3500; // default rent cost
+// }
 
-function setRentCostForUnit(unitId, rentCost) {
-  localStorage.setItem(`rentCost_${unitId}`, rentCost);
-}
+// function setRentCostForUnit(unitId, rentCost) {
+//   localStorage.setItem(`rentCost_${unitId}`, rentCost);
+// }
 </script>

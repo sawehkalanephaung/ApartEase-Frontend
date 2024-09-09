@@ -134,6 +134,9 @@ const showDeleteConfirm = ref(false); // State for showing delete confirmation m
 const unitToDelete = ref(null); // State for the unit to be deleted
 const showImageModal = ref(false); // State for showing image modal
 const currentImage = ref(''); // State for the current image URL
+const waterCostInput = ref(store.getters.getWaterCost);
+const rentCostInput = ref(store.getters.getRentCost);
+const costPerUnit = ref(store.getters.getCostPerUnit);
 
 const fetchData = async () => {
   try {
@@ -196,14 +199,22 @@ const sendBills = async () => {
   try {
     if (selectedUnits.length === unitList.value.length) {
       console.log('Sending all bills...');
-      await apiClient.post('/bill/send_all');
+      await apiClient.post('/bill/send_all', {
+        rent_cost: rentCostInput.value,
+        water_cost: waterCostInput.value,
+        cost_per_unit: costPerUnit.value,
+      });
       await apiClient.delete('/bill/del_all');
     } else {
       for (const unit of selectedUnits) {
         console.log(`Sending bill for unit ID: ${unit.id}`);
 
         try {
-          const response = await apiClient.post(`/bill/send/${unit.id}`);
+          const response = await apiClient.post(`/bill/send/${unit.id}`, {
+            rent_cost: rentCostInput.value,
+            water_cost: waterCostInput.value,
+            cost_per_unit: costPerUnit.value,
+          });
 
           const billId = response.data.bill_id; // Ensure the response contains the bill_id
           if (!billId) {
@@ -214,17 +225,16 @@ const sendBills = async () => {
           const billHistoryPayload = {
             unit_id: unit.id,
             amount: unit.amount,
-            date_sent: new Date().toISOString()
+            date_sent: new Date().toISOString(),
+            rent_cost: rentCostInput.value,
+            water_cost: waterCostInput.value,
+            cost_per_unit: costPerUnit.value
           };
 
           // Validate the payload
           if (!billHistoryPayload.amount || !billHistoryPayload.date_sent) {
             throw new Error('Invalid payload for bill history');
           }
-
-          // Add the bill record to bill history
-          console.log(`Adding bill history for bill ID: ${billId}`);
-          await apiClient.post('/bill/history/add', billHistoryPayload);
 
           // Delete the bill record
           console.log(`Deleting bill for unit ID: ${unit.id}`);

@@ -68,11 +68,14 @@ const currentNumberOfUnits = ref(0);
 const residentName = ref('');
 const residentEmail = ref('');
 const totalBills = ref(0);
+const waterCost = ref(0);
+const rentCost = ref(0);
+const costPerUnit = ref(0);
 
-const costPerUnit = computed(() => store.getters.getCostPerUnit);
-const waterCost = computed(() => store.getters.getWaterCost);
-const rentCost = computed(() => store.getters.getRentCost);
-const totalUsage = computed(() => previousNumberOfUnits.value - currentNumberOfUnits.value);
+// const costPerUnit = computed(() => store.getters.getCostPerUnit);
+// const waterCost = computed(() => store.getters.getWaterCost);
+// const rentCost = computed(() => store.getters.getRentCost);
+const totalUsage = computed(() => currentNumberOfUnits.value - previousNumberOfUnits.value);
 
 const fetchData = async () => {
 try {
@@ -84,6 +87,9 @@ try {
   residentName.value = unitData.residentName || '';
   residentEmail.value = unitData.residentEmail || '';
   totalBills.value = unitData.amount || 0;
+  waterCost.value = unitData.water_cost || 0;
+  rentCost.value = unitData.rent_cost || 0;
+  costPerUnit.value = unitData.cost_per_unit || 0;
 } catch (error) {
   console.error('Error fetching unit data:', error);
 }

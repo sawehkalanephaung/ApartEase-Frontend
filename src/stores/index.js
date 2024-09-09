@@ -6,6 +6,7 @@ const userFromLocalStorage = JSON.parse(localStorage.getItem('user'));
 const tokenFromLocalStorage = localStorage.getItem('token');
 const costPerUnitFromLocalStorage = localStorage.getItem('costPerUnit');
 const waterCostFromLocalStorage = localStorage.getItem('waterCost');
+const rentCostFromLocalStorage = localStorage.getItem('rentCost');
 
 export default createStore({
   state: {
@@ -14,6 +15,7 @@ export default createStore({
     role: userFromLocalStorage?.role || 'user', // default
     costPerUnit: costPerUnitFromLocalStorage ? parseFloat(costPerUnitFromLocalStorage) : 3, // default cost per unit
     totalUnitUsage: 0,
+    rentCost: rentCostFromLocalStorage ? parseFloat(rentCostFromLocalStorage) : 1000,
     waterCost: waterCostFromLocalStorage ? parseFloat(waterCostFromLocalStorage) : 100, // default water cost
     totalBill: 0,
   },
@@ -39,6 +41,10 @@ export default createStore({
       state.waterCost = cost;
       localStorage.setItem('waterCost', cost); // Save to localStorage
     },
+    setRentCost(state, cost) {
+      state.rentCost = cost;
+      localStorage.setItem('rentCost', cost); // Save to localStorage
+    },
     setTotalBill(state, bill) {
       state.totalBill = bill;
     },
@@ -56,6 +62,9 @@ export default createStore({
     updateWaterCost({ commit }, cost) {
       commit('setWaterCost', cost);
     },
+    updateRentCost({ commit }, cost) {
+      commit('setRentCost', cost);
+    },
     async fetchUnitData({ commit }) {
       try {
         const response = await apiClient.get('/unit/data');
@@ -63,6 +72,7 @@ export default createStore({
         commit('setCostPerUnit', data.costPerUnit);
         commit('setTotalUnitUsage', data.totalUnitUsage);
         commit('setWaterCost', data.waterCost);
+        commit('setRentCost', data.rentCost);
         commit('setTotalBill', data.totalBill);
       } catch (error) {
         console.error('Error fetching unit data:', error);
@@ -76,6 +86,7 @@ export default createStore({
     getCostPerUnit: (state) => state.costPerUnit,
     getTotalUnitUsage: (state) => state.totalUnitUsage,
     getWaterCost: (state) => state.waterCost,
+    getRentCost: (state) => state.rentCost,
     getTotalBill: (state) => state.totalBill,
   },
 });
