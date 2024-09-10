@@ -137,8 +137,8 @@
     <button @click="cancel" class="w-20 px-3 py-2 font-bold bg-white border-2 rounded-md text-slate-700 border-slate-700 hover:bg-slate-700 hover:text-white">Cancel</button>
   </div>
   <!-- Image Modal -->
-  <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal(imgUrl)">
-    <div class="relative max-w-full max-h-full p-4 bg-white rounded-lg shadow-lg" @click.stop>
+  <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal(u.imgUrl)">
+    <div class="relative w-full max-w-[700px] max-h-[700px] p-4 bg-white rounded-lg shadow-lg" @click.stop>
       <button @click="closeImageModal" class="absolute text-gray-700 top-2 right-2 hover:text-gray-900">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

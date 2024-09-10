@@ -104,29 +104,38 @@ const handleDrop = (event) => {
   };
   
   const uploadImages = async () => {
-    const formData = new FormData();
-    images.value.forEach((image) => {
-      formData.append('files[]', image.file);
+  console.log("Sending Images.");
+  const formData = new FormData();
+  images.value.forEach((image) => {
+    formData.append('files[]', image.file);
+  });
+
+  try {
+    const response = await apiClient.post('/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      validateStatus: (status) => {
+        // Consider all HTTP status codes as valid responses
+        return status >= 200 && status < 500; 
+      },
     });
-  
-    try {
-      const response = await apiClient.post('/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-  
-      if (response.status === 200) {
-        alert('Images uploaded successfully!');
-        console.log('Uploaded file URLs:', response.data.uploaded_file_urls);
-      } else {
-        alert('Failed to upload images.');
-      }
-    } catch (error) {
-      console.error('Error uploading images:', error);
-      alert('An error occurred while uploading images.');
+
+    if (response.status === 200) {
+      alert('Images uploaded successfully!');
+      console.log('Uploaded file URLs:', response.data.uploaded_file_urls);
+    } else if (response.status === 409 && response.data.message) {
+      const { error, list } = response.data.message;
+      alert(`${error}\nHere is the list of names:\n• ${list.join("\n• ")}`);
+    } else {
+      alert('Failed to upload images.');
     }
-  };
+  } catch (error) {
+    console.error('Error uploading images:', error);
+    alert('An error occurred while uploading images.');
+  }
+};
+
   </script>
   
   <style scoped>

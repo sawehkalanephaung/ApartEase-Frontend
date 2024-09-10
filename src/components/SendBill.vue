@@ -152,7 +152,7 @@ const fetchData = async () => {
       const pageData = data[data.length - 1];
       totalPages.value = pageData.total_pages;
       currentPage.value = pageData.page;
-      totalItems.value = pageData.total_records;
+      totalItems.value = pageData.total_records ? pageData.total_records : pageData.total_bills;
       unitList.value = data.slice(0, -1).map(bill => ({
         ...bill,
         selected: false,
@@ -160,7 +160,7 @@ const fetchData = async () => {
         unitImage: bill.unitImage || 'https://via.placeholder.com/600' // Add unitImage property
       }));
        // Add debug lines here
-       console.log('start:', start.value);
+      console.log('start:', start.value);
       console.log('end:', end.value);
       console.log('totalItems:', totalItems.value);
     } else {
