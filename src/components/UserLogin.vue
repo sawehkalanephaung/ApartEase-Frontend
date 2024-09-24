@@ -70,9 +70,10 @@
       </Form>
       <p v-if="message" class="mt-5 text-error">{{ message }}</p>
     </div>
+    
     <!-- Success Modal start -->
-    <div v-if="showSuccessModal" class="fixed inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75">
-      <div class="px-16 rounded-lg bg-gray-50 py-14">
+    <div v-if="showSuccessModal" class="fixed inset-0 flex items-center justify-center bg-gray-400 bg-opacity-75">
+      <div class="w-1/3 px-16 bg-gray-100 rounded-lg py-14">
         <div class="flex justify-center">
           <div class="p-6 bg-green-200 rounded-full">
             <div class="flex items-center justify-center w-16 h-16 p-4 bg-green-500 rounded-full">
@@ -82,8 +83,9 @@
             </div>
           </div>
         </div>
-        <h3 class="my-4 text-3xl font-semibold text-center text-gray-700">Login Successfully!</h3>
-        <button @click="redirectToHome" class="block px-6 py-3 mx-auto mt-10 text-white w-28 bg-emerald-400 hover:bg-emerald-500 rounded-xl">OK</button>
+        <h3 class="my-4 text-3xl font-semibold text-center text-gray-700">Success</h3>
+        <p class="text-center text-gray-700">You have successfully logged in.</p>
+        <button @click="redirectToHome" class="flex items-center justify-center w-full px-6 py-3 mx-auto mt-20 text-lg text-center text-white bg-emerald-400 hover:bg-emerald-500 rounded-xl">Continuous</button>
       </div>
     </div>
     <!-- Success Modal End -->
