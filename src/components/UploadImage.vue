@@ -34,7 +34,10 @@
   <hr class="w-full mb-8 border-t border-gray-300">
   <div class="relative bottom-0 flex justify-between w-full">
     <span class="text-gray-700 text-medium">Total Images: {{ images.length }}</span>
-    <button @click="uploadImages" class="px-4 py-2 text-white rounded bg-emerald-500 hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+    <button @click="uploadImages" class="flex items-center px-4 py-2 text-white rounded-2xl bg-emerald-500 hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+      </svg>
       Upload
     </button>
   </div>

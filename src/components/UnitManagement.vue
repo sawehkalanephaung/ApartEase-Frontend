@@ -1,21 +1,14 @@
 <template>
   <div class="flex flex-col">
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center">
-      <h3 class="ml-0 text-2xl font-medium text-gray-700">Unit Management</h3>
+    <div class="flex flex-col sm:items-end sm:flex-row sm:justify-between">
+      <h3 class="text-2xl font-medium text-gray-700">Unit Management</h3>
       <div class="flex items-center space-x-4">
-        <div class="flex items-center">
-          <label for="costPerUnit" class="mr-2">Cost Per Unit:</label>
-          <input
-            id="costPerUnit"
-            v-model="costPerUnit"
-            type="number"
-            class="w-20 px-2 py-1 border border-gray-300 rounded-md"
-            @change="updateCostPerUnit"
-          />
-        </div>
         <popper hover placement="top">
-        <button @click="sendUnits" class="w-32 px-4 py-2 ml-4 mr-4 text-white rounded bg-primary hover:bg-emerald-700">
-            Send
+        <button @click="sendUnits" class="flex items-center w-full px-4 py-2 mt-4 mr-4 text-white rounded-2xl sm:w-auto bg-primary hover:bg-emerald-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
+            </svg>
+            Move
         </button>
         <template #content>
       <div>Send units</div>
@@ -23,6 +16,8 @@
       </popper>
       </div>
     </div>
+    </div>
+    
     <div class="mt-6 space-y-4 sm:space-y-0 sm:flex sm:items-center sm:space-x-4">
         <!-- Search Bar -->
         <div class="relative flex-grow sm:flex-grow-0 sm:w-64">
@@ -35,7 +30,7 @@
           type="text"
           v-model="searchQuery"
           placeholder="Search by Room Number..."
-          class="w-full px-4 py-2 pl-8 pr-10 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          class="w-full px-4 py-2 pl-8 pr-10 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary"
           @keyup.enter="searchUnit"
         />
         <div v-if="searchQuery" class="absolute inset-y-0 right-0 flex items-center pr-3">
@@ -48,7 +43,7 @@
       </div>
       <!--filter by status-->
       <div class="relative flex-grow w-32 sm:flex-grow-0">
-        <select id="statusFilter" v-model="statusFilter" @change="filterUnits" class="w-full px-4 py-2 mr-1 text-sm border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-primary">
+        <select id="statusFilter" v-model="statusFilter" @change="filterUnits" class="w-full px-4 py-2 mr-1 text-sm border border-gray-300 appearance-none rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary">
           <option value="all">All</option>
           <option value="approved">Approved</option>
           <option value="disapproved">Disapproved</option>
@@ -59,10 +54,18 @@
           </svg>
         </div>
       </div>
-      <!-- Add the button for sending units -->
       <div class="flex items-center space-x-2">
       </div>
-    </div>
+      <div class="flex items-center ml-auto">
+          <label for="costPerUnit" class="mr-1">Cost Per Unit:</label>
+          <input
+            id="costPerUnit"
+            v-model="costPerUnit"
+            type="number"
+            class="items-end w-20 px-4 py-2 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary"
+            @change="updateCostPerUnit"
+          />
+        </div>
   </div>
   <div class="mt-4 overflow-x-auto ">
     <div class="group">

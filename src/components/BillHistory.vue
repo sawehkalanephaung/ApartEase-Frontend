@@ -70,7 +70,7 @@
             <td class="px-2 py-5 text-sm bg-white border-b border-gray-200">{{ record.amount }}</td>
             <td class="hidden px-2 py-5 text-sm bg-white border-b border-gray-200 md:table-cell" >{{ formatDate(record.date_sent) }}</td>
             <td class="px-2 py-5 text-sm bg-white border-b border-gray-200">
-              <div class="flex justify-left space-x-4">
+              <div class="flex space-x-4 justify-left">
                 <Popper hover placement="left">
                   <button @click="viewUnit(record.id)" class="mr-2 text-emerald-600 hover:text-emerald-900">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">

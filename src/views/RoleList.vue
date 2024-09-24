@@ -1,44 +1,45 @@
 <template>
-  <h3 class="text-3xl font-medium text-gray-700">Role Management</h3>
-  <div class="mt-8">
-    <h2 class="text-xl font-semibold leading-tight text-gray-700">Role List</h2>
-    <div class="mt-6 flex justify-between items-center">
-      <div class="relative w-full max-w-md"></div>
-      <button
-        @click="onCreate"
-        class="ml-3 bg-primary hover:bg-emerald-400 text-white px-4 py-2 rounded"
-      >
-        <router-link to="/create-role" class="flex items-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="h-6 w-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 4.5v15m7.5-7.5h-15"
-            />
-          </svg>
-          <span class="flex-initial w-32 ">Create Role</span>
-        </router-link>
-      </button>
-    </div>
+
+<div class="flex flex-col items-start justify-between mb-10 sm:flex-row">
+  <h3 class="text-2xl font-medium text-gray-700">Role List</h3>
+
+  <div class="mt-6 sm:mt-0">
+    <button
+      @click="onCreate"
+        class="w-full px-4 py-2 text-white rounded-2xl sm:w-auto bg-primary hover:bg-emerald-600"
+    >
+      <span class="flex items-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-6 h-6 mr-2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 4.5v15m7.5-7.5h-15"
+          />
+        </svg>
+        <span class="flex-initial">Add New</span>
+      </span>
+    </button>
+  </div>
+</div>
 
     <div class="mt-4 overflow-x-auto">
       <table class="min-w-full leading-normal">
         <thead>
           <tr>
             <th
-              class=" px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider pl-10"
+              class="px-5 py-3 pl-10 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200 "
             >
               Role Name
             </th>
             <th
-              class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider"
+              class="px-5 py-3 text-xs font-semibold tracking-wider text-center text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200"
             >
               Action
             </th>
@@ -48,25 +49,25 @@
           <tr v-if="!roles || roles.length === 0">
             <td
               colspan="2"
-              class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center "
+              class="px-5 py-5 text-sm text-center bg-white border-b border-gray-200 "
             >
               No roles found.
             </td>
           </tr>
           <tr v-else v-for="(role, index) in roles" :key="index">
-            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm pl-10">
+            <td class="px-5 py-5 pl-10 text-sm bg-white border-b border-gray-200">
               {{ role.role_name }}
             </td>
             <td
-              class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center flex-row"
+              class="flex-row px-5 py-5 text-sm text-center bg-white border-b border-gray-200"
             >
               <button
                 @click="() => onEdit(role.id)"
-                class="text-emerald-600 hover:text-emerald-900 mr-1 pr-2"
+                class="pr-2 mr-1 text-emerald-600 hover:text-emerald-900"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
+                  class="w-4 h-4"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -82,11 +83,11 @@
               </button>
               <button
                 @click="() => onDelete(role.id, role.role_name)"
-                class="text-red-500 hover:text-red-700 ml-4"
+                class="ml-4 text-red-500 hover:text-red-700"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
+                  class="w-4 h-4"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -103,10 +104,10 @@
       </table>
      
  <!-- Pagination controls -->
- <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-    <div class="flex flex-1 justify-between sm:hidden">
-      <a @click="prevPage" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">Previous</a>
-      <a @click="nextPage" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer">Next</a>
+ <div class="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
+    <div class="flex justify-between flex-1 sm:hidden">
+      <a @click="prevPage" class="relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Previous</a>
+      <a @click="nextPage" class="relative inline-flex items-center px-4 py-2 ml-3 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">Next</a>
     </div>
     <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
       <div>
@@ -115,18 +116,17 @@
         </p>
       </div>
       <div>
-        <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-          <a @click="prevPage" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer">
-            <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
+        <nav class="inline-flex -space-x-px rounded-md shadow-sm isolate" aria-label="Pagination">
+          <a @click="prevPage" class="relative inline-flex items-center px-2 py-2 text-gray-400 cursor-pointer rounded-l-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+            <ChevronLeftIcon class="w-5 h-5" aria-hidden="true" />
           </a>
-          <span v-for="page in totalPages" :key="page" @click="goToPage(page)" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer" :class="{ 'bg-emerald-600 text-white': page === currentPage }">{{ page }}</span>
-          <a @click="nextPage" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 cursor-pointer">
-            <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
+          <span v-for="page in totalPages" :key="page" @click="goToPage(page)" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 cursor-pointer ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0" :class="{ 'bg-emerald-600 text-white': page === currentPage }">{{ page }}</span>
+          <a @click="nextPage" class="relative inline-flex items-center px-2 py-2 text-gray-400 cursor-pointer rounded-r-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+            <ChevronRightIcon class="w-5 h-5" aria-hidden="true" />
           </a>
         </nav>
       </div>
     </div>
-  </div>
   </div>
   </div>
    <!-- Delete Confirmation Modal -->
@@ -135,23 +135,47 @@
     @confirm-delete="confirmDelete"
     @close="showDeleteConfirm = false"
   />
+
+  <!-- Create Role Modal -->
+  
+  <RoleCreateModal
+  :show="showCreateModal"
+  @close="closeCreateModal"
+/>
+
+  
+  <!-- Update Role Modal -->
+  <RoleEditModal
+    :show="showEditModal"
+    :roleId="selectedRoleId"
+    @close="closeEditModal"
+  />
+  
   <router-view />
 </template>
 <script setup>
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid';
 import { ref, computed, onMounted, watchEffect  } from 'vue';
 import { useRouter } from 'vue-router';
+import RoleEditModal from '@/components/RoleEditModal.vue';
 
 import apiClient from '@/services/AxiosClient.js';
 import { usePagination } from '@/composables/usePagination';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
 import store from '@/stores/index'; // Import the store
+import RoleCreateModal from '@/components/RoleCreateModal.vue';
+
 
 const router = useRouter();
 const roles = ref([]); // Reactive variable to store role data
 const showDeleteConfirm = ref(false);
 const roleToDelete = ref(null);
 const currentUserRole = store.state.role; // Get the current user's role
+const showCreateModal = ref(false);
+
+
+const showEditModal = ref(false);
+const selectedRoleId = ref(null);
 
 // Fetch role list from the backend API on component mount
 const fetchData = async () => {
@@ -178,13 +202,35 @@ onMounted(() => {
   fetchData();
 });
 
+// const onCreate = () => {
+//   router.push('/create-role');
+// };
+
 const onCreate = () => {
-  router.push('/create-role');
+  showCreateModal.value = true;
 };
 
-const onEdit = (roleId) => {
-  router.push({ name: 'RoleEditView', params: { id: roleId } });
+const closeCreateModal = () => {
+  showCreateModal.value = false;
+  fetchData(); // Refresh the data after creating
 };
+
+
+// const onEdit = (roleId) => {
+//   router.push({ name: 'RoleEditView', params: { id: roleId } });
+// };
+
+
+const onEdit = (roleId) => {
+  selectedRoleId.value = roleId;
+  showEditModal.value = true;
+};
+
+const closeEditModal = () => {
+  showEditModal.value = false;
+  fetchData();
+};
+
 
 const onDelete = (roleId, roleName) => {
   if (roleName === currentUserRole) {

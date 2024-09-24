@@ -1,6 +1,6 @@
 <template>
   <h2 class="mt-0 mb-2 text-xl font-bold">Update Unit</h2>
-  <div class="max-w-sm min-w-full bg-gray-100 rounded-lg drop-shadow-md dark:border-gray-700">
+  <div class="max-w-sm min-w-full ">
       <!-- Success Alert -->
       <div v-if="showSuccessAlert" class="space-y-5">
       <div class="p-4 bg-white border-t-2 rounded-lg border-primary dark:bg-white" role="alert" tabindex="-1" aria-labelledby="hs-bordered-success-style-label">
@@ -32,19 +32,19 @@
     </div>
     <div class="h-full mt-1">
       <div class="flex justify-around mb-4 space-x-4">
-        <div class="flex flex-col items-center w-full p-4 text-center rounded-lg">
+        <div class="flex flex-col items-center w-full p-4 text-center rounded-2xl">
           <img :src="prevImgUrl" alt="Last month" style="width: 100px; height: 100px;" @click="openImageModal(prevImgUrl)">
           <label for="prevNumberOfUnits" class="block mt-2 text-sm font-medium text-gray-700">Last month</label>
           <div class="flex items-center mt-1">
-            <input v-model="prevNumberOfUnits" type="number" id="prevNumberOfUnits" class="block px-3 py-2 border border-gray-300 rounded-md shadow-sm w-28 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600 sm:text-sm" />
+            <input v-model="prevNumberOfUnits" type="number" id="prevNumberOfUnits" class="block px-3 py-2 border border-gray-300 shadow-sm rounded-2xl w-28 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600 sm:text-sm" />
             <span class="ml-2">kw</span>
           </div>
         </div>
-        <div class="flex flex-col items-center w-full p-4 text-center rounded-lg">
+        <div class="flex flex-col items-center w-full p-4 text-center rounded-2xl">
           <img :src="imgUrl" alt="This month" style="width: 100px; height: 100px;" @click="openImageModal(imgUrl)">
           <label for="numberOfUnits" class="block mt-2 text-sm font-medium text-gray-700">This month</label>
           <div class="flex items-center mt-1">
-            <input v-model="numberOfUnits" type="number" id="numberOfUnits" class="block px-3 py-2 border border-gray-300 rounded-md shadow-sm w-28 focus:outline-none sm:text-sm focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600" />
+            <input v-model="numberOfUnits" type="number" id="numberOfUnits" class="block px-3 py-2 border border-gray-300 shadow-sm rounded-2xl w-28 focus:outline-none sm:text-sm focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600" />
             <span class="ml-2">kw</span>
           </div>
         </div>
@@ -81,20 +81,20 @@
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Unit Calculation</td>
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-                <input v-model="costPerUnit" @change="updateCostPerUnit" type="number" class="w-32 px-3 py-2 mb-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600" readonly /> baht/unit
+                <input v-model="costPerUnit" @change="updateCostPerUnit" type="number" class="w-32 px-3 py-2 mb-1 border border-gray-300 rounded-2xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600" disabled /> baht/unit
                 <p>{{ totalUnit }} * {{ costPerUnit }} = {{ unitCalculation }} baht</p>
               </td>
             </tr>
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Water cost</td>
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-                <input v-model="waterCostInput" @change="updateWaterCost" type="number" class="w-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600" /> baht
+                <input v-model="waterCostInput" @change="updateWaterCost" type="number" class="w-32 px-3 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600" /> baht
               </td>
             </tr>
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Rent cost</td>
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-                <input v-model="rentCostInput" @change="updateRentCost" type="number" class="w-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600" /> baht
+                <input v-model="rentCostInput" @change="updateRentCost" type="number" class="w-32 px-3 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600" /> baht
               </td>
             </tr>
             <tr class="text-sm">
@@ -104,7 +104,7 @@
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Status</td>
               <td class="px-6 py-2 font-bold text-gray-500 whitespace-nowrap ">
-                <select v-model="approveStatus" class="px-3 py-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600">
+                <select v-model="approveStatus" class="px-3 py-2 mb-4 border border-gray-300 w-38 rounded-2xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600">
                   <option value="approve">Approve</option>
                   <option value="disapprove">Disapprove</option>
                 </select>
@@ -133,8 +133,8 @@
     </div>
   </div>
   <div class="absolute flex justify-end p-4 mb-1 mr-4 space-x-2 bottom-2 right-4">
-    <button @click="submit" class="w-20 px-4 py-2 text-white rounded-md bg-primary hover:bg-emerald-600">Save</button>
-    <button @click="cancel" class="w-20 px-3 py-2 font-bold bg-white border-2 rounded-md text-slate-700 border-slate-700 hover:bg-slate-700 hover:text-white">Cancel</button>
+    <button @click="submit" class="w-20 px-4 py-2 text-white rounded-2xl bg-primary hover:bg-emerald-600">Save</button>
+    <button @click="cancel" class="w-20 px-3 py-2 font-bold bg-white border-2 rounded-2xl text-slate-700 border-slate-700 hover:bg-slate-700 hover:text-white">Cancel</button>
   </div>
   <!-- Image Modal -->
   <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal(u.imgUrl)">

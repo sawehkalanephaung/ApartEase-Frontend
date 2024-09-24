@@ -1,7 +1,7 @@
 <template>
   <div class="relative">
     <div class="items-start justify-between block sm:flex-row sm:items-center">
-      <button @click="$router.push('/bill-history')" class="h-10 mt-5 mb-20 text-white rounded-md hover:emerald-blue-600 w-28 bg-primary">← Back</button>
+      <button @click="$router.push('/bill-history')" class="h-10 px-4 mt-5 mb-20 text-black transition duration-300 ease-in-out bg-white border-2 border-gray-500 hover:bg-gray-700 hover:text-white rounded-2xl w-28 focus:ring-gray-500 focus:ring-opacity-50">← Back</button>
       <h3 class="mb-4 text-2xl font-medium text-gray-700 sm:mb-0">Bill History Detail</h3>
     </div>
     <div class="mt-4 overflow-auto max-h-[700px] custom-scrollbar">

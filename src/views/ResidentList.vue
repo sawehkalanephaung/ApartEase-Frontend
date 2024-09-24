@@ -1,6 +1,38 @@
 <template>
-  <h3 class="mb-10 text-2xl font-medium text-gray-700">Resident Management</h3>
-  <div class="mt-4">
+  <div class="flex flex-col items-start justify-between mb-10 sm:flex-row">
+    <h3 class="mb-4 text-2xl font-medium text-gray-700 sm:mb-0">Resident Management</h3>
+
+    <Popper hover placement="top">
+      <button
+        @click="onCreate"
+        class="w-full px-4 py-2 text-white rounded-2xl sm:w-auto bg-primary hover:bg-emerald-600"
+      >
+        <span class="flex items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6 mr-2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 4.5v15m7.5-7.5h-15"
+            />
+          </svg>
+          <span>Add New</span>
+        </span>
+      </button>
+
+      <template #content>
+        <div>Create new resident</div>
+      </template>
+    </Popper>
+  </div>
+  
+  <div class="mt-4 sm:mt-2">
     <div class="flex flex-col justify-between mt-4 sm:flex-row items-left">
       <div class="relative flex items-center w-full max-w-md mb-4 sm:mb-0 sm:mr-4">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -12,7 +44,7 @@
           type="text"
           v-model="searchQuery"
           placeholder="Search by Room Number or Name..."
-          class="w-full px-4 py-2 pl-8 pr-10 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+          class="w-full px-4 py-2 pl-8 pr-10 text-sm border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary"
           @keyup.enter="searchResident"
         />
         <div v-if="searchQuery" class="absolute inset-y-0 right-0 flex items-center pr-3">
@@ -23,40 +55,21 @@
           </button>
         </div>
       </div>
-      <div class="flex items-center mb-4 t-4 sm:mt- sm:mb-0 sm:mr-4">
+      <div class="flex items-center mt-4 mb-4 sm:mt-0 sm:mb-0 sm:mr-0">
         <label for="sort" class="mr-2 text-sm font-medium text-gray-700">Sort by:</label>
-        <select id="sort" v-model="sortCriteria" @change="sortResidents" class="px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+        <select id="sort" v-model="sortCriteria" @change="sortResidents" class="px-4 py-2 pr-8 text-sm border border-gray-300 appearance-none rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary">
           <option value="roomNumber">Room Number</option>
           <option value="name">Name</option>
         </select>
+        <div class="relative inline-block">
+          <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+            <svg class="w-4 h-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </div>
+        </div>
       </div>
-    <Popper hover placement="top">
-      <button
-        @click="onCreate"
-        class="px-4 py-2 text-white rounded sm:w-full md:w-auto sm:ml-0 md:ml-3 bg-primary hover:bg-emerald-600"
-      >
-        <router-link to="/resident-create" class="flex items-center sm:flex-row md:flex-row">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="w-6 h-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 4.5v15m7.5-7.5h-15"
-            />
-          </svg>
-          <span class="flex-none w-32">Create</span>
-        </router-link>
-      </button>
-      <template #content>
-        <div>Create new resident</div>
-      </template>
-    </Popper>
+      
     </div>
 
     <div class="mt-4 overflow-x-auto">
@@ -147,6 +160,19 @@
     @confirm-delete="confirmDelete"
     @close="showDeleteConfirm = false"
   />
+  <!-- Resident Create Modal -->
+  <ResidentCreateModal
+    :show="showCreateModal"
+    @close="closeCreateModal"
+  />
+
+<!-- Edit resident Modal -->
+  <ResidentEditModal
+  :show="showEditModal"
+  :residentId="currentResidentId"
+  @close="closeEditModal"
+/>
+
   <router-view />
 </template>
 
@@ -158,6 +184,10 @@ import router from '@/router';
 import { usePagination } from '@/composables/usePagination';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
 import Popper from 'vue3-popper';
+import ResidentEditModal from '@/components/ResidentEditModal.vue';
+import ResidentCreateModal from '@/components/ResidentCreateModal.vue';
+
+
 
 const searchQuery = ref('');
 const residents = ref([]);
@@ -165,6 +195,11 @@ const showDeleteConfirm = ref(false);
 const residentToDelete = ref(null);
 const sortCriteria = ref('roomNumber'); // Default sort criteria
 const sortOrder = ref('asc'); // Default sorting order
+const showEditModal = ref(false);
+const currentResidentId = ref(null);
+const showCreateModal = ref(false);
+
+
 
 // capitelize resident name
 const capitalizeName = (name) => {
@@ -238,13 +273,37 @@ onMounted(() => {
   fetchData();
 });
 
+// const onCreate = () => {
+//   router.push('/resident-create');
+// };
+
 const onCreate = () => {
-  router.push('/resident-create');
+  showCreateModal.value = true;
 };
 
-const onEdit = (id) => {
-  router.push({ name: 'ResidentEditView', params: { id } });
+const closeCreateModal = () => {
+  showCreateModal.value = false;
+  fetchData(); // Refresh the data after creating
 };
+
+
+
+// const onEdit = (id) => {
+//   router.push({ name: 'ResidentEditView', params: { id } });
+// };
+
+const onEdit = (id) => {
+  currentResidentId.value = id;
+  showEditModal.value = true;
+};
+
+const closeEditModal = () => {
+  showEditModal.value = false;
+  currentResidentId.value = null;
+  fetchData(); // Refresh the data after editing
+};
+
+
 
 const onDelete = (id) => {
   residentToDelete.value = id;

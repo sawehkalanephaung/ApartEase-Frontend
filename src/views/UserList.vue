@@ -1,20 +1,18 @@
 <template>
-  <h3 class="text-3xl font-medium text-gray-700">User Management</h3>
-  <div class="mt-4">
-    <div class="flex items-center justify-between mt-4">
-      <div class="relative w-full max-w-md"></div>
+  <div class="flex flex-col items-start justify-between mb-10 sm:flex-row">
+      <h3 class="text-2xl font-medium text-gray-700">User List</h3>
       <button
         @click="onCreate"
-        class="px-4 py-2 ml-3 text-white rounded bg-primary hover:bg-emerald-400"
+        class="w-full px-4 py-2 text-white rounded-2xl sm:w-auto bg-primary hover:bg-emerald-600"
       >
-        <router-link to="/create-user" class="flex items-center">
+        <span class="flex items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             stroke-width="1.5"
             stroke="currentColor"
-            class="w-6 h-6"
+            class="w-6 h-6 mr-2"
           >
             <path
               stroke-linecap="round"
@@ -22,11 +20,16 @@
               d="M12 4.5v15m7.5-7.5h-15"
             />
           </svg>
-          <span class="flex-none w-32">Create User</span>
-        </router-link>
+          <span class="flex-none">Add New</span>
+        </span>
       </button>
     </div>
-
+  
+  <div class="mt-4">
+    <div class="flex items-center justify-between mt-4">
+      <div class="relative w-full max-w-md"></div>
+    </div>
+  </div>
     <div class="mt-4 overflow-x-auto">
       <table class="min-w-full leading-normal">
         <thead>
@@ -137,12 +140,25 @@
         </div>
       </div>
     </div>
-  </div>
   <!-- Delete Confirmation Modal -->
   <DeleteConfirmationModal
     :show="showDeleteConfirm"
     @confirm-delete="confirmDelete"
     @close="showDeleteConfirm = false"
+  />
+
+  <!-- Create Modal -->
+
+  <UserCreateModal
+  :show="showCreateModal"
+  @close="closeCreateModal"
+/>
+
+<!-- Edit Modal -->
+  <UserEditModal
+    :show="showEditModal"
+    :userId="selectedUserId"
+    @close="closeEditModal"
   />
   <router-view />
 </template>
@@ -155,12 +171,19 @@ import apiClient from '@/services/AxiosClient.js';
 import { usePagination } from '@/composables/usePagination';
 import { useStore } from 'vuex';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
+import UserEditModal from '@/components/UserEditModal.vue';
+import UserCreateModal from '@/components/UserCreateModal.vue';
+
 
 const router = useRouter();
 const store = useStore();
 const users = ref([]);
 const showDeleteConfirm = ref(false);
 const userToDelete = ref(null);
+const showEditModal = ref(false);
+const selectedUserId = ref(null);
+const showCreateModal = ref(false);
+
 
 const fetchData = async () => {
   try {
@@ -186,12 +209,34 @@ onMounted(() => {
   fetchData();
 });
 
+// const onCreate = () => {
+//   router.push('/create-user');
+// };
+
 const onCreate = () => {
-  router.push('/create-user');
+  showCreateModal.value = true;
 };
 
-const onEdit = async (userId) => {
-  router.push({ name: 'UserEditView', params: { id: userId } });
+const closeCreateModal = () => {
+  showCreateModal.value = false;
+  fetchData(); // Refresh the data after creating
+};
+
+
+
+// const onEdit = async (userId) => {
+//   router.push({ name: 'UserEditView', params: { id: userId } });
+// };
+
+
+const onEdit = (userId) => {
+  selectedUserId.value = userId;
+  showEditModal.value = true;
+};
+
+const closeEditModal = () => {
+  showEditModal.value = false;
+  fetchData();
 };
 
 const onDelete = (userId) => {
