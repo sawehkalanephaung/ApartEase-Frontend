@@ -133,8 +133,9 @@
     </div>
   </div>
   <div class="flex justify-end space-x-2">
-        <button @click="submit" class="px-4 py-2 text-white rounded-2xl bg-primary hover:bg-emerald-600">Save</button>
-        <button @click="cancel" class="px-3 py-2 font-bold bg-white border-2 rounded-2xl text-slate-700 border-slate-700 hover:bg-slate-700 hover:text-white">Cancel</button>
+        <button @click="cancel" class="px-3 py-2 font-bold bg-white border-2 rounded-2xl text-slate-700 border-slate-700 hover:bg-slate-700 hover:text-white w-28">Cancel</button>
+        <button @click="submit" class="px-4 py-2 text-white rounded-2xl bg-emerald-600 hover:bg-emerald-500 w-28">Save</button>
+
       </div>
   <!-- Image Modal -->
   <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal(u.imgUrl)">

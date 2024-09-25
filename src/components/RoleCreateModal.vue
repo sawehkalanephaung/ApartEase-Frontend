@@ -17,7 +17,7 @@
               type="text"
               id="role_name"
               name="role_name"
-              class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600"
+              class="w-full px-3 py-3 leading-tight text-gray-700 border rounded appearance-none focus:outline-none focus:shadow-outline focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600"
               placeholder="Role Name"
             />
             <ErrorMessage name="role_name" class="mt-1 text-xs italic text-red-500" />
@@ -36,7 +36,7 @@
               type="submit"
               class="w-full px-3 py-2 text-sm font-medium text-center text-white border-2 border-transparent bg-emerald-400 rounded-xl hover:bg-emerald-500 sm:px-6 sm:py-3 sm:text-base"
             >
-              Submit
+              Create
             </button>
           </div>
         </Form>

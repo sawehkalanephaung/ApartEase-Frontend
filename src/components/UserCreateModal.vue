@@ -17,7 +17,7 @@
               type="text"
               id="username"
               name="username"
-              class="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600"
+              class="w-full px-3 py-3 leading-tight text-gray-700 border rounded appearance-none focus:outline-none focus:shadow-outline focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600"
               placeholder="Username"
             />
             <ErrorMessage name="username" class="mt-1 text-xs italic text-red-500" />
@@ -32,7 +32,7 @@
                 :type="passwordVisible ? 'text' : 'password'"
                 id="password"
                 name="password"
-                class="w-full px-3 py-2 pr-10 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600"
+                class="w-full px-3 py-3 pr-10 leading-tight text-gray-700 border rounded appearance-none focus:outline-none focus:shadow-outline focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600"
                 placeholder="Password"
               />
               <button
@@ -60,9 +60,9 @@
               v-model="user.role"
               id="role"
               name="role"
-              class="block w-full px-3 py-2 pr-10 text-gray-900 bg-white border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600 sm:text-sm"
+              class="block w-full px-3 py-3 pr-10 text-gray-900 bg-white border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600 sm:text-sm"
             >
-              <option v-for="role in roles" :key="role.id" :value="role.role_name">
+              <option v-for="role in roles" :key="role.id" :value="role.role_name" class="text-sm">
                 {{ role.role_name }}
               </option>
             </Field>
@@ -82,7 +82,7 @@
               class="w-full px-3 py-2 text-sm font-medium text-center text-white border-2 border-transparent bg-emerald-400 rounded-xl hover:bg-emerald-500 sm:px-6 sm:py-3 sm:text-base"
               :disabled="isSubmitting"
             >
-              {{ isSubmitting ? "Submitting..." : "Submit" }}
+              {{ isSubmitting ? "Creating..." : "Create" }}
             </button>
           </div>
         </Form>

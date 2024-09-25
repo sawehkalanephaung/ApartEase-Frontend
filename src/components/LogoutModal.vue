@@ -38,17 +38,18 @@
       </p>
       <div class="flex justify-center mt-6 space-x-4 sm:mt-8 md:mt-10">
         <button
-          @click="confirmLogout"
-          class="w-full px-3 py-2 text-sm font-medium text-center text-red-100 bg-red-400 border-4 border-transparent rounded-2xl hover:bg-red-500 sm:px-6 sm:py-3 sm:text-base"
-        >
-          Logout
-        </button>
-        <button
           @click="closeModal"
           class="w-full px-3 py-2 text-sm font-medium text-center text-black bg-transparent border-2 border-gray-600 rounded-2xl hover:bg-black hover:text-white sm:px-6 sm:py-3 sm:text-base"
         >
           Cancel
         </button>
+        <button
+          @click="confirmLogout"
+          class="w-full px-3 py-2 text-sm font-medium text-center text-red-100 bg-red-400 border-4 border-transparent rounded-2xl hover:bg-red-500 sm:px-6 sm:py-3 sm:text-base"
+        >
+          Logout
+        </button>
+     
       </div>
     </div>
   </div>

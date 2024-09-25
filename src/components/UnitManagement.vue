@@ -255,12 +255,14 @@ const updateCostPerUnit = async () => {
 };
 
 const fetchData = async () => {
+
   try {
     const response = await apiClient.get('/unit/list', {
       params: {
         page: currentPage.value === 'all' ? 'all' : currentPage.value,
       },
     });
+    console.log('API Response:', response.data);
     const data = response.data.Unit;
     if (Array.isArray(data) && data.length > 0) {
       const pageData = data[data.length - 1];
