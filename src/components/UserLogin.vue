@@ -58,21 +58,38 @@
           <ErrorMessage name="password" class="text-sm italic text-red-500" />
         </div>
 
-        <div class="mt-16">
-          <button
-            type="submit"
-            class="w-full px-3 py-3 text-center text-white rounded-2xl lg:text-lg bg-primary focus:outline-none hover:bg-emerald-500"
-            :disabled="isSubmitting"
-          > 
+     
+          <div class="buttons">
+          <button type="submit" class=" blob-btn" :disabled="isSubmitting">
             {{ isSubmitting ? "Submitting..." : "Login" }}
+            <span class="blob-btn__inner">
+              <span class="blob-btn__blobs">
+                <span class="blob-btn__blob"></span>
+                <span class="blob-btn__blob"></span>
+                <span class="blob-btn__blob"></span>
+                <span class="blob-btn__blob"></span>
+              </span>
+            </span>
           </button>
+
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display: none;">
+  <defs>
+    <filter id="goo">
+      <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10"></feGaussianBlur>
+      <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 21 -7" result="goo"></feColorMatrix>
+      <feBlend in2="goo" in="SourceGraphic" result="mix"></feBlend>
+    </filter>
+  </defs>
+</svg>
+
         </div>
       </Form>
       <p v-if="message" class="mt-5 text-error">{{ message }}</p>
     </div>
     
     <!-- Success Modal start -->
-    <div v-if="showSuccessModal" class="fixed inset-0 flex items-center justify-center bg-gray-400 bg-opacity-75">
+    <div v-if="showSuccessModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-400 bg-opacity-75">
       <div class="w-1/3 px-16 bg-gray-100 rounded-lg py-14">
         <div class="flex justify-center">
           <div class="p-6 bg-green-200 rounded-full">
@@ -246,6 +263,129 @@ body {
 @media screen and (max-width: 480px) {
   .hide-on-mobile-tablet {
     display: none;
+  }
+}
+
+/* Success Modal Styles */
+
+:root {
+  --cyan: #059669;
+  --dark: #FFFFFF;
+  --borderW: 2px;
+}
+
+.buttons {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.blob-btn {
+  --numOfBlobs: 4;
+  --cyan: #059669;
+  --dark: #FFFFFF;
+  --borderW: 2px;
+  z-index: 1;
+  position: relative;
+  padding: 1rem 0.75rem 1rem 0.75rem;
+  margin-bottom: 30px;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--cyan);
+  font-size: 16px;
+  font-weight: bold;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  transition: color 0.5s;
+  cursor: pointer;
+  border-radius: 30px;
+  width: 100%;
+}
+
+.blob-btn::before {
+  content: "";
+  z-index: 1;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border: var(--borderW) solid var(--cyan);
+  border-radius: 30px;
+}
+
+.blob-btn::after {
+  content: "";
+  z-index: -2;
+  position: absolute;
+  left: calc(var(--borderW) * 1.5);
+  top: calc(var(--borderW) * 1.5);
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s 0.2s;
+  border-radius: 30px;
+}
+
+.blob-btn:hover {
+  color: var(--dark);
+  border-radius: 30px;
+}
+
+.blob-btn:hover::after {
+  transition: all 0.3s;
+  left: 0;
+  top: 0;
+  border-radius: 30px;
+}
+
+.blob-btn__inner {
+  z-index: -1;
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 30px;
+  background: #ffffff;
+}
+
+.blob-btn__blobs {
+  position: relative;
+  display: block;
+  height: 100%;
+  filter: url('#goo');
+}
+
+.blob-btn__blob {
+  position: absolute;
+  top: var(--borderW);
+  width: calc(100% / var(--numOfBlobs));
+  height: 100%;
+  background: var(--cyan);
+  border-radius: 100%;
+  transform: translate3d(0,150%,0) scale(1.7);
+  transition: transform 0.45s;
+}
+
+@supports(filter: url('#goo')) {
+  .blob-btn__blob {
+    transform: translate3d(0,150%,0) scale(1.4);
+  }
+}
+
+.blob-btn__blob:nth-child(1) { left: calc(0 * (120% / var(--numOfBlobs))); transition-delay: calc(0 * 0.08s); }
+.blob-btn__blob:nth-child(2) { left: calc(1 * (120% / var(--numOfBlobs))); transition-delay: calc(1 * 0.08s); }
+.blob-btn__blob:nth-child(3) { left: calc(2 * (120% / var(--numOfBlobs))); transition-delay: calc(2 * 0.08s); }
+.blob-btn__blob:nth-child(4) { left: calc(3 * (120% / var(--numOfBlobs))); transition-delay: calc(3 * 0.08s); }
+
+.blob-btn:hover .blob-btn__blob {
+  transform: translateZ(0) scale(1.7);
+}
+
+@supports(filter: url('#goo')) {
+  .blob-btn:hover .blob-btn__blob {
+    transform: translateZ(0) scale(1.4);
   }
 }
 </style>

@@ -127,6 +127,12 @@
         </div>
       </div>
     </div>
+    <!-- Bill History Detail Modal -->
+    <BillHistoryDetailModal
+      :show="showBillHistoryDetailModal"
+      :billId="selectedBillId"
+      @close="closeBillHistoryDetailModal"
+    />
  
   <!-- Delete Confirmation Modal -->
   <DeleteConfirmationModal
@@ -134,6 +140,7 @@
       @confirm-delete="confirmDelete"
       @close="showDeleteConfirm = false"
     />
+
      <!-- Image Modal -->
      <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal">
       <div class="relative max-w-full max-h-full p-4 bg-white rounded-lg shadow-lg" @click.stop>
@@ -148,6 +155,9 @@
       </div>
     </div>
   </div>
+
+
+
 </template>
 
 <script setup>
@@ -158,6 +168,8 @@ import DatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { usePagination } from '@/composables/usePagination';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue'; 
+import BillHistoryDetailModal from '@/components/BillHistoryDetailModal.vue';
+
 
 const billHistory = ref([]);
 const startDate = ref(null);
@@ -170,6 +182,10 @@ const currentImage = ref('');
 const selectAll = ref(false);
 const showDeleteConfirm = ref(false); // State variable for delete confirmation modal
 const recordToDelete = ref(null); // State variable to store the record to be deleted
+
+const showBillHistoryDetailModal = ref(false);
+const selectedBillId = ref(null);
+
 
 const fetchData = async () => {
   try {
@@ -253,9 +269,20 @@ const formatDate = (dateString) => {
   return date.toLocaleDateString();
 };
 
+// const viewUnit = (id) => {
+//   router.push({ name: 'BillHistoryDetail', params: { id } });
+// };
+
+
 const viewUnit = (id) => {
-  router.push({ name: 'BillHistoryDetail', params: { id } });
+  selectedBillId.value = id;
+  showBillHistoryDetailModal.value = true;
 };
+
+const closeBillHistoryDetailModal = () => {
+  showBillHistoryDetailModal.value = false;
+};
+
 
 const deleteUnit = (id) => {
   recordToDelete.value = id;

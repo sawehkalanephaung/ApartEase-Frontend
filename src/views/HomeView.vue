@@ -1,9 +1,11 @@
 <template>
-  <div id="home" class="rounded-md p-[20px] h-full">
-    <h1 class="text-white text-4xl text-center sm:text-center">
+
+<div id="home"  class="p-[20px] h-full overflow-auto rounded-lg">
+  <div class="flex flex-col h-full">
+    <h1 class="text-4xl text-center text-white sm:text-center">
       <strong>Welcome to Home</strong>
     </h1>
-    <p class="text-white text-2xl">Username: {{ username }}</p>
+    <p class="text-2xl text-white">Username: {{ username }}</p>
     <p class="text-white">Role: {{ role }}</p>
 
 
@@ -12,6 +14,7 @@
     <p class="time">{{ time }}</p>
   </div>
 
+  </div>
   </div>
 
 </template>
@@ -80,7 +83,6 @@ p {
   right: 20px;
   bottom: 20px;
   color: #daf6ff;
-  text-shadow: 0 0 20px rgba(10, 175, 230, 1), 0 0 20px rgba(10, 175, 230, 0);
 }
 
 .time {

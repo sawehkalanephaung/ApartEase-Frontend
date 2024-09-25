@@ -34,12 +34,22 @@
   <hr class="w-full mb-8 border-t border-gray-300">
   <div class="relative bottom-0 flex justify-between w-full">
     <span class="text-gray-700 text-medium">Total Images: {{ images.length }}</span>
-    <button @click="uploadImages" class="flex items-center px-4 py-2 text-white rounded-2xl bg-emerald-500 hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-      </svg>
-      Upload
-    </button>
+    <button @click="uploadImages" :disabled="isUploading" class="flex items-center px-4 py-2 text-white rounded-2xl bg-emerald-500 hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed">
+  <template v-if="isUploading">
+    <svg class="w-5 h-5 mr-2 animate-spin" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+    Uploading...
+  </template>
+  <template v-else>
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+    </svg>
+    Upload
+  </template>
+</button>
+
   </div>
     </div>
   </template>
@@ -51,6 +61,8 @@
   
   const images = ref([]);
   const allowedExtensions = ['png', 'jpg', 'jpeg'];
+  const isUploading = ref(false);
+
 
   const isAllowedFileType = (filename) => {
   const extension = filename.split('.').pop().toLowerCase();
@@ -107,6 +119,7 @@ const handleDrop = (event) => {
   };
   
   const uploadImages = async () => {
+    isUploading.value = true;
   console.log("Sending Images.");
   const formData = new FormData();
   images.value.forEach((image) => {
@@ -127,6 +140,15 @@ const handleDrop = (event) => {
     if (response.status === 200) {
       alert('Images uploaded successfully!');
       console.log('Uploaded file URLs:', response.data.uploaded_file_urls);
+
+      
+        // Clear the images array after sucessful upload
+        images.value = [];
+
+         // Reset the file input
+      if (fileInput.value) {
+        fileInput.value.value = '';
+      }
     } else if (response.status === 409 && response.data.message) {
       const { error, list } = response.data.message;
       alert(`${error}\nHere is the list of names:\n• ${list.join("\n• ")}`);
@@ -136,6 +158,8 @@ const handleDrop = (event) => {
   } catch (error) {
     console.error('Error uploading images:', error);
     alert('An error occurred while uploading images.');
+  }finally {
+    isUploading.value = false;
   }
 };
 

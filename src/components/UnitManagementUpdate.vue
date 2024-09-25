@@ -1,8 +1,13 @@
 <template>
-  <h2 class="mt-0 mb-2 text-xl font-bold">Update Unit</h2>
-  <div class="max-w-sm min-w-full ">
+   <div class="p-[20px] h-full overflow-auto">
+    <div class="flex flex-col h-full">
+  <div class="flex items-center mb-2">
+    <h3 class="mt-0 text-xl font-bold">Update Unit</h3>
+    <h1 class="mx-auto text-xl font-bold underline">{{ roomNumber }}</h1>
+  </div>
+  <div class="max-w-sm min-w-full sm:px-4">
       <!-- Success Alert -->
-      <div v-if="showSuccessAlert" class="space-y-5">
+      <div v-if="showSuccessAlert" class="mb-4">
       <div class="p-4 bg-white border-t-2 rounded-lg border-primary dark:bg-white" role="alert" tabindex="-1" aria-labelledby="hs-bordered-success-style-label">
         <div class="flex">
           <div class="shrink-0">
@@ -26,12 +31,9 @@
         </div>
       </div>
     </div>
-    
-    <div class="flex flex-col items-center">
-      <h1 class="mt-4 text-xl font-bold underline">{{ roomNumber }}</h1>
-    </div>
-    <div class="h-full mt-1">
-      <div class="flex justify-around mb-4 space-x-4">
+
+    <div class="flex-grow overflow-auto">
+      <div class="flex flex-col justify-around mb-4 space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
         <div class="flex flex-col items-center w-full p-4 text-center rounded-2xl">
           <img :src="prevImgUrl" alt="Last month" style="width: 100px; height: 100px;" @click="openImageModal(prevImgUrl)">
           <label for="prevNumberOfUnits" class="block mt-2 text-sm font-medium text-gray-700">Last month</label>
@@ -52,7 +54,7 @@
      
 
       <!-- Navigation Menu taps -->
-      <div class="mx-6 mt-10 border-b-2 border-gray-300 mb- ml-b-2 mflex">
+      <div class="flex flex-wrap mx-2 mt-4 border-b-2 border-gray-300 sm:mx-6 sm:mt-6">
         <button
           @click="selectedTab = 'unitInfo'"
           :class="{'bg-primary text-white': selectedTab === 'unitInfo', 'bg-gray-200 text-gray-700': selectedTab !== 'unitInfo'}"
@@ -70,9 +72,8 @@
       </div>
 
       <!-- Detail Units Information Section -->
-      <div v-if="selectedTab === 'unitInfo'" class="px-6 py-2 ">
-        <h2 class="mt-6 mb-6 font-bold">Detail Units Information</h2>
-        <table class="min-w-full divide-y divide-gray-200">
+      <div v-if="selectedTab === 'unitInfo'" class="px-2 py-2 overflow-x-auto sm:px-6">
+        <table class="w-full divide-y divide-gray-200">
           <tbody class="divide-y divide-gray-200">
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Units Usage</td>
@@ -81,7 +82,7 @@
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Unit Calculation</td>
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-                <input v-model="costPerUnit" @change="updateCostPerUnit" type="number" class="w-32 px-3 py-2 mb-1 border border-gray-300 rounded-2xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600" disabled /> baht/unit
+                <input v-model="costPerUnit" @change="updateCostPerUnit" type="number" class="w-32 px-3 py-2 mb-1 border border-gray-300 cursor-not-allowed rounded-2xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600" disabled> baht/unit
                 <p>{{ totalUnit }} * {{ costPerUnit }} = {{ unitCalculation }} baht</p>
               </td>
             </tr>
@@ -115,9 +116,8 @@
       </div>
 
       <!-- Resident Information Section -->
-      <div v-if="selectedTab === 'residentInfo'" class="px-6 py-2">
-        <h2 class="mt-6 mb-6 font-bold ">Resident Information</h2>
-        <table class="min-w-full divide-y divide-gray-200">
+      <div v-if="selectedTab === 'residentInfo'" class="px-2 py-2 overflow-x-auto sm:px-6">
+        <table class="w-full divide-y divide-gray-200">
           <tbody class="divide-y divide-gray-200">
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 font whitespace-nowrap ">Name:</td>       
@@ -132,10 +132,10 @@
       </div>
     </div>
   </div>
-  <div class="absolute flex justify-end p-4 mb-1 mr-4 space-x-2 bottom-2 right-4">
-    <button @click="submit" class="w-20 px-4 py-2 text-white rounded-2xl bg-primary hover:bg-emerald-600">Save</button>
-    <button @click="cancel" class="w-20 px-3 py-2 font-bold bg-white border-2 rounded-2xl text-slate-700 border-slate-700 hover:bg-slate-700 hover:text-white">Cancel</button>
-  </div>
+  <div class="flex justify-end space-x-2">
+        <button @click="submit" class="px-4 py-2 text-white rounded-2xl bg-primary hover:bg-emerald-600">Save</button>
+        <button @click="cancel" class="px-3 py-2 font-bold bg-white border-2 rounded-2xl text-slate-700 border-slate-700 hover:bg-slate-700 hover:text-white">Cancel</button>
+      </div>
   <!-- Image Modal -->
   <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal(u.imgUrl)">
     <div class="relative w-full max-w-[700px] max-h-[700px] p-4 bg-white rounded-lg shadow-lg" @click.stop>
@@ -149,6 +149,8 @@
       </div>
     </div>
   </div>
+  </div>
+</div>
 </template>
 
 
@@ -334,3 +336,52 @@ const updateRentCost = () => {
 //   localStorage.setItem(`rentCost_${unitId}`, rentCost);
 // }
 </script>
+
+
+<style scoped>
+@media screen and (max-width: 390px) {
+  .max-w-sm {
+    padding: 0.5rem;
+  }
+
+  table {
+    font-size: 0.875rem;
+  }
+
+  td {
+    padding: 0.5rem 0.25rem;
+  }
+
+  input[type="number"],
+  select {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .absolute {
+    position: static;
+    margin-top: 1rem;
+  }
+
+  button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  table {
+    font-size: 0.875rem;
+  }
+
+  td {
+    padding: 0.5rem 0.25rem;
+  }
+
+  input[type="number"],
+  select {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+</style>
