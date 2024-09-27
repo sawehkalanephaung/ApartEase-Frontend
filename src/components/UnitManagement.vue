@@ -157,17 +157,16 @@
       </div>
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
-  <p class="text-sm text-gray-700">
-    Showing {{ ' ' }}
-    <span class="font-medium">{{ start + 1 }}</span>
-    {{ ' ' }} to {{ ' ' }}
-    <span class="font-medium">{{ end || 0 }}</span>
-    {{ ' ' }} of {{ ' ' }}
-    <span class="font-medium">{{ totalItems || 0 }}</span>
-    {{ ' ' }} results
-  </p>
-</div>
-
+            <p class="text-sm text-gray-700">
+              Showing {{ ' ' }}
+              <span class="font-medium">{{ start + 1 }}</span>
+              {{ ' ' }} to {{ ' ' }}
+              <span class="font-medium">{{ end || 0 }}</span>
+              {{ ' ' }} of {{ ' ' }}
+              <span class="font-medium">{{ totalItems || 0 }}</span>
+              {{ ' ' }} results
+            </p>
+          </div>
         <div>
           <nav class="inline-flex -space-x-px rounded-md shadow-sm isolate" aria-label="Pagination">
             <a @click="prevPage" class="relative inline-flex items-center px-2 py-2 text-gray-400 cursor-pointer rounded-l-md ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">

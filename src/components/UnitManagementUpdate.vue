@@ -1,6 +1,6 @@
 <template>
 
-   <div class="p-[20px] h-full overflow-auto">
+   <div class="p-[20px] h-full overflow-visible">
     <div class="flex flex-col h-full">
   <div class="flex items-center mb-2">
     <h3 class="mt-0 text-xl font-bold">Update Unit</h3>
@@ -48,7 +48,7 @@
 
       <!-- Detail Units Information Section -->
       <div v-if="selectedTab === 'unitInfo'" class="px-2 py-2 overflow-x-auto sm:px-6">
-        <table class="w-full divide-y divide-gray-200">
+        <table class="w-full divide-y divide-gray-200 table-auto">
           <tbody class="divide-y divide-gray-200">
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Units Usage</td>
@@ -70,7 +70,8 @@
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Rent cost</td>
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-                <input v-model="rentCostInput" @change="updateRentCost" type="number" class="w-32 px-3 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600" /> baht
+                <input v-model="rentCostInput" @change="updateRentCost" type="number" class="relative z-10 w-32 px-3 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600"
+ /> baht
               </td>
             </tr>
             <tr class="text-sm">
@@ -80,7 +81,8 @@
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Status</td>
               <td class="px-6 py-2 font-bold text-gray-500 whitespace-nowrap ">
-                <select v-model="approveStatus" class="px-3 py-2 mb-4 border border-gray-300 w-38 rounded-2xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600">
+                <select v-model="approveStatus" class="relative z-10 w-32 px-3 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600"
+                >
                   <option value="approve">Approve</option>
                   <option value="disapprove">Disapprove</option>
                 </select>
@@ -360,7 +362,39 @@ const updateRentCost = () => {
   input[type="number"],
   select {
     width: 100%;
+    padding: 0.5rem;
     margin-bottom: 0.5rem;
   }
 }
+
+/* New media queries for specific screen sizes */
+@media screen and (min-width: 740px) and (max-width: 1097px) {
+  .flex-grow {
+    overflow: visible;
+  }
+
+  table {
+    table-layout: fixed;
+  }
+
+  td {
+    position: relative;
+  }
+
+  input[type="number"],
+  select {
+    position: relative;
+    z-index: 10;
+  }
+}
+
+/* Ensure interactivity for larger screens */
+@media screen and (min-width: 1098px) {
+  .flex-grow {
+    overflow: visible;
+  }
+}
+
+
+
 </style>
