@@ -1,5 +1,5 @@
 <template>
-
+<ToastNotification :show="showToast" :message="toastMessage" :type="toastType" />
 <div class="flex flex-col items-start justify-between mb-10 sm:flex-row">
   <h3 class="text-2xl font-medium text-gray-700">Role List</h3>
 
@@ -164,6 +164,7 @@ import { usePagination } from '@/composables/usePagination';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
 import store from '@/stores/index'; // Import the store
 import RoleCreateModal from '@/components/RoleCreateModal.vue';
+import ToastNotification from '@/components/ToastNotification.vue';
 
 
 const router = useRouter();
@@ -176,6 +177,22 @@ const showCreateModal = ref(false);
 
 const showEditModal = ref(false);
 const selectedRoleId = ref(null);
+
+
+const showToast = ref(false);
+const toastMessage = ref('');
+const toastType = ref('success');
+
+const showToastMessage = (message, type = 'success') => {
+  toastMessage.value = message;
+  toastType.value = type;
+  showToast.value = true;
+  setTimeout(() => {
+    showToast.value = false;
+  }, 3000);
+};
+
+
 
 // Fetch role list from the backend API on component mount
 const fetchData = async () => {
@@ -234,7 +251,8 @@ const closeEditModal = () => {
 
 const onDelete = (roleId, roleName) => {
   if (roleName === currentUserRole) {
-    alert("You are currently assigned this role. It cannot be deleted.");
+    console.log("You are currently assigned this role. It cannot be deleted.");
+    showToastMessage('You are currently assigned this role. It cannot be deleted.', 'warning');
     return;
   }
   roleToDelete.value = roleId;
@@ -250,8 +268,10 @@ const confirmDelete = async () => {
     });
     fetchData();
     showDeleteConfirm.value = false;
+    showToastMessage('User deleted successfully!', 'success');
   } catch (error) {
     console.error("Error deleting role:", error);
+    showToastMessage('Error deleting user.', 'error');
   }
 };
 

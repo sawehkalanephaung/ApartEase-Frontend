@@ -1,4 +1,5 @@
 <template>
+    <ToastNotification :show="showToast" :message="toastMessage" :type="toastType" />
   <div class="relative">
     <h3 class="mb-10 text-2xl font-medium text-gray-700">Billing</h3>
     <button @click="sendBills" :disabled="isLoading" class="absolute right-0 items-center px-4 py-2 text-white rounded-2xl top-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -133,6 +134,7 @@ import { useStore } from 'vuex'; // Import Vuex store
 import apiClient from '@/services/AxiosClient.js';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
 import { usePagination } from '@/composables/usePagination';
+import ToastNotification from '@/components/ToastNotification.vue';
 
 
 const router = useRouter();
@@ -150,6 +152,21 @@ const costPerUnit = ref(store.getters.getCostPerUnit);
 
 const isLoading = ref(false);
 
+
+
+
+const showToast = ref(false);
+const toastMessage = ref('');
+const toastType = ref('success');
+
+const showToastMessage = (message, type = 'success') => {
+  toastMessage.value = message;
+  toastType.value = type;
+  showToast.value = true;
+  setTimeout(() => {
+    showToast.value = false;
+  }, 3000);
+};
 
 const fetchData = async () => {
   try {
@@ -203,12 +220,14 @@ const editUnit = (unitId) => {
 };
 
 const sendBills = async () => {
-  isLoading.value = true;
   const selectedUnits = unitList.value.filter(unit => unit.selected);
   if (selectedUnits.length === 0) {
-    alert('Please select at least one unit to send bills.');
+    console.log('No unit selected. Please choose one to send the bill.');
+    showToastMessage('No bill selected.', 'warning')
     return;
   }
+
+  isLoading.value = true;
 
   try {
     if (selectedUnits.length === unitList.value.length) {
@@ -259,14 +278,18 @@ const sendBills = async () => {
         }
       }
     }
-    alert('Bills sent successfully!');
+
+    console.log('Bills sent successfully');
+    showToastMessage('Bills end sucessfully!', 'success');
     localStorage.removeItem('selectedUnits');
     unitList.value = unitList.value.filter(unit => !unit.selected);
-    console.log('Bills sent successfully');
+ 
+    
   } catch (error) {
     console.error('Error sending bills:', error);
-    alert('Failed to send bills. Please try again.');
-  }finally {
+    console.log('Failed to send bills. Please try again.');
+    showToastMessage('Failed to send bills, Please try again', 'error');
+  } finally {
     isLoading.value = false;
   }
 };
@@ -291,9 +314,11 @@ const confirmDelete = async () => {
     unitList.value = unitList.value.filter(unit => unit.id !== unitToDelete.value);
     showDeleteConfirm.value = false;
     console.log('Bill deleted successfully');
+    showToastMessage('Bill deleted successfully!', 'success');
+    showToastMessage
   } catch (error) {
     console.error('Error deleting bill:', error);
-    alert('Failed to delete bill. Please try again.');
+    showToastMessage('Failed to delete bill. please try again', 'error')
   }
 };
 

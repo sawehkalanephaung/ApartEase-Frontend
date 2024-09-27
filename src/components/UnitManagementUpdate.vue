@@ -1,4 +1,5 @@
 <template>
+
    <div class="p-[20px] h-full overflow-auto">
     <div class="flex flex-col h-full">
   <div class="flex items-center mb-2">
@@ -6,32 +7,6 @@
     <h1 class="mx-auto text-xl font-bold underline">{{ roomNumber }}</h1>
   </div>
   <div class="max-w-sm min-w-full sm:px-4">
-      <!-- Success Alert -->
-      <div v-if="showSuccessAlert" class="mb-4">
-      <div class="p-4 bg-white border-t-2 rounded-lg border-primary dark:bg-white" role="alert" tabindex="-1" aria-labelledby="hs-bordered-success-style-label">
-        <div class="flex">
-          <div class="shrink-0">
-            <!-- Icon -->
-            <span class="inline-flex items-center justify-center border-4 rounded-full border-emerald-200 text-emerald-800 bg-emerald-200 size-8 dark:text-teal-400">
-              <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
-                <path d="m9 12 2 2 4-4"></path>
-              </svg>
-            </span>
-            <!-- End Icon -->
-          </div>
-          <div class="ms-3">
-            <h3 id="hs-bordered-success-style-label" class="font-semibold text-gray-800 dark:text-black">
-              Successfully updated.
-            </h3>
-            <p class="text-sm text-gray-700 dark:text-neutral-400">
-              You have successfully updated the unit information.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="flex-grow overflow-auto">
       <div class="flex flex-col justify-around mb-4 space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
         <div class="flex flex-col items-center w-full p-4 text-center rounded-2xl">
@@ -137,21 +112,23 @@
         <button @click="submit" class="px-4 py-2 text-white rounded-2xl bg-emerald-600 hover:bg-emerald-500 w-28">Save</button>
 
       </div>
-  <!-- Image Modal -->
-  <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal(u.imgUrl)">
-    <div class="relative w-full max-w-[700px] max-h-[700px] p-4 bg-white rounded-lg shadow-lg" @click.stop>
-      <button @click="closeImageModal" class="absolute text-gray-700 top-2 right-2 hover:text-gray-900">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-      <div class="mt-8">
-        <img :src="currentImage || 'https://via.placeholder.com/700'" alt="Unit Image" class="object-contain w-full h-full" />
-      </div>
+ <!-- Image Modal -->
+<div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal">
+  <div class="relative w-full max-w-3xl max-h-[90vh] p-4 bg-white rounded-lg shadow-lg" @click.stop>
+    <button @click="closeImageModal" class="absolute text-gray-700 top-2 right-2 hover:text-gray-900">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <div class="flex items-center justify-center h-full">
+      <img :src="currentImage || 'https://via.placeholder.com/600'" alt="Unit Image" class="object-contain max-w-full max-h-[80vh]" />
     </div>
   </div>
+</div>
+
   </div>
 </div>
+<ToastNotification :show="showToast" :message="toastMessage" :type="toastType" />
 </template>
 
 
@@ -160,6 +137,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import apiClient from '@/services/AxiosClient.js';
+import ToastNotification from '@/components/ToastNotification.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -190,8 +168,21 @@ const totalUnit = computed(() => numberOfUnits.value - prevNumberOfUnits.value);
 const unitCalculation = computed(() => totalUnit.value * costPerUnit.value);
 const totalBill = computed(() => unitCalculation.value + waterCostInput.value + rentCostInput.value);
 
-const showSuccessAlert = ref(false); // Reactive variable for success alert
 const imgUrl = ref('');
+
+const showToast = ref(false);
+const toastMessage = ref('');
+const toastType = ref('success');
+
+const showToastMessage = (message, type = 'success') => {
+  toastMessage.value = message;
+  toastType.value = type;
+  showToast.value = true;
+  setTimeout(() => {
+    showToast.value = false;
+  }, 3000);
+};
+
 
 const fetchData = async () => {
   try {
@@ -216,6 +207,7 @@ const fetchData = async () => {
     }
   } catch (error) {
     console.error("Error fetching data:", error);
+    
   }
 };
 
@@ -242,7 +234,6 @@ onMounted(() => {
 const cancel = () => {
   router.push('/unit-management');
 };
-
 const submit = async () => {
   try {
     console.debug('Submit function called');
@@ -258,6 +249,7 @@ const submit = async () => {
 
     if (!hasChanges) {
       console.debug('No changes detected');
+    
       router.push('/unit-management');
       return;
     }
@@ -283,17 +275,12 @@ const submit = async () => {
     store.dispatch('updateWaterCost', waterCostInput.value);
     store.dispatch('updateRentCost', rentCostInput.value);
 
+    // Show success message
+    showToastMessage('Unit updated successfully', 'success');
 
-    // Show success alert
-    showSuccessAlert.value = true;
-    setTimeout(() => {
-      showSuccessAlert.value = false;
-      router.push('/unit-management');
-    }, 2000); // Hide alert after 3 seconds
-
+    router.push('/unit-management');
   } catch (error) {
     console.error('Error during submission:', error);
-
     if (error.response && error.response.data && error.response.data.message) {
       message.value = error.response.data.message;
     } else {
@@ -327,15 +314,6 @@ const updateRentCost = () => {
   store.dispatch('updateRentCost', rentCostInput.value);
 };
 
-// Helper functions to manage rent cost locally
-// function getRentCostForUnit(unitId) {
-//   const rentCost = localStorage.getItem(`rentCost_${unitId}`);
-//   return rentCost ? parseFloat(rentCost) : 3500; // default rent cost
-// }
-
-// function setRentCostForUnit(unitId, rentCost) {
-//   localStorage.setItem(`rentCost_${unitId}`, rentCost);
-// }
 </script>
 
 

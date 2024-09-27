@@ -1,4 +1,5 @@
 <template>
+    <ToastNotification :show="showToast" :message="toastMessage" :type="toastType" />
   <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
     <div class="w-full max-w-xl p-6 bg-white rounded-md shadow-md">
       <div class="flex items-center justify-between w-full px-4 py-4 text-sm font-medium leading-none select-none">
@@ -75,6 +76,7 @@ import { ref } from 'vue';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 import apiClient from '@/services/AxiosClient.js';
+import ToastNotification from '@/components/ToastNotification.vue';
 
 const props = defineProps({
   show: Boolean,
@@ -86,6 +88,22 @@ const roomNumber = ref('');
 const name = ref('');
 const lineId = ref('');
 const message = ref('');
+
+
+
+const showToast = ref(false);
+const toastMessage = ref('');
+const toastType = ref('success');
+
+const showToastMessage = (message, type = 'success') => {
+  toastMessage.value = message;
+  toastType.value = type;
+  showToast.value = true;
+  setTimeout(() => {
+    showToast.value = false;
+  }, 3000);
+};
+
 
 const schema = yup.object().shape({
   roomNumber: yup.string().required('Room number is required!'),
@@ -110,16 +128,16 @@ const onSubmit = async () => {
     };
     const response = await apiClient.post('/resident/add', resident);
     if (response.status === 201) {
-      alert(response.data.message);
+      console.log(response.data.message);
+      showToastMessage('Resident created successfully!');
       emit('close');
-    } else {
-      alert(response.data.message);
-    }
+    } 
   } catch (error) {
     if (error.response && error.response.data && error.response.data.message) {
       message.value = error.response.data.message;
     } else {
       message.value = 'An error occurred during registration. Please try again.';
+      showToastMessage('An error occurred during registration. Please try again.');
     }
   }
 };

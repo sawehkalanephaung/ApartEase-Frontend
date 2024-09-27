@@ -1,4 +1,5 @@
 <template>
+   <ToastNotification :show="showToast" :message="toastMessage" :type="toastType" />
     <div class="relative flex flex-col items-center p-4">
       <div class="flex gap-4 mb-0">
         <input type="file" ref="fileInput" @change="handleFileUpload" multiple accept="image/*" class="hidden" />
@@ -17,9 +18,9 @@
           </Popper>
         <p class="mb-4 text-lg">Drag & Drop Images or <a href="#" @click.prevent="triggerFileInput" class="text-lg text-emerald-500 hover:text-emerald-700 focus:outline-none focus:underline">browse</a></p>
       </div>
-      <div class="flex flex-col w-full gap-4 overflow-y-auto max-h-96 custom-scrollbar"  style="max-height: 32rem;">
-        <div v-for="(image, index) in images" :key="index" class="flex items-center gap-4 p-2 border rounded">
-          <img :src="image.url" alt="Uploaded Image" class="object-cover w-24 h-24" />
+      <div class="flex flex-col w-full gap-4 overflow-y-auto max-h-96 custom-scrollbar" style="max-height: 32rem;">
+    <div v-for="(image, index) in images" :key="index" class="flex items-center gap-4 p-2 border rounded">
+      <img :src="image.url" alt="Uploaded Image" class="object-cover w-24 h-24 cursor-pointer" @click="openImageModal(image.url)" />
           <div class="flex-1">
             <span>{{ image.name }}</span>
             <span class="block text-sm text-gray-500">{{ formatFileSize(image.size) }}</span>
@@ -32,9 +33,9 @@
         </div>
       </div>
   <hr class="w-full mb-8 border-t border-gray-300">
-  <div class="relative bottom-0 flex justify-between w-full">
-    <span class="text-gray-700 text-medium">Total Images: {{ images.length }}</span>
-    <button @click="uploadImages" :disabled="isUploading" class="flex items-center px-4 py-2 text-white rounded-2xl bg-emerald-500 hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed">
+  <div class="relative bottom-0 flex items-center justify-between w-full">
+    <span class="flex-1 text-gray-700 text-medium">Total Images: {{ images.length }}</span>
+    <button @click="uploadImages" :disabled="isUploading" class="flex items-center justify-center px-4 py-2 text-white rounded-2xl bg-emerald-500 hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed">
   <template v-if="isUploading">
     <svg class="w-5 h-5 mr-2 animate-spin" viewBox="0 0 24 24">
       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -49,20 +50,49 @@
     Upload
   </template>
 </button>
-
   </div>
     </div>
+
+    <!-- Image Preview Modal -->
+<div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal">
+  <div class="relative w-11/12 max-w-2xl p-4 bg-white rounded-lg shadow-lg" @click.stop>
+    <button @click="closeImageModal" class="absolute text-gray-700 top-2 right-2 hover:text-gray-900">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <div class="flex items-center justify-center h-[70vh]">
+      <img :src="currentImage" alt="Preview Image" class="object-contain max-w-full max-h-full" />
+    </div>
+  </div>
+</div>
+
   </template>
   
   <script setup>
   import { ref } from 'vue';
   import Popper from 'vue3-popper';
   import apiClient from '@/services/AxiosClient.js'; // Use the configured Axios client
+  import ToastNotification from '@/components/ToastNotification.vue';
   
   const images = ref([]);
   const allowedExtensions = ['png', 'jpg', 'jpeg'];
   const isUploading = ref(false);
 
+
+
+  const showToast = ref(false);
+  const toastMessage = ref('');
+  const toastType = ref('success');
+
+  const showToastMessage = (message, type = 'success') => {
+    toastMessage.value = message;
+    toastType.value = type;
+    showToast.value = true;
+    setTimeout(() => {
+      showToast.value = false;
+    }, 3000);
+  };
 
   const isAllowedFileType = (filename) => {
   const extension = filename.split('.').pop().toLowerCase();
@@ -85,7 +115,8 @@
       };
       reader.readAsDataURL(files[i]);
     } else {
-      alert('Only PNG, JPG, JPEG files are allowed!');
+      console.log('Only PNG, JPG, JPEG files are allowed!');
+      showToastMessage('Only PNG, JPG, JPEG files are allowed!', 'warning');
     }
   }
 };
@@ -100,7 +131,8 @@ const handleDrop = (event) => {
       };
       reader.readAsDataURL(files[i]);
     } else {
-      alert('Only PNG, JPG, JPEG files are allowed!');
+      console.log('Only PNG, JPG, JPEG files are allowed!');
+      showToastMessage('Only PNG, JPG, JPEG files are allowed!', 'warning');
     }
   }
 };
@@ -116,6 +148,7 @@ const handleDrop = (event) => {
   
   const removeImage = (index) => {
     images.value.splice(index, 1);
+    showToastMessage('Image removed successfully', 'success');
   };
   
   const uploadImages = async () => {
@@ -138,7 +171,8 @@ const handleDrop = (event) => {
     });
 
     if (response.status === 200) {
-      alert('Images uploaded successfully!');
+      console.log('Images uploaded successfully!');
+      showToastMessage('Images uploaded sucessfully!');
       console.log('Uploaded file URLs:', response.data.uploaded_file_urls);
 
       
@@ -153,16 +187,31 @@ const handleDrop = (event) => {
       const { error, list } = response.data.message;
       alert(`${error}\nHere is the list of names:\n• ${list.join("\n• ")}`);
     } else {
-      alert('Failed to upload images.');
+      console.log('Failed to upload images.');
+      showToastMessage('No images found. Please choose files to upload', "info");
     }
   } catch (error) {
     console.error('Error uploading images:', error);
-    alert('An error occurred while uploading images.');
+    showToastMessage('Unable to upload image. Machine learning service is down.', 'error');
   }finally {
     isUploading.value = false;
   }
 };
 
+
+// Image preview modal state
+const showImageModal = ref(false);
+const currentImage = ref('');
+
+const openImageModal = (imageUrl) => {
+  currentImage.value = imageUrl;
+  showImageModal.value = true;
+};
+
+const closeImageModal = () => {
+  showImageModal.value = false;
+  currentImage.value = '';
+};
   </script>
   
   <style scoped>

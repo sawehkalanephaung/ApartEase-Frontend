@@ -1,4 +1,5 @@
 <template>
+    <ToastNotification :show="showToast" :message="toastMessage" :type="toastType" />
   <div class="flex flex-col items-start justify-between mb-10 sm:flex-row">
     <h3 class="mb-4 text-2xl font-medium text-gray-700 sm:mb-0">Resident Management</h3>
 
@@ -186,6 +187,7 @@ import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
 import Popper from 'vue3-popper';
 import ResidentEditModal from '@/components/ResidentEditModal.vue';
 import ResidentCreateModal from '@/components/ResidentCreateModal.vue';
+import ToastNotification from '@/components/ToastNotification.vue';
 
 
 
@@ -199,7 +201,18 @@ const showEditModal = ref(false);
 const currentResidentId = ref(null);
 const showCreateModal = ref(false);
 
+const showToast = ref(false);
+const toastMessage = ref('');
+const toastType = ref('success');
 
+const showToastMessage = (message, type = 'success') => {
+  toastMessage.value = message;
+  toastType.value = type;
+  showToast.value = true;
+  setTimeout(() => {
+    showToast.value = false;
+  }, 3000);
+};
 
 // capitelize resident name
 const capitalizeName = (name) => {
@@ -315,8 +328,10 @@ const confirmDelete = async () => {
     await apiClient.delete(`/resident/del/${residentToDelete.value}`);
     fetchData();
     showDeleteConfirm.value = false;
+    showToastMessage('User deleted successfully!', 'success');
   } catch (error) {
     console.error('Error deleting resident:', error);
+    showToastMessage('Error deleting user.', 'error');
   }
 };
 
@@ -349,6 +364,7 @@ const searchResident = async () => {
     }
   } catch (error) {
     console.error('Error searching resident:', error);
+    showToastMessage('No Resident found.', 'info');
     residents.value = [];
     totalPages.value = 1;
     totalItems.value = 0;

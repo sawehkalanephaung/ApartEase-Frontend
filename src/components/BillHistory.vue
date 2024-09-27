@@ -1,4 +1,5 @@
 <template>
+    <ToastNotification :show="showToast" :message="toastMessage" :type="toastType" />
   <div class="relative">
     <div class="flex flex-col items-start justify-between sm:flex-row sm:items-center">
       <h3 class="mb-4 text-2xl font-medium text-gray-700 sm:mb-0">Bill History</h3>
@@ -169,6 +170,7 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import { usePagination } from '@/composables/usePagination';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue'; 
 import BillHistoryDetailModal from '@/components/BillHistoryDetailModal.vue';
+import ToastNotification from '@/components/ToastNotification.vue';
 
 
 const billHistory = ref([]);
@@ -187,6 +189,18 @@ const showBillHistoryDetailModal = ref(false);
 const selectedBillId = ref(null);
 
 
+const showToast = ref(false);
+const toastMessage = ref('');
+const toastType = ref('success');
+
+const showToastMessage = (message, type = 'success') => {
+  toastMessage.value = message;
+  toastType.value = type;
+  showToast.value = true;
+  setTimeout(() => {
+    showToast.value = false;
+  }, 3000);
+};
 const fetchData = async () => {
   try {
     const response = await apiClient.get('/bill/history/list', {
@@ -294,10 +308,11 @@ const confirmDelete = async () => {
     await apiClient.delete(`/bill/history/del/${recordToDelete.value}`);
     billHistory.value = billHistory.value.filter(unit => unit.id !== recordToDelete.value);
     showDeleteConfirm.value = false;
-    alert('Unit history record deleted successfully!');
+    console.log('Unit history record deleted successfully!');
+    showToastMessage('Unit History record deleted successfully!', 'success');
   } catch (error) {
     console.error('Error deleting unit history record:', error);
-    alert('Failed to delete unit history record. Please try again.');
+    showToastMessage('Failed to delete unit history record. Please try again', 'error');
   }
 };
 
@@ -367,6 +382,7 @@ const closeImageModal = () => {
  height: 30px;
  width: auto;
  margin-right: 0.5rem;
+border-radius: 10px;
 }
 
 ::v-deep .dp__action_select {

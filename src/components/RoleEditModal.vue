@@ -1,4 +1,5 @@
 <template>
+    <ToastNotification :show="showToast" :message="toastMessage" :type="toastType" />
     <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div class="w-full max-w-xl p-6 bg-white rounded-md shadow-md">
         <div class="flex items-center justify-between w-full px-4 py-4 text-sm font-medium leading-none select-none">
@@ -46,6 +47,8 @@
 <script setup>
 import { ref, watch } from 'vue';
 import apiClient from '@/services/AxiosClient';
+import ToastNotification from '@/components/ToastNotification.vue';
+
 
 const props = defineProps({
   show: Boolean,
@@ -58,6 +61,21 @@ const role = ref({ role_name: '' });
 const originalRoleName = ref('');
 const loading = ref(true);
 const error = ref(null);
+
+
+const showToast = ref(false);
+const toastMessage = ref('');
+const toastType = ref('success');
+
+const showToastMessage = (message, type = 'success') => {
+  toastMessage.value = message;
+  toastType.value = type;
+  showToast.value = true;
+  setTimeout(() => {
+    showToast.value = false;
+  }, 3000);
+};
+
 
 const fetchData = async () => {
   try {
@@ -101,10 +119,12 @@ const onSubmit = async () => {
     const response = await apiClient.put(`/role/edit/${props.roleId}`, {
       role_name: role.value.role_name,
     });
-    alert(response.data.message);
+    console.log(response.data.message);
+    showToastMessage('Role updated successfully!');
     emit('close');
   } catch (err) {
     error.value = "The name of this role is already in use.";
+    showToastMessage('The name of this role is already in use.', 'error');
   }
 };
 </script>

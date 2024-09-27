@@ -160,6 +160,7 @@
     :userId="selectedUserId"
     @close="closeEditModal"
   />
+  <ToastNotification :show="showToast" :message="toastMessage" :type="toastType" />
   <router-view />
 </template>
 
@@ -173,6 +174,7 @@ import { useStore } from 'vuex';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
 import UserEditModal from '@/components/UserEditModal.vue';
 import UserCreateModal from '@/components/UserCreateModal.vue';
+import ToastNotification from '@/components/ToastNotification.vue';
 
 
 const router = useRouter();
@@ -184,6 +186,19 @@ const showEditModal = ref(false);
 const selectedUserId = ref(null);
 const showCreateModal = ref(false);
 
+
+const showToast = ref(false);
+const toastMessage = ref('');
+const toastType = ref('success');
+
+const showToastMessage = (message, type = 'success') => {
+  toastMessage.value = message;
+  toastType.value = type;
+  showToast.value = true;
+  setTimeout(() => {
+    showToast.value = false;
+  }, 3000);
+};
 
 const fetchData = async () => {
   try {
@@ -220,6 +235,7 @@ const onCreate = () => {
 const closeCreateModal = () => {
   showCreateModal.value = false;
   fetchData(); // Refresh the data after creating
+  // showToastMessage('User created successfully!', 'success');
 };
 
 
@@ -237,6 +253,7 @@ const onEdit = (userId) => {
 const closeEditModal = () => {
   showEditModal.value = false;
   fetchData();
+  // showToastMessage('User updated successfully!', 'success');
 };
 
 const onDelete = (userId) => {
@@ -244,7 +261,7 @@ const onDelete = (userId) => {
   const userToDeleteObj = users.value.find(user => user.id === userId);
 
   if (currentUser && userToDeleteObj && currentUser.username === userToDeleteObj.username) {
-    alert("You cannot delete the currently logged-in account.");
+    showToastMessage('You cannot delete the currently logged-in account.', 'warning');
     return;
   }
 
@@ -256,11 +273,12 @@ const confirmDelete = async () => {
   try {
     const response = await apiClient.delete(`/user/del/${userToDelete.value}`);
     const result = await response.data;
-    alert(result.message);
     fetchData();
     showDeleteConfirm.value = false;
+    showToastMessage('User deleted successfully!', 'success');
   } catch (error) {
     console.error(error);
+    showToastMessage('Error deleting user.', 'error');
   }
 };
 

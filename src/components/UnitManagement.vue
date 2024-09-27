@@ -1,4 +1,5 @@
 <template>
+   <ToastNotification :show="showToast" :message="toastMessage" :type="toastType" />
   <div class="flex flex-col">
     <div class="flex flex-col sm:items-end sm:flex-row sm:justify-between">
       <h3 class="text-2xl font-medium text-gray-700">Unit Management</h3>
@@ -101,7 +102,7 @@
           <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
             <input type="checkbox" v-model="u.selected" :value="u.id" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" />
           </td>
-          <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">
+          <td class="flex items-center gap-4 p-2 px-5 py-5 text-sm bg-white border-b border-gray-200 rounded">
             <img :src="u.imgUrl || 'https://via.placeholder.com/600'" alt="Unit Image" class="object-cover cursor-pointer w-14 h-14" @click="openImageModal(u.imgUrl)" />
           </td>
           <td class="px-5 py-5 text-sm bg-white border-b border-gray-200">{{ u.res_room }}</td>
@@ -192,18 +193,19 @@
       @close="showDeleteConfirm = false"
   />
   <!-- Image Modal -->
-  <div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal(u.imgUrl)">
-    <div class="relative w-full max-w-[700px] max-h-[700px] p-4 bg-white rounded-lg shadow-lg" @click.stop>
-      <button @click="closeImageModal" class="absolute text-gray-700 top-2 right-2 hover:text-gray-900">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-      <div class="mt-8">
-        <img :src="currentImage || 'https://via.placeholder.com/700'" alt="Unit Image" class="object-contain w-full h-full" />
-      </div>
+<div v-if="showImageModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" @click="closeImageModal">
+  <div class="relative w-full max-w-3xl max-h-[90vh] p-4 bg-white rounded-lg shadow-lg" @click.stop>
+    <button @click="closeImageModal" class="absolute text-gray-700 top-2 right-2 hover:text-gray-900">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <div class="flex items-center justify-center h-full">
+      <img :src="currentImage || 'https://via.placeholder.com/700'" alt="Unit Image" class="object-contain max-w-full max-h-[80vh]" />
     </div>
   </div>
+</div>
+
   <router-view />
 </template>
 
@@ -218,6 +220,7 @@ import { usePagination } from '@/composables/usePagination';
 import DeleteConfirmationModal from '@/components/DeleteConfirmationModal.vue';
 import '@vuepic/vue-datepicker/dist/main.css';
 import Popper from 'vue3-popper';
+import ToastNotification from '@/components/ToastNotification.vue';
 
 const units = ref([]);
 const showDeleteConfirm = ref(false);
@@ -240,6 +243,24 @@ const costPerUnit = computed({
 const totalUnitsUsage = computed(() => store.getters.getTotalUnitUsage);
 const totalBill = computed(() => store.getters.getTotalBill);
 
+
+
+
+
+const showToast = ref(false);
+const toastMessage = ref('');
+const toastType = ref('success');
+
+const showToastMessage = (message, type = 'success') => {
+  toastMessage.value = message;
+  toastType.value = type;
+  showToast.value = true;
+  setTimeout(() => {
+    showToast.value = false;
+  }, 3000);
+};
+
+
 const updateCostPerUnit = async () => {
   try {
     console.log('Updating cost per unit:', costPerUnit.value);
@@ -249,8 +270,10 @@ const updateCostPerUnit = async () => {
     }));
     await new Promise(resolve => setTimeout(resolve, 500));
     console.log('Cost per unit updated successfully');
+    showToastMessage('The cost per unit has been updated successfully and saved.');
   } catch (error) {
     console.error('Error updating cost per unit:', error);
+    showToastMessage('Error updating cost per unit', 'error');
   }
 };
 
@@ -278,6 +301,7 @@ const fetchData = async () => {
     }
   } catch (error) {
     console.error('Error fetching units:', error);
+    showToastMessage('Error fetching units', 'error');
   }
 };
 
@@ -318,14 +342,14 @@ const confirmDelete = async () => {
     if (response.status === 200) {
       await fetchData();
       showDeleteConfirm.value = false;
+      showToastMessage('Unit deleted successfully');
       window.location.reload(); // Refresh the page
     } else {
       throw new Error('Failed to delete unit');
     }
   } catch (error) {
     console.error('Error deleting units:', error);
-    // Handle the error, e.g., show an error message to the user
-    // You can use a toast notification or an alert here
+    showToastMessage('Error deleting units', 'error');
   }
 };
 
@@ -379,6 +403,7 @@ const searchUnit = async () => {
     console.log('Unit search completed successfully');
   } catch (error) {
     console.error('Error searching unit:', error);
+    showToastMessage('No result found with this room number', 'info');
     units.value = [];
     totalPages.value = 1;
     totalItems.value = 0;
@@ -430,7 +455,8 @@ const sendUnits = async () => {
   }
 
   if (selectedUnits.length === 0) {
-    alert('Please select at least one unit.');
+    console.log('Please select at least one unit.');
+    showToastMessage('No unit selected.', 'warning')
     return;
   }
 
@@ -441,12 +467,14 @@ const sendUnits = async () => {
   console.log('Selected units:', selectedUnits);
   selectedUnits.forEach(unit => {
     console.log(`Unit ID: ${unit.id}, Approve Status: ${unit.approveStatus}`);
+    showToastMessage('The status is disapproved, change to approved', 'warning');
   });
 
   // Ensure approveStatus is correctly interpreted as a boolean
   const disapprovedUnits = selectedUnits.filter(unit => !Boolean(unit.approveStatus));
   if (disapprovedUnits.length > 0) {
-    alert('Disapproved Unit! Please check it');
+    console.log('Disapproved Unit! Please check it');
+    showToastMessage('The status is disapproved, change to approved', 'warning');
     return;
   }
 
@@ -462,7 +490,8 @@ const sendUnits = async () => {
 
       if (isNaN(numberOfUnits) || isNaN(prevNumberOfUnits) || isNaN(costPerUnit) || isNaN(waterCost) || isNaN(rentCost)) {
         console.error('Unit data is missing required properties or contains invalid values:', unit);
-        alert('Unit data is missing required properties or contains invalid values. Please check the unit data.');
+        console.log('Unit data is missing required properties or contains invalid values. Please check the unit data.');
+        showToastMessage('Unit data is missing required properties or contains invalid values. Please check the unit data.', 'error');
         return;
       }
 
@@ -480,6 +509,7 @@ const sendUnits = async () => {
         cost_per_unit: costPerUnit
       };
       console.log('Sending bill data:', billData);
+      showToastMessage('Sending bill data:', 'success');
       await apiClient.post(`/bill/add/${unit.id}`, billData);
     }));
 
@@ -488,18 +518,20 @@ const sendUnits = async () => {
     const totalUnit = selectedUnits.reduce((total, unit) => total + (Number(unit.numberOfUnits) - Number(unit.prevNumberOfUnits)), 0);
     const totalBill = selectedUnits.reduce((total, unit) => total + ((Number(unit.numberOfUnits) - Number(unit.prevNumberOfUnits)) * store.getters.getCostPerUnit + store.getters.getWaterCost + store.getters.getRentCost), 0);
 
-    router.push({
-      name: 'SendBill',
-      query: {
-        selectedUnits: JSON.stringify(selectedUnits),
-        totalUnit,
-        totalBill
-      }
-    });
+    // router.push({
+    //   name: 'SendBill',
+    //   query: {
+    //     selectedUnits: JSON.stringify(selectedUnits),
+    //     totalUnit,
+    //     totalBill
+    //   }
+    // });
     console.log('Units sent successfully');
+    showToastMessage('Move unit to Bill page successfully!', 'success');
   } catch (error) {
     console.error('Error sending units:', error);
-    alert('Failed to send units. Please try again.');
+    console.log('Failed to send units. Please try again.');
+    showToastMessage('Failed to send units. Please try again.', 'error');
   }
 };
 
