@@ -13,7 +13,8 @@
           <img :src="prevImgUrl" alt="Last month" style="width: 100px; height: 100px;" @click="openImageModal(prevImgUrl)">
           <label for="prevNumberOfUnits" class="block mt-2 text-sm font-medium text-gray-700">Last month</label>
           <div class="flex items-center mt-1">
-            <input v-model="prevNumberOfUnits" type="number" id="prevNumberOfUnits" class="block px-3 py-2 border border-gray-300 shadow-sm rounded-2xl w-28 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600 sm:text-sm" />
+            <input v-model="prevNumberOfUnits" type="number" id="prevNumberOfUnits" class="relative z-10 w-32 px-3 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600"
+            />
             <span class="ml-2">kw</span>
           </div>
         </div>
@@ -21,7 +22,8 @@
           <img :src="imgUrl" alt="This month" style="width: 100px; height: 100px;" @click="openImageModal(imgUrl)">
           <label for="numberOfUnits" class="block mt-2 text-sm font-medium text-gray-700">This month</label>
           <div class="flex items-center mt-1">
-            <input v-model="numberOfUnits" type="number" id="numberOfUnits" class="block px-3 py-2 border border-gray-300 shadow-sm rounded-2xl w-28 focus:outline-none sm:text-sm focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600" />
+            <input v-model="numberOfUnits" type="number" id="numberOfUnits" class="relative z-10 w-32 px-3 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600"
+            />
             <span class="ml-2">kw</span>
           </div>
         </div>
@@ -64,14 +66,14 @@
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Water cost</td>
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-                <input v-model="waterCostInput" @change="updateWaterCost" type="number" class="w-32 px-3 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600" /> baht
+                <input v-model="waterCostInput" @change="updateWaterCost" type="number" class="relative z-10 w-32 px-3 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600"
+                /> baht
               </td>
             </tr>
             <tr class="text-sm">
               <td class="px-6 py-2 font-medium text-gray-900 whitespace-nowrap">Rent cost</td>
               <td class="px-6 py-2 text-gray-500 whitespace-nowrap">
-                <input v-model="rentCostInput" @change="updateRentCost" type="number" class="relative z-10 w-32 px-3 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600"
- /> baht
+                <input v-model="rentCostInput" @change="updateRentCost" type="number" class="relative z-10 w-32 px-3 py-2 border border-gray-300 rounded-2xl focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-600"/> baht
               </td>
             </tr>
             <tr class="text-sm">
@@ -110,8 +112,9 @@
     </div>
   </div>
   <div class="flex justify-end space-x-2">
-        <button @click="cancel" class="px-3 py-2 font-bold bg-white border-2 rounded-2xl text-slate-700 border-slate-700 hover:bg-slate-700 hover:text-white w-28">Cancel</button>
-        <button @click="submit" class="px-4 py-2 text-white rounded-2xl bg-emerald-600 hover:bg-emerald-500 w-28">Save</button>
+    <button @click="cancel" class="relative z-30 px-3 py-2 font-bold bg-white border-2 rounded-2xl text-slate-700 border-slate-700 hover:bg-slate-700 hover:text-white w-28">Cancel</button>
+    <button @click="submit" class="relative z-30 px-4 py-2 text-white rounded-2xl bg-emerald-600 hover:bg-emerald-500 w-28">Save</button>
+
 
       </div>
  <!-- Image Modal -->
