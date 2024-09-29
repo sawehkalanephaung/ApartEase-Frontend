@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import store from '@/stores/index'; 
-import Login from '../components/UserLogin.vue';
+import UserLogin from '../components/UserLogin.vue';
 import SideNav from '../components/SideNav.vue';
 import HomeView from '@/views/HomeView.vue';
 
@@ -29,9 +29,13 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/",
-      name: "login",
-      component: Login,
+      path: '/',
+      redirect: '/login'
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: UserLogin
     },
     {
       path: "/sidenav",
@@ -163,7 +167,8 @@ router.beforeEach((to, from, next) => {
   if (requiresAuth && !token) {
     next({ name: 'login' }); // Redirect to login if not authenticated
   } else if (requiresAuth && roles && !roles.includes(userRole)) {
-    next({ name: 'login' }); // Redirect to home if not authorized
+    // next({ name: 'login' }); // Redirect to home if not authorized
+    next(false); // Prevent navigation if user does not have the required role
   } else {
     next(); // Proceed to the route
   }

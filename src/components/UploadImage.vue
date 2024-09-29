@@ -175,14 +175,7 @@ const handleDrop = (event) => {
       showToastMessage('Images uploaded sucessfully!');
       console.log('Uploaded file URLs:', response.data.uploaded_file_urls);
 
-      
-        // Clear the images array after sucessful upload
-        images.value = [];
-
-         // Reset the file input
-      if (fileInput.value) {
-        fileInput.value.value = '';
-      }
+  
     } else if (response.status === 409 && response.data.message) {
       const { error, list } = response.data.message;
       alert(`${error}\nHere is the list of names:\n• ${list.join("\n• ")}`);

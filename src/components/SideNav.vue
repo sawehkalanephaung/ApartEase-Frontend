@@ -229,7 +229,7 @@ const logout = () => {
   showSuccessMessage.value = true;
 
   // Redirect to login page
-  router.push("/");
+  router.push("/login");
 };
 
 // add breadcrumbs
