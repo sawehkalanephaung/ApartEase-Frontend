@@ -106,7 +106,7 @@ git tag -d v1.0.0
 
 #### Login Page
 
-![Alt text](./Project_Docs/UI/UI-01%20Login%20Page.jpeg)
+![Alt text](./Project_Docs/UI/UI01.jpeg)
 
 #### Signup Page
 ![Alt text](./Project_Docs/UI/UI-02%20Login%20Sucessful%20Modal.jpeg)
