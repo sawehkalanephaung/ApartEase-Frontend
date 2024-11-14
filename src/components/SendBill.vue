@@ -280,7 +280,7 @@ const sendBills = async () => {
     }
 
     console.log('Bills sent successfully');
-    showToastMessage('Bills end sucessfully!', 'success');
+    showToastMessage('Bills send sucessfully!', 'success');
     localStorage.removeItem('selectedUnits');
     unitList.value = unitList.value.filter(unit => !unit.selected);
  

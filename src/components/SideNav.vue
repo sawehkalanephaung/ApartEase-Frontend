@@ -239,6 +239,11 @@ const navigateTo = (page) => {
   }
 };
 
+/**
+ * Watches the route changes and updates the breadcrumb navigation accordingly.
+ * The breadcrumb is updated based on the name of the current route.
+ * This function ensures the breadcrumb accurately reflects the user's navigation.
+ */
 watch(route, (newRoute) => {
   if (newRoute.name === 'HomeView') {
     breadcrumb.value = ["Home"];

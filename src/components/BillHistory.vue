@@ -40,12 +40,12 @@
       <table class="min-w-full leading-normal text-md">
         <thead class="sticky-header">
           <tr>
-            <th class="px-2 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
+            <!-- <th class="px-2 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">
             <div class="flex items-center">
               <input type="checkbox" @change="toggleSelectAll" v-model="selectAll" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" />
               <span class="ml-2">All</span>
             </div>
-          </th>
+          </th> -->
             <th class="px-2 py-5 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Room Number</th>
             <th class="px-2 py-5 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200">Amount</th>
             <th class= "hidden px-2 py-5 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b-2 border-gray-200 md:table-cell">Date Sent</th>
@@ -63,9 +63,9 @@
               :class="[
                 record.selected ? 'bg-emerald-100 hover:bg-emerald-200!important border-l-4 border-emerald-500' : 'hover:bg-gray-100'
               ]">
-              <td class="px-2 py-5 text-sm bg-white border-b border-gray-200">
+              <!-- <td class="px-2 py-5 text-sm bg-white border-b border-gray-200">
               <input type="checkbox" v-model="record.selected" :value="record.id" class="lg:w-4 lg:h-4 md:w-4 md:h-4 sm:w-4 sm:h-4" />
-            </td>
+            </td> -->
            
             <td class="px-2 py-5 text-sm bg-white border-b border-gray-200">{{ record.res_room || 'Unknown' }}</td>
             <td class="px-2 py-5 text-sm bg-white border-b border-gray-200">{{ record.amount }}</td>

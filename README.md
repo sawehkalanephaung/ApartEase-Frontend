@@ -91,3 +91,15 @@ git branch -d branch-name
 git tag -d v1.0.0
 
 ```
+
+
+
+
+
+## Project Documentation
+
+### UI Design
+
+![Alt text](./Project_Docs/UI/UI-01%20Login%20page.jpeg)
+![Alt text](./Project_Docs/UI/UI-02%20Login%20Sucess%20confirmation.jpeg)
+![Alt text](./Project_Docs/UI/UI-03%20Signup%20page.jpeg)

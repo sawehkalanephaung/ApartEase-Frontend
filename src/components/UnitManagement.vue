@@ -300,7 +300,7 @@ const fetchData = async () => {
     }
   } catch (error) {
     console.error('Error fetching units:', error);
-    showToastMessage('Error fetching units', 'error');
+    // showToastMessage('Error fetching units', 'error');
   }
 };
 

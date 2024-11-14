@@ -185,7 +185,7 @@ const handleDrop = (event) => {
     }
   } catch (error) {
     console.error('Error uploading images:', error);
-    showToastMessage('Unable to upload image. Machine learning service is down.', 'error');
+    showToastMessage('Unable to upload image. Machine learning service is down or the image already used.', 'error');
   }finally {
     isUploading.value = false;
   }
