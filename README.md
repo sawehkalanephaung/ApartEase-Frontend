@@ -105,11 +105,15 @@ git tag -d v1.0.0
 
 
 #### Login Page
+
 ![Alt text](./Project_Docs/UI/UI-01%20Login%20Page.jpeg)
+
 #### Signup Page
 ![Alt text](./Project_Docs/UI/UI-02%20Login%20Sucessful%20Modal.jpeg)
+
 #### Home page
 ![Alt text](./Project_Docs/UI/UI-03%20Home%20page.jpeg)
+
 #### Profile Page
 ![Alt text](./Project_Docs/UI/UI-04%20Profile%20Page.jpeg)
 
@@ -161,7 +165,3 @@ git tag -d v1.0.0
 
 
 
-
-
-### VDO
-https://github.com/Apisit250aps/Resident/assets/93828844/5a1c4b2c-9d2c-4b5d-b7e2-c3a8d9f6f5e5
