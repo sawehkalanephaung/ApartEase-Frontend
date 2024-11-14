@@ -98,8 +98,70 @@ git tag -d v1.0.0
 
 ## Project Documentation
 
+### Project Overview
+
+![Alt text](./Project_Docs/Poster.pdf)
+
 ### UI Design
 
-![Alt text](./Project_Docs/UI/UI-01%20Login%20page.jpeg)
-![Alt text](./Project_Docs/UI/UI-02%20Login%20Sucess%20confirmation.jpeg)
-![Alt text](./Project_Docs/UI/UI-03%20Signup%20page.jpeg)
+#### Login Page
+![Alt text](./Project_Docs/UI/UI-01%20Login%20Page.jpeg)
+#### Signup Page
+![Alt text](./Project_Docs/UI/UI-02%20Login%20Sucessful%20Modal.jpeg)
+#### Home page
+![Alt text](./Project_Docs/UI/UI-03%20Home%20page.jpeg)
+#### Profile Page
+![Alt text](./Project_Docs/UI/UI-04%20Profile%20Page.jpeg)
+
+#### Resident Page
+![Alt text](./Project_Docs/UI/UI-05%20Resident%20Page.jpeg)
+
+#### Resident Create Modal
+![Alt text](./Project_Docs/UI/UI-06%20Resident%20Create%20Modal%20.jpeg)
+
+#### Resident Update Modal
+![Alt text](./Project_Docs/UI/UI-07%20Resident%20Update%20Modal.jpeg)
+#### User Page
+
+![Alt text](./Project_Docs/UI/UI-08%20User%20Page.jpeg)
+#### User Create Modal
+
+![Alt text](./Project_Docs/UI/UI-09%20User%20Create%20Modal.jpeg)
+#### User Update Modal
+![Alt text](./Project_Docs/UI/UI-10%20User%20Update%20Modal.jpeg)
+#### Role Page
+![Alt text](./Project_Docs/UI/UI-11%20Role%20page.jpeg)
+
+#### Role Create Modal
+![Alt text](./Project_Docs/UI/UI-12%20Role%20Create%20Modal.jpeg)
+
+#### Role Update Modal
+![Alt text](./Project_Docs/UI/UI-13%20Role%20Update%20Modal.jpeg)
+
+#### Delete Modal
+![Alt text](./Project_Docs/UI/UI-14%20Delete%20modal.jpeg)
+
+#### Unit Management Page
+![Alt text](./Project_Docs/UI/UI-15%20Unit%20Management%20page.jpeg)
+
+#### Unit Update Modal
+![Alt text](./Project_Docs/UI/UI-16%20Unit%20Update%20Modal.jpeg)
+
+#### Bill Page
+![Alt text](./Project_Docs/UI/UI-17%20Bill%20page%20.jpeg)
+
+#### Bill History
+![Alt text](./Project_Docs/UI/UI-18%20Bill%20History.jpeg)
+
+#### Bill History View Modal
+![Alt text](./Project_Docs/UI/UI-19%20Bill%20History%20View%20Modal.jpeg)
+
+#### Upload Page
+![Alt text](./Project_Docs/UI/UI-20%20Upload%20page.jpeg)
+
+
+
+
+
+### VDO
+![Alt text](./Project_Docs/VDO/Show%20pro%20video.mp4)
